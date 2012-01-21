@@ -5,7 +5,7 @@ int main (void)
         float a = 0.0;
         a = +5;
 
-        char c;
+        char c_int = 'a';
 	
 	a = -4 + 5.5;
 	a = -5.12 + (-12);

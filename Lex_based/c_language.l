@@ -9,12 +9,8 @@
 				printf ("\n");
 	        	} 
 
- /* Comments and strings */
+ /* Comments */
 "/*".*"*/"		/* Do nothing. */
-\".*\"			{
-				// Simply print the entire string
-				printf ("%s", yytext);	
-			}
 
 
  /* Operators */
@@ -83,14 +79,24 @@ return 			{
 			}
 
  /* Identifier */
-[a-zA-Z_][a-zA-Z0-9]*	{
+[a-zA-Z_][_a-zA-Z0-9]*	{
 				printf ("ID");
 			}
+
  /* Numeric Constants */
 (\+|\-|"")[0-9]*	{
 				printf ("CONST_INT");
 			}
 (\+|\-|"")[0-9]*\.[0-9]* {
 				printf ("CONST_FLOAT");
+			}
+ /* Literals */
+\".*\"			{
+				printf ("STR");
+				// Simply print the entire string
+			//	printf ("%s", yytext);	
+			}
+\'.\'			{
+				printf ("LIT");
 			}
 %%        
