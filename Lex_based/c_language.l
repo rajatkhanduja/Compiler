@@ -41,7 +41,7 @@
 [ \t\n]*">"[ \t\n]*	{
 				PRINT_AND_RETURN (GT, OP);
 			}
-[ \t\n]*"!"[ \t\n]*	{ 
+"!"[ \t\n]*	        { 
 				PRINT_AND_RETURN (NOT, OP);
 			}
 
