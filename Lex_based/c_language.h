@@ -26,6 +26,10 @@ typedef enum { BR = 1,
                ASSIGNMENT,
                EQ,
                GT,
+	       LCB,
+	       RCB,
+	       LB,
+	       RB,
                NOT
                } token;
 
