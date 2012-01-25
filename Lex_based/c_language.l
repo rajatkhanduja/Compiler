@@ -45,6 +45,11 @@
 				PRINT_AND_RETURN (NOT, OP);
 			}
 
+ /* Brackets */
+[ \t\n]*"{"[ \t\n]*	{
+				PRINT_AND_RETURN (LCB, OP);
+			}
+
 
  /* Keywords */
 break			{ 
