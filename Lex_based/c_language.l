@@ -49,7 +49,31 @@
 [ \t\n]*"{"[ \t\n]*	{
 				PRINT_AND_RETURN (LCB, OP);
 			}
+			
+ /* Brackets */
+[ \t\n]*"}"[ \t\n]*	{
+				PRINT_AND_RETURN (RCB, OP);
+			}
+			
+ /* Brackets */
+[ \t\n]*"["[ \t\n]*	{
+				PRINT_AND_RETURN (LSB, OP);
+			}
+			
+ /* Brackets */
+[ \t\n]*"]"[ \t\n]*	{
+				PRINT_AND_RETURN (RSB, OP);
+			}
 
+ /* Brackets */
+[ \t\n]*"("[ \t\n]*	{
+				PRINT_AND_RETURN (LB, OP);
+			}
+
+ /* Brackets */
+[ \t\n]*")"[ \t\n]*	{
+				PRINT_AND_RETURN (RB, OP);
+			}
 
  /* Keywords */
 break			{ 
