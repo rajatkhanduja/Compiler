@@ -30,6 +30,8 @@ typedef enum { BR = 1,
 	       RCB,
 	       LB,
 	       RB,
+	       LSB,
+	       RSB,
                NOT
                } token;
 
