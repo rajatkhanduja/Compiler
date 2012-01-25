@@ -3,7 +3,7 @@ OBJ = obj
 BIN = bin
 CC = gcc
 CFLAGS = -Iinclude/ 
-OBJECTS = 
+OBJECTS = ${OBJ}/regex_parser.o ${OBJ}/main.o
 
 all: ${OBJECTS}
 	${CC} $^ -g -o ${BIN}/lexical_analyzer
