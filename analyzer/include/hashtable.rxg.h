@@ -1,24 +1,27 @@
 #include <commons.rb.h>
 
-typedef struct hash_entry_linklist
-{
-	char tokenname[MAXLENtokenname];
-	ste *sentry;	//include symbol table struct
-	struct hash_entry_linklist *lnext;
-}hll;
+// EDIT by rb: added a #define, removed hse, modified the hashtable.
 
-typedef	struct hash_entry
-{
-	char hash_alpha;
-	//hash_ll* hash_ptr;		
-	hll *hnext;
-	
-}hse;
+#define LENaz	26
 
-hse *hashtable[26]; 
+typedef	struct hash_entry_linklist
+	{
+		char tokenname[MAXLENtokenname];
+		ste *sentry;	//include symbol table struct
+		struct hash_entry_linklist *lnext;
+	}
+	hll;
+
+hll* hashtable[LENaz];
 
 //function to create hash table with characters a,b....z and pointers assigned NULL
-void hs_initialize();
+void hs_initialize(void);
+
+/* This function returns the first chararcter of the token,
+just in case the hash function later changes.
+
+Makes the first character capital for the hash function to check. */
+char hs_enhash(char*);
 
 /* hs_find() finds whether hash index for a particular 
 character exists or not. If it doesnt it returns NULL. If it does, 
@@ -35,11 +38,4 @@ hll* hs_find(char*);
 
 by the hash index of the existing hash table.*/
 hll* hs_insert(char*);
-
-
-/* This function returns the first chararcter of the token,
-just in case the hash function later changes.
-
-Makes the first character capital for the hash function to check. */
-char hs_enhash(char*);
 
