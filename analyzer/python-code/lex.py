@@ -3,7 +3,7 @@
 import infix2postfix
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../../test/input","r")
+regexFile = file("/../../test/input","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
@@ -14,16 +14,36 @@ NFAList = {}  # List of base NFA's constructed. {"regex":NFA_Class_Object, ... }
 
 # NFA Structure
 class NFA :
-	def __init__():
+	def __init__(self):
 		self.regex = ''    # Regex that it represents.
 		self.s0 = 0        # Start State
 		self.F = set()     # Set of accepting states
 		self.move = {}     # Two dimensional transition table
 		self.nos = 0       # Number of states
 
+def inc_states(nfa,base):	# base is the number to start with.
+	nfa_new = NFA()
+	nfa_new.regex = nfa.regex	# The regex is same for both.
+	nfa_new.s0 = base		# The start state is incremented by the base.
+	nfa_new.nos = nfa.nos
+	
+	# The list of final states is incremented by the base no.
+	for final in nfa.F :
+		nfa_new.F.add(final + base)
+	
+	for key in nfa.move.iterkeys() :
+		# nfa.move[key] is again a dictionary like {input:(set of states),input:(set of states), ... }
+		for symbol in nfa.move[key].iterkeys() :
+			nfa_new.move[key + 1][symbol].add(nfa.move[key][symbol] + 1)
+	
+	return new_nfa
+
+
+
 
 # Implementation MYT (McNaughton-Yamada-Thompson) Algorithm
 def NFA_MYT(NFA_1,NFA_2,op) :
+	
 	# This would require a state re-numbering.
 	NFA_final = NFA()
 	NFA_3 = NFA()         # NFA_3 is obtained through state re-numbering on NFA_2
