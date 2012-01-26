@@ -77,8 +77,10 @@ void st_printtable(ste* const h, FILE* f)
 {
 	fprintf(f, "\n### SYMBOL TABLE ###\n");
 	ste* e = h;
-	do
+	while(e)
+	{
 		st_printentry(e, f);
-	while(e = h->pnext);
+		e = h->pnext;
+	}
 }
 
