@@ -2,6 +2,7 @@
 
 #include <fsm.h>
 #include <debug.h>
+#include <set.h>
 
 char special_symbols[] = { 0, '.', '^', '$', '%', '#' };
 
@@ -122,5 +123,10 @@ int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
 
 int simulate_NFA (fsm_table_t *fsm_table, char *str)
 {
-	
+#warning  "Don't Compile\n NO FUNCTIONS TO INITIALIZE fsm_table" 
+	// TODO : Function to initialize fsm_table
+
+	int n = fsm_table->n_states;
+
+//	char newStates = 
 }
