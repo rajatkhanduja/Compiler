@@ -6,7 +6,7 @@ CFLAGS = -Iinclude/
 OBJECTS = ${OBJ}/regex_parser.o ${OBJ}/main.o
 
 all: ${OBJECTS}
-	${CC} $^ -g -o ${BIN}/lexical_analyzer
+	${CC} $^ -g -o ${BIN}/lexical_analyzer.out
 
 # This is a general rule
 ${OBJ}/%.o : ${SRC}/%.c
@@ -14,4 +14,4 @@ ${OBJ}/%.o : ${SRC}/%.c
 
 clean:
 	rm -f ${OBJ}/*.o
-	rm -f ${BIN}/*
+	rm -f ${BIN}/*.out
