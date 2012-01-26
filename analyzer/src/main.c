@@ -5,7 +5,7 @@
 
 int main (int argc, char *argv[])
 {	
-/*
+
 	char input[100];
 	char postfix[100];
 
@@ -15,7 +15,7 @@ int main (int argc, char *argv[])
 
 		infix2postfix (input, postfix);
 
-		printf ("postfix_string is %s\n", postfix);
+		printf ("postfix_string is --%s--\n", postfix);
 	}
-*/
+
 }

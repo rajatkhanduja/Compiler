@@ -3,6 +3,7 @@
 #include <stdio.h>		// for showing error message
 #include <regex_parser.h>
 #include <assert.h>
+#include <string.h>
 
 /* Supported REGEX operations with priority. Lower the 'value', higher the priority */
 enum operation		
@@ -18,12 +19,9 @@ enum operation
 /* Define literals for the operators */
 char operators[] = { '*', '@', '|', '(', ')' };
 
-
-/* Two stacks for postfix notation */
-static char symbol_stack[MAX_REGEX_LEN];
-static int symbol_stack_top;		// Indicates the top most element
 static char op_stack[MAX_REGEX_LEN];
 static int op_stack_top;		// Indicates the top most element
+
 
 /* This function returns the enum operation for the character corresponding to the 
  * operation. In case of no match, it returns -1
@@ -42,12 +40,61 @@ static int is_operator (char c)
 	return -1;
 }
 
+/* This function accepts a string of regular expression and inserts 
+ * concatenation symbol to the string. 
+ */
+static void insert_concat_sym (char *original_regex)
+{
+	unsigned int len = strlen (original_regex);
+	char temp[(2 * len) + 1];
+	char ch_prev = '*';
+	unsigned int i, j;
+	int op;
+
+	for ( i = 0, j = 0; i < len && original_regex[i]; i++, j++)
+	{
+		if ( (op = is_operator (original_regex[i])) > -1 )
+		{
+			if ( op == LB)
+			{
+				if ( is_operator (ch_prev ) == -1)
+				{
+					temp[j++] = '@';
+				}
+			}
+
+			temp[j] = original_regex[i];
+		}
+		else if ( (op = is_operator (ch_prev)) > -1 )
+		{
+			// Previous character was an operator.
+		
+			if ( op == RB )
+			{
+				temp[j++] = '@';
+			}
+			temp[j] = original_regex[i];
+		}
+		else
+		{
+			temp[j++] = '@';
+			temp[j] = original_regex[i];
+		}
+
+		ch_prev = original_regex[i];
+	}
+
+	temp[j] = '\0';
+
+	strcpy (original_regex, temp);
+}
+
 /* This function is called when an operator is encountered in the given regex.
  * If the priority of the operator on the top of the stack is lower than that of 
  * the new operator, the operator is popped, along with the required characters 
  * from the 'symbol_stack'. 
  */
-static void insert_operator(enum operation op, char *final_regex) 
+static char * insert_operator(enum operation op, char *final_regex) 
 {
 	enum operation top;
 
@@ -56,33 +103,33 @@ static void insert_operator(enum operation op, char *final_regex)
 	if ( op == LB )
 	{
 		insert_op_string (LB);
-		return;
+		return (final_regex);
 	}
 
-	while ( op_stack_top > -1 && symbol_stack_top > -1 && ( top = op_stack[op_stack_top]) < op)
+	if ( op == STAR )
 	{
-		
-		printf ("StUcK !!! \n");
-		if ( top == STAR ) 
-		{
-			*final_regex++ = symbol_stack[symbol_stack_top--];
-			*final_regex++ = operators[STAR]; 
-		}
-		else if ( top == LB && op == RB)
+		*final_regex++ = operators[op];
+		return (final_regex);
+	}
+
+	while ( op_stack_top > -1 
+		&& 
+		(( top = is_operator (op_stack[op_stack_top])) < op))
+	{
+		if ( top == LB && op == RB)
 		{
 			op_stack_top--;
+			return (final_regex);
 		}
-		else
+		else if ( top != LB )
 		{
-			*final_regex++ = symbol_stack[symbol_stack_top--];
-			*final_regex++ = operators[op_stack[op_stack_top--]];
+			*final_regex++ = op_stack[op_stack_top];
+			op_stack_top--;
 		}		
 	}
 
-	
 	switch (op)
 	{
-		case STAR 	: insert_op_string (STAR)  ; break;
 		case CONCAT 	: insert_op_string (CONCAT); break;
 		case OR		: insert_op_string (OR)    ; break;
 
@@ -93,48 +140,36 @@ static void insert_operator(enum operation op, char *final_regex)
 		#endif
 	}
 
-	return;
+	return (final_regex);
 }
 
 void infix2postfix (char *original_regex, char *final_regex)
 {
-	symbol_stack_top = op_stack_top = -1;
+	op_stack_top = -1;
 
 	char ch;
 	int operator_val;
+
+	insert_concat_sym (original_regex);
+	printf ("%s : after symbols\n", original_regex);
 
 	while ( ch = *original_regex++ )
 	{	
 		if ( (operator_val = is_operator (ch)) != -1)
 		{
-			insert_operator (operator_val, final_regex);
+			final_regex = insert_operator (operator_val, final_regex);
 		}
 		else
 		{
-			symbol_stack[++symbol_stack_top] = ch;
+			*final_regex++ = ch;
 		}
-		printf ("Stuck here\n");
 	}
 
 	enum operation op;
 	// Empty the stacks.
-	while ( op_stack_top > -1 && symbol_stack_top > -1)
+	while ( op_stack_top > -1)
 	{
-		printf ("2 Stuck here\n");
-		op = op_stack[op_stack_top];
-		
-		if ( op == STAR )
-		{
-			*final_regex++ = symbol_stack[symbol_stack_top--];
-			*final_regex++ = operators[STAR];
-		}
-		else
-		{
-			*final_regex++ = symbol_stack[symbol_stack_top--];
-			*final_regex++ = symbol_stack[symbol_stack_top--];
-			*final_regex++ = op;
-			op_stack_top--;
-		}
+		*final_regex++ = op_stack[op_stack_top--];
 	}
 
 	*final_regex = '\0';
