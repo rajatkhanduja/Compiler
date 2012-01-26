@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <debug.h>
 #include <fsm.h>
-#include <regex_parser.h>
+#include <regex_to_fsm.h>
 
 int main (int argc, char *argv[])
 {	

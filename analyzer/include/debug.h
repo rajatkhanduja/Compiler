@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 /* The following checks for a condition and if false, prints an error, but doesn't exit */
-#define CHECK_CONDITION(EXPR,STR) if (! (EXPR) ) { fprintf (stderr, "Error on line %s in %s\n" #STR, __LINE__, __FILE__);}
+#define CHECK_CONDITION(EXPR,STR) if (! (EXPR) ) { fprintf (stderr, "Error on line %d in %s: " #STR "\n", __LINE__, __FILE__);}
 
 #endif	
 // End of file

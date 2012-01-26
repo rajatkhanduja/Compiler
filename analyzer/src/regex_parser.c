@@ -8,6 +8,7 @@
 static char op_stack[MAX_REGEX_LEN];
 static int op_stack_top;		// Indicates the top most element
 
+char operators[] = { '*', '@', '|', '(', ')' };
 
 /* This function returns the enum operation for the character corresponding to the 
  * operation. In case of no match, it returns -1
