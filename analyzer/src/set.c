@@ -5,6 +5,12 @@
 
 unsigned int insert_element (tree_t *root, state_t *addr)
 {
+	if ( 0 == root->state_addr )
+	{
+		/* state_addr is zero implies it has not been used. */
+		root->state_addr = addr;
+		return 0;
+	}
 	if (addr > root->state_addr)
 	{
 		if (root->right)
@@ -13,7 +19,7 @@ unsigned int insert_element (tree_t *root, state_t *addr)
 		}
 		else
 		{
-			root->right = ALLOC_TREE();
+			ALLOC_TREE(root->right);
 			if (!root->right)
 			{
 				fprintf (stderr, "Unable to allocate space\n");
@@ -35,7 +41,7 @@ unsigned int insert_element (tree_t *root, state_t *addr)
 		}
 		else
 		{
-			root->left = ALLOC_TREE();
+			ALLOC_TREE(root->left);
 			if (!root->left)
 			{
 				fprintf (stderr, "Unable to allocate space\n");
@@ -67,6 +73,7 @@ void delete_tree (tree_t *root)
 
 	free (root);
 }
+
 void union_sets_internal (tree_t *set1, tree_t *set2)
 {
 	/* This assumes that set1 is the larger out of the two and 
@@ -87,6 +94,7 @@ void union_sets_internal (tree_t *set1, tree_t *set2)
 
 	free (set2);
 }
+
 void union_sets (tree_t *set1, tree_t *set2)
 {
 	/* insert the smaller tree into larger tree
@@ -102,4 +110,24 @@ void union_sets (tree_t *set1, tree_t *set2)
 
 	// Insert set2 into set1 and delete the tree
 	union_sets_internal (set1, set2);
+}
+
+void tree_to_list (tree_t *tree, list_t *list)
+{
+	list->state_addr = tree->state_addr;
+	
+	list_t *tmp; 
+	
+	if ( tree->left )
+	{
+		ALLOC_LIST(tmp);
+		list->next = tmp;
+		tree_to_list (tree->left, tmp);
+	}
+	else if ( tree->right )
+	{
+		ALLOC_LIST(tmp);
+		list->next = tmp;
+		tree_to_list (tree->right, tmp);
+	}
 }

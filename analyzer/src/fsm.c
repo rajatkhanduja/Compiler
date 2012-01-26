@@ -33,7 +33,8 @@ state_link_t * create_transition (char c, enum special sym, state_t *next_state)
 	// Create a new state.
 	if ( next_state == NULL )
 	{
-		state_t *next_state = ALLOC_STATE ();
+		state_t *next_state;
+		ALLOC_STATE (next_state);
 
 		if ( !next_state )
 		{
@@ -79,7 +80,8 @@ int link_states (state_t *state1, state_t *state2, char c, enum special sym)
 		tmp = tmp->next;
 	}
 
-	tmp = ALLOC_STATE_LINK();
+	ALLOC_STATE_LINK(tmp);
+	
 	
 	if (!tmp)
 	{
@@ -121,12 +123,98 @@ int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
 	fsm1->accept_state = fsm2->accept_state;
 }
 
-int simulate_NFA (fsm_table_t *fsm_table, char *str)
+/* Function to check for epsilon transitions from ONE state and add them to the set of 
+ * new states. 
+ */
+void epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 {
-#warning  "Don't Compile\n NO FUNCTIONS TO INITIALIZE fsm_table" 
-	// TODO : Function to initialize fsm_table
+	state_link_t *link = cur_state->links;
 
-	int n = fsm_table->n_states;
+	while (link)
+	{
+		if (EPSILON == link->sym)
+		{
+			// Add the next_state to the set of states
+			insert_element (set_new_states, link->next_state);
+		}
 
-//	char newStates = 
+		link = link->next;
+	}
+}
+
+/* Function to perform epsilon transitions on the entire set using function
+ * for states 
+ */
+void epsilon_set_transitions (tree_t *cur_states)
+{
+	state_t *state;
+	
+	FOR_EACH (cur_states, state, epsilon_state_transitions (state, cur_states));
+}
+
+/* Function to tell if a character is valid for a special NFA symbols */
+int accept (char c, enum special sym)
+{
+	switch (sym)
+	{
+		case DOT : 
+			return 1;
+		case EPSILON : 
+			return ( c == special_symbols [EPSILON]) ? 1 : 0;
+		case CAPITAL_LETTERS : 
+			return ( c >= 'A' && c <= 'Z' ) ? 1 : 0;
+		case SMALL_LETTERS : 
+			return ( c >= 'a' && c <= 'z' ) ? 1 : 0;
+		case DIGITS :
+			return ( c >= '0' && c <= '9' ) ? 1 : 0;
+		default :
+			return 0;
+	}
+}
+
+/* Function to find new states given initial state and transition character
+ * The new states are inserted into the set (tree)
+ */
+void new_states (state_t *cur_state, char c, tree_t *new_states)
+{
+	state_link_t *link = cur_state->links;
+
+	while (link)
+	{
+		if ( ( link->sym != NONE && accept (c, link->sym) )
+		   ||
+		   ( ( link->sym == NONE )&& (c == link->c) ) )
+
+		{
+			insert_element (new_states, link->next_state);
+		}
+
+		link = link->next;
+	}
+}
+
+int simulate_NFA (fsm_t *fsm, char *str)
+{
+	state_t *state = &(fsm->start_state); 
+	unsigned int longest_match = 0;		// Stores the length of the longest match
+	tree_t *active_states, *old_states = NULL;
+	ALLOC_TREE (active_states);
+
+	epsilon_state_transitions (state, active_states);
+	char ch;
+
+	while ( (ch = *str++) != '\0' )
+	{
+		if (old_states)
+			free(old_states);
+
+		old_states = active_states;
+		ALLOC_TREE(active_states);
+
+		// Find set of new states.
+		FOR_EACH (old_states, state, new_states(state, ch, active_states));
+
+		// Perform epsilon transitions for all
+		epsilon_set_transitions (active_states);
+	}
 }

@@ -45,18 +45,13 @@ typedef struct fsm_t
 	
 } fsm_t;
 
-typedef struct fsm_table_t 
-{
-	int n_states;
-	fsm_t fsm;
-	state_t *states;
-} fsm_table_t;
-
 /* Some useful macros */
-#define ALLOC_FSM()        (fsm_t *)   malloc ( sizeof (fsm_t) )
-#define ALLOC_STATE()      (state_t *) malloc ( sizeof (state_t))
-#define ALLOC_STATE_LINK() (state_link_t *) malloc (sizeof (state_link_t))
-#define ALLOC_FSM_TABLE()  (fsm_table_t) malloc ( sizeof (fsm_table_t))
+#define ALLOC_FSM(ptr) ptr = (fsm_t *)   malloc ( sizeof (fsm_t) ); \
+		       ptr->accept_state = NULL;
+#define ALLOC_STATE(ptr) ptr = (state_t *) malloc ( sizeof (state_t)); \
+			 ptr->links = NULL;
+#define ALLOC_STATE_LINK(ptr) ptr = (state_link_t *) malloc (sizeof (state_link_t)); \
+			      ptr->next_state = NULL;  ptr->next = NULL; 
 
 /* Function to check if a character is a special symbol or not. 
  * It returns the apt 'enum special', NONE (=0) for not a special symbol.
@@ -85,5 +80,5 @@ int single_char_NFA (fsm_t *fsm, char c, enum special sym);
  */
 int concat_NFA (fsm_t *fsm1, fsm_t *fsm2);
 
-
+/* Function to simulate a NFA */
 #endif //End of file

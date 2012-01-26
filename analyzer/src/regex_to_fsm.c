@@ -39,6 +39,6 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 	while ( *final_regex )
 	{
 		// Create a NFA for a character transition and push to stack.
-		tmp = ALLOC_FSM();
+		ALLOC_FSM(tmp);
 	}
 }
