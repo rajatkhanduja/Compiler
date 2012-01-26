@@ -1,4 +1,10 @@
-/* File declares structures and functions required to parse regular expressions */
+/* This file contains the declarations for parsing regular expressions 
+ * Author : Rajat Khanduja
+ *
+ * Currently supported expressions :-
+ *      - Simple strings ( all characters except |, \, -, (,),[,]) are accepted as such
+ *      
+ */
 
 #ifndef REGEX_PARSER_H_INCLUDED
 #define REGEX_PARSER_H_INCLUDED
