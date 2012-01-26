@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
 import infix2postfix
+import copy
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../../test/input","r")
+regexFile = file("../../test/input","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
@@ -13,8 +14,8 @@ NFAList = {}  # List of base NFA's constructed. {"regex":NFA_Class_Object, ... }
 
 
 # NFA Structure
-class NFA :
-	def __init__():
+class NFA(object) :
+	def __init__(self):
 		self.regex = ''    # Regex that it represents.
 		self.s0 = 0        # Start State
 		self.F = set()     # Set of accepting states
@@ -103,9 +104,12 @@ def regex_NFA_base(char):
 		nfa = NFA()
 		nfa.nos = 2
 		nfa.regex = char
-		NFAList[regex] = nfa
+		NFAList[nfa.regex] = nfa
 		nfa.F.add(1)
-		nfa.move[nfa.s0][char] = nfa.F.copy()	# Shallow copy
+		print char
+		print nfa.s0
+		nfa.move[nfa.s0] = {char:copy.copy(nfa.F)}	# Shallow copy
+		print nfa.move
 		return nfa
 
 
@@ -116,22 +120,22 @@ def Regex2NFA(postfix) :
 	length = len(postfix)
 	nfa = NFA()
 	while ( i < length ) :
-		if ( regex[i] != '*' and regex[i] != '|' and regex[i] != '%' ) :
+		if ( postfix[i] != '*' and postfix[i] != '|' and postfix[i] != '%' ) :
 			# It's an operand
-			if ( regex[i] == '\\' ) :
+			if ( postfix[i] == '\\' ) :
 				# We just encountered an escaped operand
-				nfa = regex_NFA_base(regex[i + 1])
+				nfa = regex_NFA_base(postfix[i + 1])
 				
 				NFA_postfix.append(nfa)
 				i = i + 1
 			
 			else :	# It;s a non escaped character
-				nfa = regex_NFA_base(regex[i])
+				nfa = regex_NFA_base(postfix[i])
 				NFA_postfix.append(nfa)
 		else :
 
 			# It's an operator
-			NFA_postfix.append(regex[i])
+			NFA_postfix.append(postfix[i])
 				
 	i = i + 1	# iterator
 	return NFA_postfix
