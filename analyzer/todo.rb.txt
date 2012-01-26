@@ -1,0 +1,13 @@
+hash.h:							
+			hs_insert()
+			hs_find()
+			hs_enhash()
+			
+symboltable.h:
+			st_insert()
+			st_find()
+			st_printtable()
+			st_printentry()
+			st_link()
+
+@Raman, check your facebook messages as soon as you see this.
