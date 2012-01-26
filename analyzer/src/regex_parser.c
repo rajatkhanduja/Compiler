@@ -40,6 +40,14 @@ static int is_operator (char c)
 	return -1;
 }
 
+/* This function accepts a string a regular expression and converts
+ * the range elements into 'or' separated expressions
+ */
+static void convert_range (char *original_regex)
+{
+	// TODO
+}
+
 /* This function accepts a string of regular expression and inserts 
  * concatenation symbol to the string. 
  */
@@ -53,8 +61,29 @@ static void insert_concat_sym (char *original_regex)
 
 	for ( i = 0, j = 0; i < len && original_regex[i]; i++, j++)
 	{
+		if ( original_regex[i] == '\\' && ch_prev != '\\')
+		{
+			// Next character is escaped
+			ch_prev = '\\';
+			j--;
+			continue;
+		}
+
+		if ( ch_prev == '\\')
+		{
+			// Not operator but escaped character
+			temp[j++] = '@';
+			temp[j++] = '\\';
+			temp[j] = original_regex[i];
+
+			// For next iteration to not confuse it with operator
+			ch_prev = 'a';	// Any character without sp meaning
+			continue;
+		}
+
 		if ( (op = is_operator (original_regex[i])) > -1 )
 		{
+			
 			if ( op == LB)
 			{
 				if ( is_operator (ch_prev ) == -1)
@@ -68,7 +97,6 @@ static void insert_concat_sym (char *original_regex)
 		else if ( (op = is_operator (ch_prev)) > -1 )
 		{
 			// Previous character was an operator.
-		
 			if ( op == RB )
 			{
 				temp[j++] = '@';
@@ -147,7 +175,7 @@ void infix2postfix (char *original_regex, char *final_regex)
 {
 	op_stack_top = -1;
 
-	char ch;
+	char ch, ch_prev;
 	int operator_val;
 
 	insert_concat_sym (original_regex);
@@ -155,7 +183,7 @@ void infix2postfix (char *original_regex, char *final_regex)
 
 	while ( ch = *original_regex++ )
 	{	
-		if ( (operator_val = is_operator (ch)) != -1)
+		if ( (operator_val = is_operator (ch)) != -1 && ch_prev != '\\')
 		{
 			final_regex = insert_operator (operator_val, final_regex);
 		}
@@ -163,6 +191,12 @@ void infix2postfix (char *original_regex, char *final_regex)
 		{
 			*final_regex++ = ch;
 		}
+		if ( ch_prev == ch && ch_prev == '\\')
+		{
+			// Change it to any character without special meaning
+			ch = 'a';
+		}
+		ch_prev = ch;
 	}
 
 	enum operation op;
