@@ -5,20 +5,6 @@
 #include <assert.h>
 #include <string.h>
 
-/* Supported REGEX operations with priority. Lower the 'value', higher the priority */
-enum operation		
-{
-	STAR,
-	CONCAT,
-	OR,
-	LB,
-	RB
-	// Keep LB and RB at the lowest priority
-};
-
-/* Define literals for the operators */
-char operators[] = { '*', '@', '|', '(', ')' };
-
 static char op_stack[MAX_REGEX_LEN];
 static int op_stack_top;		// Indicates the top most element
 
@@ -26,7 +12,7 @@ static int op_stack_top;		// Indicates the top most element
 /* This function returns the enum operation for the character corresponding to the 
  * operation. In case of no match, it returns -1
  */
-static int is_operator (char c)
+int is_operator (char c)
 {
 	enum operation t; 
 	for (t = STAR; t <= RB; t++)

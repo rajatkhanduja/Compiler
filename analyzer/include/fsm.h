@@ -5,7 +5,8 @@
 enum special 
 {	
 	NONE = 0,		// No special symbol
-	DOT
+	DOT,
+	EPSILON
 };	
 
 
@@ -27,5 +28,11 @@ struct fsm_t
 {
 	struct state_t start_state;
 };
+
+
+/* Function to create a transition to a new state. The transition is returned, which has the 
+ * pointer to the next state.
+ */
+struct state_link_t * create_transition (char c, enum special sym);
 
 #endif //End of file
