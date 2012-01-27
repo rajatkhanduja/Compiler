@@ -80,5 +80,11 @@ int single_char_NFA (fsm_t *fsm, char c, enum special sym);
  */
 int concat_NFA (fsm_t *fsm1, fsm_t *fsm2);
 
-/* Function to simulate a NFA */
+/* Function to repeat ... TODO : Complete this */
+int repeat_NFA (fsm_t *fsm1, fsm_t *fsm2);
+
+/* Function to simulate a NFA 
+ * It returns the length of the longest match.
+ */
+int simulate_NFA (fsm_t *fsm, char *str);
 #endif //End of file

@@ -3,6 +3,7 @@
 #include <fsm.h>
 #include <debug.h>
 #include <set.h>
+#include <assert.h>
 
 char special_symbols[] = { 0, '.', '^', '$', '%', '#' };
 
@@ -103,7 +104,9 @@ int single_char_NFA (fsm_t *fsm, char c, enum special sym)
 		return -1;
 	}
 
-	fsm->start_state.links = create_transition (c, sym, NULL);
+	assert (fsm->start_state.links = create_transition (c, sym, NULL));
+
+	fsm->accept_state = fsm->start_state.links->next_state;
 
 	if ( !fsm->start_state.links )
 	{
@@ -113,11 +116,20 @@ int single_char_NFA (fsm_t *fsm, char c, enum special sym)
 	return 0;
 }
 
+
+int repeat_NFA (fsm_t *fsm1, fsm_t *fsm2)
+{
+	// Second argument is just for consistency.
+}
+
+
 int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
 {
-	CHECK_CONDITION ( (fsm1->accept_state->links == NULL), "Accept state non-zero");	// for debugging
-
 	// Link from the first's final state to the start state of the next.
+	if (!fsm1->accept_state)
+	{
+		ALLOC_STATE(fsm1->accept_state);
+	}
 	link_states ( fsm1->accept_state, &(fsm2->start_state), 'a', EPSILON);
 	fsm1->accept_state->is_final_state = 0;
 	fsm1->accept_state = fsm2->accept_state;
@@ -126,9 +138,10 @@ int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
 /* Function to check for epsilon transitions from ONE state and add them to the set of 
  * new states. 
  */
-void epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
+int epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 {
 	state_link_t *link = cur_state->links;
+	int count = 0;
 
 	while (link)
 	{
@@ -136,10 +149,13 @@ void epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 		{
 			// Add the next_state to the set of states
 			insert_element (set_new_states, link->next_state);
+			count++;
 		}
 
 		link = link->next;
 	}
+
+	return count;
 }
 
 /* Function to perform epsilon transitions on the entire set using function
@@ -148,8 +164,22 @@ void epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 void epsilon_set_transitions (tree_t *cur_states)
 {
 	state_t *state;
-	
-	FOR_EACH (cur_states, state, epsilon_state_transitions (state, cur_states));
+	int count = 0;
+
+	tree_t *new_states;
+	tree_t *new_states_closure;
+
+	ALLOC_TREE (new_states);
+
+	FOR_EACH (cur_states, state, epsilon_state_transitions (state, new_states));
+
+	do
+	{
+		ALLOC_TREE (new_states_closure);
+		FOR_EACH (new_states, state, epsilon_state_transitions (state, new_states_closure));
+		union_sets (cur_states, new_states); // new_states tree is deleted
+		new_states = new_states_closure;		
+	} while ( new_states_closure->state_addr );
 }
 
 /* Function to tell if a character is valid for a special NFA symbols */
@@ -197,13 +227,14 @@ int simulate_NFA (fsm_t *fsm, char *str)
 {
 	state_t *state = &(fsm->start_state); 
 	unsigned int longest_match = 0;		// Stores the length of the longest match
+	unsigned int i = 0;
 	tree_t *active_states, *old_states = NULL;
 	ALLOC_TREE (active_states);
 
 	epsilon_state_transitions (state, active_states);
 	char ch;
 
-	while ( (ch = *str++) != '\0' )
+	while ( (ch = *(str+i) ) != '\0' )
 	{
 		if (old_states)
 			free(old_states);
@@ -216,5 +247,13 @@ int simulate_NFA (fsm_t *fsm, char *str)
 
 		// Perform epsilon transitions for all
 		epsilon_set_transitions (active_states);
+
+		if ( find (active_states, fsm->accept_state) )
+		{
+			longest_match = i;
+		}
+		i++;
 	}
+
+	return longest_match;
 }

@@ -74,6 +74,25 @@ void delete_tree (tree_t *root)
 	free (root);
 }
 
+
+tree_t * find ( tree_t * root, state_t * addr)
+{
+	if (addr == root->state_addr)
+	{
+		return root;
+	}
+
+	if ( root->left )
+	{
+		return (find (root->left, addr));
+	}
+
+	if ( root-> right )
+	{
+		return (find (root->right, addr));
+	}
+}
+
 void union_sets_internal (tree_t *set1, tree_t *set2)
 {
 	/* This assumes that set1 is the larger out of the two and 

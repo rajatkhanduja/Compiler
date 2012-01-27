@@ -31,6 +31,9 @@ typedef struct list_t
 /* Function to insert element into the tree_t */
 unsigned int insert_element (tree_t *root, state_t *addr);
 
+/* Function to find an element in the tree */
+tree_t * find (tree_t *root, state_t *addr);
+
 /* Function to delete a tree */
 void delete_tree (tree_t *root);
 

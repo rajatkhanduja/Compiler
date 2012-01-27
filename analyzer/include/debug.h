@@ -1,8 +1,8 @@
 /* This program defines some functions and macros to help in debugging programs. */
 
+#include <assert.h>
 #ifdef DEBUG_MODE
 
-#include <assert.h>
 
 #define CHECK_CONDITION(EXPR,STR) assert (EXPR)	// Checks condition and exits program if false
 
