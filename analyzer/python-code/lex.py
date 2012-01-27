@@ -1,17 +1,18 @@
 #!/usr/bin/python
 
 import infix2postfix
+import simulation
 import copy
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../test/input1","r")
+regexFile = file("../../test/input2","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
 
 
 NFAList = {}  # List of base NFA's constructed. {"regex":NFA_Class_Object, ... }
-
+NFAall_List	= []     # Regex OR applies to all the individual regular expressions.
 
 # NFA Structure
 class NFA(object) :
@@ -21,6 +22,7 @@ class NFA(object) :
 		self.F = set()     # Set of accepting states
 		self.move = {}     # Two dimensional transition table
 		self.nos = 0       # Number of states
+		self.token = ''    # Token Name
 
 def inc_states(nfa,base):	# base is the number to start with.
 	nfa_new = NFA()
@@ -133,9 +135,9 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 		NFA_final.move.update(NFA_1.move)
 
 
-		print NFA_1.move
-		print op
-		print NFA_final.move
+		#print NFA_1.move
+		#print op
+		#print NFA_final.move
 	
 	return NFA_final			
 
@@ -220,6 +222,7 @@ NFA_Lex = []	# Empty List
 
 
 def build_NFA():
+	global NFAall
 	for nextLine in regexFile :
 		nextLine = nextLine.splitlines()[0] # Strip the new line character at the end of string.
 		words = nextLine.split('\t')
@@ -228,13 +231,17 @@ def build_NFA():
 		postfix = infix2postfix.infix2postfix(regex)
 		NFA_postfix = Regex2NFA(postfix)
 		nfa = postfixEval(NFA_postfix)
+		nfa.token = token	# Updating the token name
+		NFAall_List.append(nfa)
 		print nfa.move
-	return nfa
+		print "***************************************************************"
+
+
 
 
 if __name__ == '__main__' :
 	build_NFA()
-
+	simulation.NFA_simulate(NFAall_List)
 
 
 	

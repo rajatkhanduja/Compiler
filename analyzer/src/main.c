@@ -45,7 +45,7 @@ int main (int argc, char *argv[])
 	for (i = 0; i < n_tokens; i++)
 	{	
 		fprintf (stderr, "simulating %d dfa\n", i);
-		printf ("%d\n", simulate_NFA (&token_NFA[i], "abc"));
+		printf ("%d\n", simulate_NFA (&token_NFA[i], "abac"));
 	}
 
 	printf ("final i is %d\n", i);
@@ -57,8 +57,6 @@ int main (int argc, char *argv[])
 
 void read_tokens (FILE *fp)
 {
-	
-
 	char line[MAX_LINE_LENGTH];
 	char *token, *regex;
 	int n_token_ = 0;

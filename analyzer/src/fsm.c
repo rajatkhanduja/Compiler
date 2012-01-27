@@ -82,18 +82,26 @@ int link_states (state_t *state1, state_t *state2, char c, enum special sym)
 {
 	state_link_t *tmp = state1->links;
 
-	while ( tmp )
-	{
-		tmp = tmp->next;
-	}
-
-	ALLOC_STATE_LINK(tmp);
-	
-	
 	if (!tmp)
 	{
-		// Space not allocated
-		return 1;
+		ALLOC_STATE_LINK (state1->links);
+		tmp = state1->links;
+	}
+	else
+	{
+		while ( tmp->next )
+		{
+			tmp = tmp->next;
+		}
+
+		ALLOC_STATE_LINK(tmp->next);
+		tmp = tmp->next;
+	
+		if (!tmp)
+		{
+			// Space not allocated
+			return 1;
+		}
 	}
 
 	/* Set the values */
@@ -276,6 +284,7 @@ int simulate_NFA (fsm_t *fsm, char *str)
 		if ( find (active_states, fsm->accept_state) )
 		{
 			longest_match = i;
+			fprintf (stderr, "THERE IS SOME FINAL STATE\n");
 		}
 		i++;
 		fprintf (stderr, "after everythin\n");

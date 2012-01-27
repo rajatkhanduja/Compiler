@@ -87,8 +87,8 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 				else
 				{
 					fprintf (stderr, "ASFASD\n");
-					tmp_fsm1 = POP();
 					tmp_fsm2 = POP();
+					tmp_fsm1 = POP();
 					//fn_ptr = (int *) NFA_operators[op];
 					func_ptr = op_functions[op];
 					fprintf (stderr, "1231adsfASFASD\n");
