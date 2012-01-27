@@ -1,7 +1,7 @@
 import copy
 import pprint
 
-srcFile = file("../../test/test3.c")
+srcFile = file("../../test/testf.c")
 
 # tokenStream is { lineno : [set of tokens], lineno. : [set of tokens], .... }
 tokenStream = {}
@@ -72,6 +72,8 @@ def NFA_simulate(nfa_all) :
 	for nextLine in srcFile:
 		nextLine = nextLine.splitlines()[0]
 		words = nextLine.split(' ')
+		while '' in words:
+			words.remove('')
 		print "Words on line :" + str(i) + " " + str(words)
 		i = i + 1
 		for word in words :

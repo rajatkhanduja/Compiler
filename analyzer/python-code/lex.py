@@ -5,7 +5,7 @@ import simulation
 import copy
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../test/input3","r")
+regexFile = file("../../test/input1","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
