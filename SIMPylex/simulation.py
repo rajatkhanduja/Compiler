@@ -1,7 +1,7 @@
 import copy
 import pprint
 
-srcFile = file("../../test/testf.c")
+srcFile = file("../test/source.c")
 
 # tokenStream is { lineno : [set of tokens], lineno. : [set of tokens], .... }
 tokenStream = {}
@@ -51,21 +51,6 @@ def epsilon_closure(oldStates, nfa):
 	
 	return activeStates				
 
-'''	activeStates = set()
-	newStates = set()
-	print type(states)
-	
-	for state in states :
-		activeStates.update (nfa.move[state]['#'])
-			
-	if not (states.difference(activeStates)):	# oldStates is not equal to newStates . i.e some new states have been added to oldStates
-		for state in activeStates:
-			newStates.update (nfa.move[state]['#'])
-		
-		 = epsilon_closure (newStates,nfa)
-	else :
-		return newStates
-'''
 def NFA_simulate(nfa_all) :
 	token = ''
 	i = 0
@@ -108,7 +93,7 @@ def NFA_simulate(nfa_all) :
 	print "``````````````````````````````````````````````````````````````````````````````````````````````````"
 
 	for lexeme in symbolTable.iterkeys() :
-		print "*******************************************************************************************"
+		#print "*******************************************************************************************"
 		print
 		print "Lexeme	: " + str(lexeme)
 		print "Token	: " + str(symbolTable[lexeme][0].token)

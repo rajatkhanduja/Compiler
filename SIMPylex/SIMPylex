@@ -3,9 +3,10 @@
 import infix2postfix
 import simulation
 import copy
+import pprint
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../test/input1","r")
+regexFile = file("../test/regex.l","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
