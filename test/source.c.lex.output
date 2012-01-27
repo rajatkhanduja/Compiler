@@ -1,0 +1,15 @@
+< INT, 1 > < ID, 1 > < ASSIGNMENT, 1 > < CONST_INT, 1 > 
+< INT, 2 > < ID, 2 > < ASSIGNMENT, 2 > < CONST_INT, 2 > 
+< INT, 3 > < ID, 3 > 
+< ID, 4 > < ASSIGNMENT, 4 > < CONST_INT, 4 > < PLUS, 4 > < CONST_INT, 4 > 
+< ID, 5 > < ASSIGNMENT, 5 > < CONST_INT, 5 > < MUL, 5 > < CONST_INT, 5 > 
+< ID, 6 > < ASSIGNMENT, 6 > < CONST_INT, 6 > < MINUS, 6 > < CONST_INT, 6 > 
+< RET, 7 > < ID, 7 > < ID, 7 > 
+< IF, 8 > < ID, 8 > < ASSIGNMENT, 8 > < CONST_INT, 8 > 
+< BR, 9 > 
+< ELSE, 10 > 
+< CONT, 11 > 
+< VOID, 12 > < ID, 12 > < LPAREN, 12 > < RPAREN, 12 > 
+< LBRACE, 13 > 
+< ID, 14 > < ASSIGNMENT, 14 > < CONST_INT, 14 > 
+< RBRACE, 15 > 

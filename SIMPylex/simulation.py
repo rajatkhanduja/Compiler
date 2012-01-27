@@ -2,6 +2,7 @@ import copy
 import pprint
 
 srcFile = file("../test/source.c")
+outFile = file("../test/source.c.lex.output","w")
 
 # tokenStream is { lineno : [set of tokens], lineno. : [set of tokens], .... }
 tokenStream = {}
@@ -59,7 +60,7 @@ def NFA_simulate(nfa_all) :
 		words = nextLine.split(' ')
 		while '' in words:
 			words.remove('')
-		print "Words on line :" + str(i) + " " + str(words)
+		print "Words on line " + str(i) + " : " + str(words)
 		i = i + 1
 		for word in words :
 			symObject = symbolTableEntry()
@@ -80,27 +81,38 @@ def NFA_simulate(nfa_all) :
 					
 					print "---------------------------------------------------------------------------------"
 					print "MATCHED  :: " + str(word) + " with token < " + str(nfa.token) + ", " + str(i) + " >" + " TOKEN " + str(symObject.token) + " LINE " + str(symObject.line)
-
+					
 					print "---------------------------------------------------------------------------------"
+
+					# Writing to file uotput for the parser.
+					outFile.write("< " + str(nfa.token) + ", " + str(i) + " > ") 
+
 				if matched:
 					break
 			if not matched :
+
+				# Writing to file uotput for the parser.
+				outFile.write("@@ Error : " + str(word) + " @@ ") 
+
 				print "Error on line " + str(i)
 				print "No token for lexeme : " + str(word)
+
+		# Writing to file uotput for the parser.		
+		outFile.write("\n")
+
 	# Printing Symbol Table
+	print
 	print "``````````````````````````````````````````````````````````````````````````````````````````````````"
-	print "				SYMBOL TABLE 								"
+	print "                                       SYMBOL TABLE                                               "
 	print "``````````````````````````````````````````````````````````````````````````````````````````````````"
 
 	for lexeme in symbolTable.iterkeys() :
 		#print "*******************************************************************************************"
-		print
-		print "Lexeme	: " + str(lexeme)
-		print "Token	: " + str(symbolTable[lexeme][0].token)
+		print "Lexeme\t:\t" + str(lexeme)
+		print "Token\t:\t" + str(symbolTable[lexeme][0].token)
 		for entry in symbolTable[lexeme] :
 			# symbolTable[lexeme] is an list of objects
-			print "Line	: " + str(entry.line)
-		print
+			print "Line\t:\t" + str(entry.line)
 		print "*******************************************************************************************"
 	#pp = pprint.PrettyPrinter(indent=4)
 	#pp.pprint(symbolTable)

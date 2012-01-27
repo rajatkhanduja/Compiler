@@ -5,6 +5,8 @@ import simulation
 import copy
 import pprint
 
+pp = pprint.PrettyPrinter(indent=4)
+
 # Conversion of regular expressions into NFA
 regexFile = file("../test/regex.l","r")
 
@@ -108,9 +110,9 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 			
 		for final in NFA_2.F :
 			NFA_final.move[final]['#'].add(NFA_3.s0)
-		print NFA_2.move
-		print NFA_3.move
-		print NFA_final.move
+		#pp.pprint(NFA_2.move)
+		#pp.pprint(NFA_3.move)
+		#pp.pprint(NFA_final.move)
 	
 	elif op == '*' :
 		# Here, no renumbering of states is allowed.
@@ -240,7 +242,8 @@ def build_NFA():
 		print "******************************************" + " TRANSITION TABLE for  " + str(nfa.regex) + "  ***********************************************"
 		for key in nfa.move.iterkeys() :
 			print nfa.move[key]
-		print "******************************************************************************************************************************************"
+		print "********************************************************************************************************************************"
+		print
 
 
 
