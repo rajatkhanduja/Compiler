@@ -1,0 +1,15 @@
+< INT, 1 > @@ Error : aa @@ < ASSIGNMENT, 1 > < CONST_INT, 1 > 
+< INT, 2 > @@ Error : bb @@ < ASSIGNMENT, 2 > < CONST_INT, 2 > 
+< INT, 3 > @@ Error : ab @@ 
+@@ Error : aa @@ < ASSIGNMENT, 4 > < CONST_INT, 4 > < PLUS, 4 > < CONST_INT, 4 > 
+@@ Error : bb @@ < ASSIGNMENT, 5 > < CONST_INT, 5 > < MUL, 5 > < CONST_INT, 5 > 
+@@ Error : ab @@ < ASSIGNMENT, 6 > < CONST_INT, 6 > < MINUS, 6 > < CONST_INT, 6 > 
+< RET, 7 > @@ Error : ab @@ @@ Error : aa @@ 
+< IF, 8 > @@ Error : aa @@ < ASSIGNMENT, 8 > < CONST_INT, 8 > 
+< BR, 9 > 
+< ELSE, 10 > 
+< CONT, 11 > 
+< VOID, 12 > @@ Error : ba @@ < LPAREN, 12 > < RPAREN, 12 > 
+< LBRACE, 13 > 
+@@ Error : ba @@ < ASSIGNMENT, 14 > < CONST_INT, 14 > 
+< RBRACE, 15 > 
