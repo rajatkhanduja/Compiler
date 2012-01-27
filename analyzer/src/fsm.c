@@ -7,6 +7,13 @@
 
 char special_symbols[] = { 0, '.', '^', '$', '%', '#' };
 
+/*
+void print_NFA (fsm_t *fsm)
+{
+	printf ("
+}
+*/
+
 int is_special_symbol (char c)
 {
 	enum special t;
@@ -34,7 +41,6 @@ state_link_t * create_transition (char c, enum special sym, state_t *next_state)
 	// Create a new state.
 	if ( next_state == NULL )
 	{
-		state_t *next_state;
 		ALLOC_STATE (next_state);
 
 		if ( !next_state )
@@ -107,8 +113,9 @@ int single_char_NFA (fsm_t *fsm, char c, enum special sym)
 	assert (fsm->start_state.links = create_transition (c, sym, NULL));
 
 	fsm->accept_state = fsm->start_state.links->next_state;
+	fsm->accept_state->is_final_state = 1;
 
-	if ( !fsm->start_state.links )
+	if ( !(fsm->start_state.links) )
 	{
 		return 1;
 	}

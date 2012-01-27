@@ -9,7 +9,7 @@
 
 // Stack of fsm
 fsm_t stack_fsm[MAX_STATES];
-int stack_top = -1;
+int stack_top = 0;
 
 #define PUSH(val) \
 {\
@@ -47,7 +47,8 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 	#define CREATE_SINGLE_CHAR_NFA_AND_PUSH(_c, _sym) \
 	{\
 		fprintf (stderr, "Creating single state\n");\
-		single_char_NFA (&stack_fsm[stack_top++], _c, _sym);\
+		single_char_NFA (&stack_fsm[stack_top], _c, _sym);\
+		stack_top++;\
 	}
 	
 	fprintf (stderr, "Regular expression changed to NFA format.\n");

@@ -39,6 +39,20 @@ int main (int argc, char *argv[])
 
 	// Reading tokens
 	read_tokens (fp);
+
+	int i = 0;
+
+	for (i = 0; i < n_tokens; i++)
+	{	
+		fprintf (stderr, "simulating %d dfa\n", i);
+		printf ("%d\n", simulate_NFA (&token_NFA[i], "abc"));
+	}
+
+	printf ("final i is %d\n", i);
+
+	return 0;
+
+
 }
 
 void read_tokens (FILE *fp)
@@ -47,30 +61,22 @@ void read_tokens (FILE *fp)
 
 	char line[MAX_LINE_LENGTH];
 	char *token, *regex;
-	while ( 1 )
+	while ( NULL != fgets (line, MAX_LINE_LENGTH - 1, fp) )
 	{
-		fgets (line, MAX_LINE_LENGTH - 1, fp);
-		
-		if (strlen (line) == 0 && feof(fp))
-		{
-			break;
-		}
-
-		regex = strtok (line, "\t");
+		regex = strtok (line, "\t\n");
 	
 		fprintf (stderr, "REGEX : %s\n", regex);
 		
 		// Get the token name 
-		token = strtok (NULL, "\t");
-		fprintf (stderr, "TOKEN : %s\n", token);
+		token = strtok (NULL, "\t\n");
+		fprintf (stderr, "TOKEN : %s\n",  token);
 		
 		strncpy (tokens[n_tokens], regex, MAX_TOKEN_LENGTH);
 
 		fprintf (stderr, "About to generate NFA\n", token);
 		// Generate NFA.
-		create_NFA ( token_NFA + n_tokens, regex);
+		create_NFA ( &token_NFA[n_tokens], regex);
 		fprintf (stderr, "Generated NFA\n", token);
-
-
+		n_tokens++;
 	}
 }
