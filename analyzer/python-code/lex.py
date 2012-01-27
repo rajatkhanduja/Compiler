@@ -4,7 +4,7 @@ import infix2postfix
 import copy
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../test/input","r")
+regexFile = file("../../test/input1","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
@@ -34,10 +34,13 @@ def inc_states(nfa,base):	# base is the number to start with.
 	
 	for key in nfa.move.iterkeys() :
 		# nfa.move[key] is again a dictionary like {input:(set of states),input:(set of states), ... }
+		nfa_new.move[key + base] = {}
 		for symbol in nfa.move[key].iterkeys() :
-			nfa_new.move[key + 1][symbol].add(nfa.move[key][symbol] + 1)
-	
-	return new_nfa
+			nfa_new.move[key + base][symbol] =  set()
+			# nfa.move[key][symbol] is a set of states.
+			for states in nfa.move[key][symbol] :
+				nfa_new.move[key + base][symbol].add(states + base)
+	return nfa_new
 
 
 
@@ -48,69 +51,92 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 	# This would require a state re-numbering.
 	NFA_final = NFA()
 	NFA_3 = NFA()         # NFA_3 is obtained through state re-numbering on NFA_2
-	NFA_final.regex = NFA_1.regex + op + NFA_2.regex
 	# NFAList[NFA_final.regex] = NFA_final
 	
 	
 	
 	if op == '|' :
+		NFA_final.regex = NFA_1.regex + op + NFA_2.regex
 		NFA_final.nos = NFA_1.nos + NFA_2.nos + 2
 		NFA_3 = inc_states(NFA_2,NFA_1.nos)
-
+		
 		# Now comes the part of MYT algorithm
 		NFA_final.s0 = NFA_final.nos - 2        # New start state
 		NFA_final.F.add(NFA_final.nos - 1)	# New Single Final state
 
 		# epsilon-transitions from the new start state to the start states of the two NFA's under the or operation
-		NFA_final.move[NFA_final.s0]['#'] = (NFA_1.s0,NFA_3.s0)
+		NFA_final.move[NFA_final.s0] = {'#' : set([NFA_1.s0, NFA_3.s0])}
 		
 		
-		# epsilon-transitions to the final states of the two NFA's under the or operation to the new final state.
+		# epsilon-transitions from the final states of the two NFA's under the or operation to the new final state.
 		for final in NFA_1.F :
-			NFA_final.move[final]['#'] = NFA_final.F.copy()  # Shallow copy
+			NFA_final.move[final] = {'#' : copy.copy(NFA_final.F)}  # Shallow copy
 		for final in NFA_3.F :
-			NFA_final.move[final]['#'] = NFA_final.F.copy()         # Shallow copy
+			NFA_final.move[final] = {'#' : copy.copy(NFA_final.F)}         # Shallow copy
 		
 		# Now add the other transitions from NFA_1 and NFA_3 to NFA_final
 		NFA_final.move.update(NFA_1.move)
 		NFA_final.move.update(NFA_3.move)
 
+
 	elif op == '%' :
+		# NFA_2 is 'i' and NFA_1 is 'f'
+		NFA_final.regex = NFA_2.regex + op + NFA_1.regex
 		NFA_final.nos = NFA_1.nos + NFA_2.nos
-		NFA_3 = inc_states(NFA_2,NFA_1.nos)
+		NFA_3 = inc_states(NFA_1,NFA_2.nos)
 
 		# Now comes the part of MYT algorithm
 
-		NFA_final.s0 = NFA_1.s0         # The start state of the new NFA is same as the start state of the first NFA under concatenation.
-		NFA_final.F = NFA_3.F.copy()           # The set of final states for the new NFA is the same as the set of Final states of the 2nd NFA under concatenation.
+		NFA_final.s0 = NFA_2.s0         # The start state of the new NFA is same as the start state of the first NFA under concatenation.
+		NFA_final.F = copy.copy(NFA_3.F)           # The set of final states for the new NFA is the same as the set of Final states of the 2nd NFA under concatenation.
 
 		
 		# Now add the other transitions from NFA_1 and NFA_3 to NFA_final
-		NFA_final.move.update(NFA_1.move)
+		NFA_final.move.update(NFA_2.move)
 		NFA_final.move.update(NFA_3.move)
 		
-		
+
 		# epsilon-transitions to the final states of the two NFA's under the or operation to the new final state.
-		for final in NFA_1.F :
+		for final in NFA_2.F :
+			NFA_final.move[final] = {}
+					
+		for final in NFA_2.F :
+			NFA_final.move[final]['#'] = set()
+			
+		for final in NFA_2.F :
 			NFA_final.move[final]['#'].add(NFA_3.s0)
 	
 	elif op == '*' :
 		# Here, no renumbering of states is allowed.
 		
+		NFA_final.regex = NFA_1.regex + op
 		NFA_final.nos = NFA_1.nos + 2
 
 		# Now comes the part of MYT algorithm
 		NFA_final.s0 = NFA_final.nos - 2		# New start state
 		NFA_final.F.add(NFA_final.nos - 1)		# New Single Final state
 
-		NFA_final.move[NFA_final.s0]['#'] = NFA_1.F.copy()
-
+		NFA_final.move[NFA_final.s0] = {}
+		#NFA_final.move[NFA_final.s0]['#'] = set()
+		
+		# START STATE
+		NFA_final.move[NFA_final.s0]['#'] = copy.copy(NFA_final.F)
 		NFA_final.move[NFA_final.s0]['#'].add(NFA_1.s0)
-
+		
+		# OLD FINAL STATES
 		for final in NFA_1.F :
-			NFA_final[final]['#'] = NFA_final.F.copy()
-			NFA_final[final]['#'].add(NFA_1.s0)
+			NFA_final.move[final] = {}
+			NFA_final.move[final]['#'] = copy.copy(NFA_final.F)
+			NFA_final.move[final]['#'].add(NFA_1.s0)
+		
+		
+		NFA_final.move.update(NFA_1.move)
 
+
+		print NFA_1.move
+		print op
+		print NFA_final.move
+	
 	return NFA_final			
 
 
@@ -126,10 +152,7 @@ def regex_NFA_base(char):
 		nfa.regex = char
 		NFAList[nfa.regex] = nfa
 		nfa.F.add(1)
-		print char
-		print nfa.s0
-		nfa.move[nfa.s0] = {char:copy.copy(nfa.F)}	# Shallow copy
-		print nfa.move
+		nfa.move[nfa.s0] = {char : copy.copy(nfa.F)}	# Shallow copy
 		return nfa
 
 
@@ -139,8 +162,8 @@ def Regex2NFA(postfix) :
 	i = 0
 	length = len(postfix)
 	nfa = NFA()
-	while ( i < length ) :
-		if ( postfix[i] != '*' and postfix[i] != '|' and postfix[i] != '%' ) :
+	while (i < length) :
+		if (postfix[i] <> '*' and postfix[i] <> '|' and postfix[i] <> '%' and postfix[i] <> '.') :
 			# It's an operand
 			if ( postfix[i] == '\\' ) :
 				# We just encountered an escaped operand
@@ -149,7 +172,7 @@ def Regex2NFA(postfix) :
 				NFA_postfix.append(nfa)
 				i = i + 1
 			
-			else :	# It;s a non escaped character
+			else :	# It's a non escaped character
 				nfa = regex_NFA_base(postfix[i])
 				NFA_postfix.append(nfa)
 		else :
@@ -157,7 +180,7 @@ def Regex2NFA(postfix) :
 			# It's an operator
 			NFA_postfix.append(postfix[i])
 				
-	i = i + 1	# iterator
+		i = i + 1	# iterator
 	return NFA_postfix
 
 
@@ -172,23 +195,20 @@ def postfixEval(postfix) :	# Postfix evaluator . ***** ALL OPERANDS IN THIS POST
 	top1 = '' 
 	nfa = NFA()
 	while ( i < length ) :
-		if ( postfix[i] != '*' and postfix[i] != '|' and postfix[i] != '%' ) :
+		if ( postfix[i] <> '*' and postfix[i] <> '|' and postfix[i] <> '%' ) :
 			# Implies this is an operand
-			if ( postfix[i] == '\\' ) :
-				# Encountered an escape sequence
-				operandStack.append(postfix[i+1])
-				i = i + 1
-			else :	
-				operandStack.append(postfix[i])
+			operandStack.append(postfix[i])
+	
 		else : # It's an operator
 			top0 = operandStack.pop(len(operandStack) - 1)
-			if ( regex[i] == '*' ) :	# Unary operator
+			if ( postfix[i] == '*' ) :	# Unary operator
 				nfa = NFA_MYT(top0,None,postfix[i])
 				
 			else :	
-				top1 = operandStack.pop(len(opearndStaack) - 2)
+				top1 = operandStack.pop(len(operandStack) - 1)
 				nfa = NFA_MYT(top0,top1,postfix[i])
 		
+			operandStack.append(nfa)
 		i = i + 1	# iterator
 
 
@@ -208,6 +228,7 @@ def build_NFA():
 		postfix = infix2postfix.infix2postfix(regex)
 		NFA_postfix = Regex2NFA(postfix)
 		nfa = postfixEval(NFA_postfix)
+		print nfa.move
 	return nfa
 
 
