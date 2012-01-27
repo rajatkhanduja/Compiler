@@ -147,6 +147,11 @@ int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
  */
 int epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 {
+	if ( !cur_state )
+	{
+		return 0;
+	}
+
 	state_link_t *link = cur_state->links;
 	int count = 0;
 
@@ -170,6 +175,11 @@ int epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
  */
 void epsilon_set_transitions (tree_t *cur_states)
 {
+	if (NULL == cur_states)
+	{
+		return;
+	}
+
 	state_t *state;
 	int count = 0;
 
@@ -177,9 +187,11 @@ void epsilon_set_transitions (tree_t *cur_states)
 	tree_t *new_states_closure;
 
 	ALLOC_TREE (new_states);
+	fprintf (stderr, "Inside set transitions. before FOR_EACH\n");
 
 	FOR_EACH (cur_states, state, epsilon_state_transitions (state, new_states));
 
+	fprintf (stderr, "Inside set transitions. After FOR_EACH\n");
 	do
 	{
 		ALLOC_TREE (new_states_closure);
@@ -214,6 +226,11 @@ int accept (char c, enum special sym)
  */
 void new_states (state_t *cur_state, char c, tree_t *new_states)
 {
+	assert (new_states);
+	if ( !cur_state)
+	{
+		return;
+	}
 	state_link_t *link = cur_state->links;
 
 	while (link)
@@ -251,15 +268,17 @@ int simulate_NFA (fsm_t *fsm, char *str)
 
 		// Find set of new states.
 		FOR_EACH (old_states, state, new_states(state, ch, active_states));
-
+		fprintf (stderr, "epsilon -- before\n");
 		// Perform epsilon transitions for all
 		epsilon_set_transitions (active_states);
+		fprintf (stderr, "epsilon -- after\n");
 
 		if ( find (active_states, fsm->accept_state) )
 		{
 			longest_match = i;
 		}
 		i++;
+		fprintf (stderr, "after everythin\n");
 	}
 
 	return longest_match;

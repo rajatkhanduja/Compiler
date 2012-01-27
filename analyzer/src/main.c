@@ -14,8 +14,8 @@
 #define MAX_LINE_LENGTH 100
 #define MAX_FILENAME 50
 
-char tokens[MAX_TOKEN_LENGTH][MAX_TOKENS];
-int n_tokens = 0;
+char tokens[MAX_TOKENS][MAX_TOKEN_LENGTH];
+static int n_tokens = 0;
 fsm_t token_NFA[MAX_TOKENS];
 
 void read_tokens (FILE *fp);
@@ -61,6 +61,7 @@ void read_tokens (FILE *fp)
 
 	char line[MAX_LINE_LENGTH];
 	char *token, *regex;
+	int n_token_ = 0;
 	while ( NULL != fgets (line, MAX_LINE_LENGTH - 1, fp) )
 	{
 		regex = strtok (line, "\t\n");
@@ -71,12 +72,15 @@ void read_tokens (FILE *fp)
 		token = strtok (NULL, "\t\n");
 		fprintf (stderr, "TOKEN : %s\n",  token);
 		
-		strncpy (tokens[n_tokens], regex, MAX_TOKEN_LENGTH);
+		strncpy (tokens[n_token_], regex, MAX_TOKEN_LENGTH);
 
 		fprintf (stderr, "About to generate NFA\n", token);
 		// Generate NFA.
-		create_NFA ( &token_NFA[n_tokens], regex);
+		create_NFA ( &token_NFA[n_token_], regex);
 		fprintf (stderr, "Generated NFA\n", token);
-		n_tokens++;
+		assert (token_NFA[n_token_].start_state.links);
+		n_token_++;
 	}
+	n_tokens = n_token_;	// Strangely this has to be used. The global variable is accessed 
+				// and modified at unimaginable parts of the program 
 }

@@ -8,13 +8,12 @@
 
 
 // Stack of fsm
-fsm_t stack_fsm[MAX_STATES];
 int stack_top = 0;
 
 #define PUSH(val) \
 {\
 	stack_fsm[stack_top++] = val; \
-\}
+}
 
 #define POP() (stack_fsm[--stack_top]);
 
@@ -94,6 +93,7 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 					func_ptr = op_functions[op];
 					fprintf (stderr, "1231adsfASFASD\n");
 					(*func_ptr)(&tmp_fsm1, &tmp_fsm2);
+					PUSH(tmp_fsm1);
 				}
 			}
 
@@ -106,4 +106,7 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 
 		ch_prev = ch;
 	}
+
+	assert (stack_top >= 0);
+	*fsm = stack_fsm[stack_top - 1];
 }

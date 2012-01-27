@@ -77,6 +77,11 @@ void delete_tree (tree_t *root)
 
 tree_t * find ( tree_t * root, state_t * addr)
 {
+	if ( ! root || ! root->state_addr )
+	{
+		return NULL;
+	}
+		
 	if (addr == root->state_addr)
 	{
 		return root;
