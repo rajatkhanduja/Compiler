@@ -1,6 +1,7 @@
 import copy
+import pprint
 
-srcFile = file("../../test/test1.c")
+srcFile = file("../../test/test3.c")
 
 # tokenStream is { lineno : [set of tokens], lineno. : [set of tokens], .... }
 tokenStream = {}
@@ -30,7 +31,8 @@ def epsilon_closure(oldStates, nfa):
 	
 	activeStates.update(oldStates)
 	for state in oldStates :
-		activeStates.update(nfa.move[state]['#'])
+		if nfa.move.has_key(state) and nfa.move[state].has_key('#') :
+			activeStates.update(nfa.move[state]['#'])
 
 
 	while ( True ):
@@ -67,18 +69,17 @@ def epsilon_closure(oldStates, nfa):
 def NFA_simulate(nfa_all) :
 	token = ''
 	i = 0
-	symObject = symbolTableEntry()
 	for nextLine in srcFile:
 		nextLine = nextLine.splitlines()[0]
 		words = nextLine.split(' ')
+		print "Words on line :" + str(i) + " " + str(words)
 		i = i + 1
 		for word in words :
-			print word
+			symObject = symbolTableEntry()
 			matched = False
 			for nfa in nfa_all :
 				S = epsilon_closure(set([nfa.s0]), nfa)	# Set of current states
 				for c in word :
-					print "At " + str(c) + " in " + str(word)
 					S = epsilon_closure(move(nfa,S,c), nfa)
 				if S.intersection(nfa.F):
 					symObject.token = nfa.token
@@ -89,14 +90,34 @@ def NFA_simulate(nfa_all) :
 						symbolTable[word] = []
 						symbolTable[word].append(symObject)
 					matched = True
-					print "Matched " + str(word) + " with token " + str(nfa.token)
+					
+					print "---------------------------------------------------------------------------------"
+					print "MATCHED  :: " + str(word) + " with token < " + str(nfa.token) + ", " + str(i) + " >" + " TOKEN " + str(symObject.token) + " LINE " + str(symObject.line)
+
+					print "---------------------------------------------------------------------------------"
 				if matched:
 					break
 			if not matched :
 				print "Error on line " + str(i)
 				print "No token for lexeme : " + str(word)
-				
+	# Printing Symbol Table
+	print "``````````````````````````````````````````````````````````````````````````````````````````````````"
+	print "				SYMBOL TABLE 								"
+	print "``````````````````````````````````````````````````````````````````````````````````````````````````"
 
+	for lexeme in symbolTable.iterkeys() :
+		print "*******************************************************************************************"
+		print
+		print "Lexeme	: " + str(lexeme)
+		print "Token	: " + str(symbolTable[lexeme][0].token)
+		for entry in symbolTable[lexeme] :
+			# symbolTable[lexeme] is an list of objects
+			print "Line	: " + str(entry.line)
+		print
+		print "*******************************************************************************************"
+	#pp = pprint.PrettyPrinter(indent=4)
+	#pp.pprint(symbolTable)
+	 
 
 				
 					

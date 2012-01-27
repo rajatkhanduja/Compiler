@@ -1,1 +1,1 @@
-(a|b)*	TOKEN
+(a|b|c|d|e\f)*	TOKEN

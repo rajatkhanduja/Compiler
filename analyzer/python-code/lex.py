@@ -5,7 +5,7 @@ import simulation
 import copy
 
 # Conversion of regular expressions into NFA
-regexFile = file("../../test/input2","r")
+regexFile = file("../../test/input3","r")
 
 
 # move = { state:{ input:(List of states) , input:(List of states) , ... }  , ... }
@@ -61,7 +61,7 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 		NFA_final.regex = NFA_1.regex + op + NFA_2.regex
 		NFA_final.nos = NFA_1.nos + NFA_2.nos + 2
 		NFA_3 = inc_states(NFA_2,NFA_1.nos)
-		
+		NFA_3.s0 = NFA_2.s0 + NFA_1.nos
 		# Now comes the part of MYT algorithm
 		NFA_final.s0 = NFA_final.nos - 2        # New start state
 		NFA_final.F.add(NFA_final.nos - 1)	# New Single Final state
@@ -86,7 +86,7 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 		NFA_final.regex = NFA_2.regex + op + NFA_1.regex
 		NFA_final.nos = NFA_1.nos + NFA_2.nos
 		NFA_3 = inc_states(NFA_1,NFA_2.nos)
-
+		NFA_3.s0 = NFA_1.s0 + NFA_2.nos
 		# Now comes the part of MYT algorithm
 
 		NFA_final.s0 = NFA_2.s0         # The start state of the new NFA is same as the start state of the first NFA under concatenation.
@@ -107,13 +107,16 @@ def NFA_MYT(NFA_1,NFA_2,op) :
 			
 		for final in NFA_2.F :
 			NFA_final.move[final]['#'].add(NFA_3.s0)
+		print NFA_2.move
+		print NFA_3.move
+		print NFA_final.move
 	
 	elif op == '*' :
 		# Here, no renumbering of states is allowed.
 		
 		NFA_final.regex = NFA_1.regex + op
 		NFA_final.nos = NFA_1.nos + 2
-
+		
 		# Now comes the part of MYT algorithm
 		NFA_final.s0 = NFA_final.nos - 2		# New start state
 		NFA_final.F.add(NFA_final.nos - 1)		# New Single Final state
@@ -233,13 +236,16 @@ def build_NFA():
 		nfa = postfixEval(NFA_postfix)
 		nfa.token = token	# Updating the token name
 		NFAall_List.append(nfa)
-		print nfa.move
-		print "***************************************************************"
+		print "******************************************" + " TRANSITION TABLE for  " + str(nfa.regex) + "  ***********************************************"
+		for key in nfa.move.iterkeys() :
+			print nfa.move[key]
+		print "******************************************************************************************************************************************"
 
 
 
 
 if __name__ == '__main__' :
+	
 	build_NFA()
 	simulation.NFA_simulate(NFAall_List)
 
