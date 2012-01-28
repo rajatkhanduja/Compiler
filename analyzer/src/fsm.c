@@ -5,6 +5,7 @@
 #include <set.h>
 #include <assert.h>
 
+
 char special_symbols[] = { 0, '.', '^', '$', '%', '#' };
 
 /*
@@ -145,7 +146,7 @@ int concat_NFA (fsm_t *fsm1, fsm_t *fsm2)
 	{
 		ALLOC_STATE(fsm1->accept_state);
 	}
-	link_states ( fsm1->accept_state, &(fsm2->start_state), 'a', EPSILON);
+	link_states ( fsm1->accept_state, &(fsm2->start_state), '-', EPSILON);
 	fsm1->accept_state->is_final_state = 0;
 	fsm1->accept_state = fsm2->accept_state;
 }
