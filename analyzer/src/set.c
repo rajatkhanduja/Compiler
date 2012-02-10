@@ -155,3 +155,8 @@ void tree_to_list (tree_t *tree, list_t *list)
 		tree_to_list (tree->right, tmp);
 	}
 }
+
+unsigned int height_of_tree (tree_t *tree)
+{
+	return tree->height;
+}

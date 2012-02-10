@@ -5,17 +5,20 @@
 #include <regex_to_fsm.h>
 #include <regex_parser.h>
 
-
+#define PUSH(ptr) stack_fsm[stack_top++] = ptr
+#define POP()     stack_fsm[--stack_top]
 
 // Stack of fsm
 int stack_top = 0;
 
-#define PUSH(val) \
-{\
-	stack_fsm[stack_top++] = val; \
+void push_single_char_NFA_on_stack (char c, enum special sym)
+{
+	fsm_t *tmp_ptr;
+	ALLOC_FSM (tmp_ptr);
+	single_char_NFA (tmp_ptr, c, sym);
+	PUSH (tmp_ptr);
 }
 
-#define POP() (stack_fsm[--stack_top]);
 
 char NFA_operators[] = { '*', '@', '|' };
 
@@ -40,16 +43,16 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 	fsm_t *tmp = NULL;
 	char ch, ch_prev;
 	int (*func_ptr) (fsm_t*, fsm_t*) = NULL;
-	fsm_t tmp_fsm1, tmp_fsm2;
+	fsm_t *tmp_fsm1, *tmp_fsm2;
 
 	int op, i = 0;
-	#define CREATE_SINGLE_CHAR_NFA_AND_PUSH(_c, _sym) \
+/*	#define CREATE_SINGLE_CHAR_NFA_AND_PUSH(_c, _sym) \
 	{\
 		fprintf (stderr, "Creating single state\n");\
 		single_char_NFA (&stack_fsm[stack_top], _c, _sym);\
 		stack_top++;\
 	}
-	
+*/	
 	fprintf (stderr, "Regular expression changed to NFA format.\n");
 	
 	ch_prev = 'a';
@@ -60,7 +63,7 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 		{
 			if ( ch_prev == '\\' )
 			{
-				CREATE_SINGLE_CHAR_NFA_AND_PUSH (ch, NONE);
+				push_single_char_NFA_on_stack (ch, NONE);
 			}
 			else
 			{
@@ -74,7 +77,7 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 			if ( ch_prev == '\\' )
 			{
 				// Escaped character and not special
-				CREATE_SINGLE_CHAR_NFA_AND_PUSH (ch, NONE);
+				push_single_char_NFA_on_stack (ch, NONE);
 			}
 			else
 			{
@@ -87,13 +90,13 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 				else
 				{
 					fprintf (stderr, "ASFASD\n");
-					tmp_fsm2 = POP();
-					tmp_fsm1 = POP();
+					tmp_fsm2 = POP ();
+					tmp_fsm1 = POP ();
 					//fn_ptr = (int *) NFA_operators[op];
 					func_ptr = op_functions[op];
 					fprintf (stderr, "1231adsfASFASD\n");
-					(*func_ptr)(&tmp_fsm1, &tmp_fsm2);
-					PUSH(tmp_fsm1);
+					(*func_ptr)(tmp_fsm1, tmp_fsm2);
+					PUSH (tmp_fsm1);
 				}
 			}
 
@@ -101,12 +104,12 @@ unsigned int create_NFA (fsm_t *fsm, char *regular_expression)
 		else
 		{
 			// TODO :: Add more if-else
-			CREATE_SINGLE_CHAR_NFA_AND_PUSH (ch, NONE);
+			push_single_char_NFA_on_stack (ch, NONE);
 		}
 
 		ch_prev = ch;
 	}
 
 	assert (stack_top >= 0);
-	*fsm = stack_fsm[stack_top - 1];
+	deep_copy (fsm, stack_fsm[stack_top - 1]);
 }

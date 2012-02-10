@@ -23,6 +23,9 @@ void read_tokens (FILE *fp);
 
 int main (int argc, char *argv[])
 {	
+	// Initiate debugging.
+	DEBUG_INIT ("debug_log");
+
 	char token_filename[MAX_FILENAME];
 
 	strncpy (token_filename, argv[1], MAX_FILENAME);
@@ -45,7 +48,7 @@ int main (int argc, char *argv[])
 	for (i = 0; i < n_tokens; i++)
 	{	
 		fprintf (stderr, "simulating %d dfa\n", i);
-		printf ("%d\n", simulate_NFA (&token_NFA[i], "abac"));
+		printf ("%d\n", simulate_NFA (&token_NFA[i], "bc"));
 	}
 
 	printf ("final i is %d\n", i);

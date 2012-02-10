@@ -87,4 +87,7 @@ int repeat_NFA (fsm_t *fsm1, fsm_t *fsm2);
  * It returns the length of the longest match.
  */
 int simulate_NFA (fsm_t *fsm, char *str);
+
+/* Function to copy NFA */
+void deep_copy (fsm_t *fsm1, fsm_t *fsm2); 
 #endif //End of file

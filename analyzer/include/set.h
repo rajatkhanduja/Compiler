@@ -43,6 +43,9 @@ void union_sets (tree_t *set1, tree_t *set2);
 /* Function to convert a tree to a list */
 void tree_to_list (tree_t *tree, list_t *list);
 
+/* Function to return the height of a tree */
+unsigned int height_of_tree (tree_t *tree);
+
 /* Type of FOR_EACH 
  * void FOR_EACH (tree_t *, state_t * , EXPR)
  * The second element must be initialized before calling this. 

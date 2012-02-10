@@ -161,6 +161,8 @@ int epsilon_state_transitions (state_t *cur_state, tree_t *set_new_states)
 		return 0;
 	}
 
+	insert_element (set_new_states, cur_state);
+
 	state_link_t *link = cur_state->links;
 	int count = 0;
 
@@ -200,13 +202,22 @@ void epsilon_set_transitions (tree_t *cur_states)
 
 	FOR_EACH (cur_states, state, epsilon_state_transitions (state, new_states));
 
+	unsigned int height_new, height_union;
+	char first_loop = 1;
+
 	fprintf (stderr, "Inside set transitions. After FOR_EACH\n");
 	do
 	{
 		ALLOC_TREE (new_states_closure);
 		FOR_EACH (new_states, state, epsilon_state_transitions (state, new_states_closure));
+		height_new = height_of_tree (new_states);
 		union_sets (cur_states, new_states); // new_states tree is deleted
+		height_union = height_of_tree (cur_states);
+
+		if (!first_loop && height_new == height_union)
+			break;
 		new_states = new_states_closure;		
+		first_loop = 0;
 	} while ( new_states_closure->state_addr );
 }
 
@@ -292,4 +303,16 @@ int simulate_NFA (fsm_t *fsm, char *str)
 	}
 
 	return longest_match;
+}
+
+void deep_copy (fsm_t *dest, fsm_t *src)
+{
+	/* Function to perform deep copy operation on two FSMs */
+
+	// Copy the accept state pointer.
+	dest->accept_state = src->accept_state;		
+
+	//Copy the start_state
+	dest->start_state.is_final_state = src->start_state.is_final_state;
+	dest->start_state.links = src->start_state.links;
 }
