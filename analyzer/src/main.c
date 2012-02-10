@@ -49,6 +49,7 @@ int main (int argc, char *argv[])
 	{	
 		fprintf (stderr, "simulating %d dfa\n", i);
 		printf ("%d\n", simulate_NFA (&token_NFA[i], "bc"));
+		printf ("%d\n", simulate_NFA (&token_NFA[i], "abc"));
 	}
 
 	printf ("final i is %d\n", i);

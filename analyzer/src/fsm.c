@@ -295,7 +295,7 @@ int simulate_NFA (fsm_t *fsm, char *str)
 
 		if ( find (active_states, fsm->accept_state) )
 		{
-			longest_match = i;
+			longest_match = i + 1;
 			fprintf (stderr, "THERE IS SOME FINAL STATE\n");
 		}
 		i++;
