@@ -1,0 +1,18 @@
+there are a few modifications suggested and few TODOs needed to SIMPylex:
+
+	1. Break SIMPylex into modular subparts and using CPickle, print SymbolTable and output of the lexical analyser.
+	2. SymbolTable needs to be improved.
+	3. Thorough testing of the algorithm implementation is due.
+	4. Modify output of lexical analyser to be of the form:
+		line_no.
+		token1
+		token2
+		.
+		.
+		'\n'
+		line_no.
+		tokeni
+		tokenj
+		.
+		.
+		.
