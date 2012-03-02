@@ -2,3 +2,5 @@
 *.out
 .*.swo
 .*.swp
+*.opp
+*.outpp

@@ -4,10 +4,10 @@ BIN = .
 CC = g++
 DEFINES =
 CFLAGS = -I./
-OBJECTS = ${OBJ}/Rule.opp ${OBJ}/xtoLL1.opp
+OBJECTS = ${OBJ}/Rule.opp ${OBJ}/Grammar.opp ${OBJ}/xtoLL1driver.opp
 
-all: clean ${OBJECTS}
-	${CC} $^ -g -o ${BIN}/xtoLL1.outpp
+all: ${OBJECTS}
+	${CC} $^ -g -o ${BIN}/xtoLL1drivier.outpp
 
 ${OBJ}/%.opp : ${SRC}/%.cpp
 	${CC} -c -g ${DEFINES} ${CFLAGS} $< -o $@

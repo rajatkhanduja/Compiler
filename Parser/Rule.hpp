@@ -9,8 +9,7 @@
  *	AbB->cD|DDB
  */
 
-#include <string>
-#include <vector>
+#include <commons.hpp>
 using namespace std;
 
 class Rule
@@ -21,12 +20,13 @@ class Rule
 	
 	public:
 		Rule();
-		Rule(std::string, vector<std::string>);
+		Rule(const std::string, vector<std::string>);
 		std::string RuleHead();
 		vector<std::string> RuleTail();
 		void RuleAddTail(std::string);
 		void RuleRemoveTail(std::string);
 		void RuleRemoveTail(int);
+		int RuleFindTail(const std::string);
 		int RuleNTails();
 		void RuleOutput();
 		bool operator==(Rule);

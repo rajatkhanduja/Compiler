@@ -1,3 +1,4 @@
+#include <commons.hpp>
 #include <Rule.hpp>
 using namespace std;
 
@@ -12,5 +13,8 @@ class Grammar
 		void GrammarAddRule(Rule);
 		void GrammarRemoveRule(int);
 		void GrammarRemoveRule(Rule);
-		void operator==(Grammar);
+		int GrammarFindRule(Rule);
+		int GrammarNRules();
+		void GrammarOutput();
+		bool operator==(Grammar*);
 };
