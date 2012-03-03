@@ -1,11 +1,21 @@
 #include "ParserFunctions.hpp"
 
+/* The extern keyword means "declare without defining". In other words ,it is a way to explicitly declare a variable, 
+   or to force a declaration without a definition. It is also possible to explicitly define a variable, i.e. to force 
+   a definition. It is done by assigning an initialization value to a variable. If neither the extern keyword nor an 
+   initialization value are present, the statement can be either a declaration or a definition.
+
+   An external variable may also be declared inside a function. In this case the extern keyword must be used, otherwise 
+   the compiler will consider it a definition of a local variable, which has a different scope, lifetime and initial value. 
+   This declaration will only be visible inside the function instead of throughout the function's module. 
+*/
+
 vector<string> FirstSet::First (string Gsym, Grammar CFG)
 {
  	vector<string> retval;
 	int flag = 0;
 	// Gsym is a terminal.
-	if ( CFG.isTerm.find(Gsym)->second) 
+	if ( (CFG.isTerm.find(Gsym))->second) 
 		{
 			
 			retval.push_back(Gsym);
@@ -43,7 +53,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 							// not contain an epsilon. Hence flag is set to 0 in this hope.
 
 							// The condition below states that the leftmost symbol of this reduction is a terminal.
-							if ( CFG.isTerm.find(*its1)->second )		// Terminating condition for Recursion.
+							if ( (CFG.isTerm.find(*its1))->second )		// Terminating condition for Recursion.
 								retval.push_back(*its1);
 							else	// It's a non-terminal.
 							{	
@@ -93,12 +103,50 @@ return retval;
 
 vector<string> FollowSet::Follow (string Gsym, Grammar CFG)
 {
-vector<string> retval;
-if ( Gsym == CFG.startSym )
-{
-	retval.push_back("$");		// We place the "$" symbol in follow of the start symbol.
-}
+	vector<string> retval;
+	if ( Gsym == CFG.startSym )
+	{
+		retval.push_back("$");		// We place the "$" symbol in follow of the start symbol.
+	}
 
+	vector<Rule> GRules = CFG.GrammarAllRules();	// All Rules whose head starts with Gsym.
+	//vector<Rule> matchedRules;
+	vector<Rule>::iterator itr; vector<string>::iterator its1, its2;	// Declaration
+	vector<string> tail, firstNextSym;
+
+	for ( itr = GRules.begin; itr < GRules.end; itr++ )
+	{
+
+		tail = (*itr).tail;	// #TODO This requires tail to be public member.
+		for ( its1 = tail.begin; its1 < tail.end; its1++ )
+		{
+			if ( (*its1) == Gsym )	// Symbol(Gsym) found in the tail of the Grammar Rule.
+			{
+				// Rule 2 and Rule 3 for FOLLOW now need to be checked for. The Rule just found is of interest to us. 
+				if ( (CFG.isTerm.find(*(its1 + 1)))->second )	// It's a terminal
+				{
+					retval.push_back(*(its + 1));	break;	
+				}
+				else	// It's a non-terminal.
+				{
+					firstNextSym = (this.firstSet.find(*(its1 + 1)))->second;	// Find the firstSet of this non-terminal.
+					
+					// TRAVERSING THE FIRST SET OF THIS NON-TERMINAL TO FIND IF IT CONTAINS AN EPSILON.
+					for ( its2 = firstNextSym.begin; its2 < firstNextSym.end; its2 ++ )
+					{
+						if ( (*its2) == "#" )	// Epsilon Symbol
+					}
+				}
+			}
+
+
+
+		}
+
+	}
+
+
+}
 
 
 

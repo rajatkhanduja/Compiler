@@ -20,6 +20,7 @@ class Grammar
 		int GrammarFindRule(Rule);
 		/* Added by Bharat Khatri */
 		vector<Rule> GrammarFindRule(string head);
+		vector<Rule> GrammarAllRules();
 		/* Added by Bharat Khatri */
 		int GrammarNRules();
 		void GrammarOutput();
