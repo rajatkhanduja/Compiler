@@ -106,6 +106,57 @@ static string insertConcatSymbol (string originalRegex)
 	return (finalRegex);
 }
 
+static void insertOperator (operation op, string &finalRegex)
+{
+
+}
+
+static string infix2Postfix (string modifiedRegex)
+{
+	/* The input string is assumed to be in internal form,
+	 * that is it should have concatenate operator at the appropriate 
+	 * positons.
+	 */
+
+	char ch, prevCh;
+	int i, operatorVal;
+	string finalRegex;
+
+	for ( i = 0; i < modifiedRegex.length (); i++)
+	{
+		ch = modifiedRegex[i];
+
+		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\')
+		{
+			insertOperator ( (operation) operatorVal, finalRegex);
+		}
+		else
+		{
+			finalRegex.push_back (ch);
+		}
+
+		if ( prevCh == ch && prevCh == '\\' )
+		{
+			// Change it to any character without special meaning
+			ch = 'a';
+		}
+
+		prevCh = ch;
+	}
+
+	operation op;
+
+	// Empty the stack
+	while (opStack.size () > 0)
+	{
+		finalRegex.push_back (opStack.back());
+		opStack.pop_back ();
+	}
+
+	return finalRegex;
+
+}
+
 
 RegexParser::RegexParser (string regex)
 {
