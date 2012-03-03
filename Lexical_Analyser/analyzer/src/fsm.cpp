@@ -50,6 +50,7 @@ void FSM::concatenate (FSM& rhs)
 	 * entire fsm.
 	 */
 	acceptState = rhs.acceptState;
+	rhs.acceptState->isFinalState = true;
 }
 
 FSM * FSM::operator+= (FSM& fsm)
@@ -64,21 +65,35 @@ FSM * FSM::repeat ()
 	FSM *startFSM = new FSM();
 	FSM *endFSM   = new FSM();
 
+	/* Loop back from the accept state of the fsm to the start state */
 	acceptState->createTransition ('e', EPSILON, &startState);
 	acceptState->isFinalState = true;
 
+	/* Concatenate the endFSM state with fsm */
 	this->concatenate (*endFSM);
+	/* Concatenate the startFSM with 'this' fsm */
 	startFSM->concatenate (*this);
 
+	/* Create a epsilon-transition from startFSM to endFSM */
 	startFSM->startState.createTransition ('e', EPSILON, startFSM->acceptState);
 
-	std::cerr << startFSM->startState.links[0].nextState->links[0].nextState->links[1].nextState<<std::endl;
-	std::cerr << startFSM->startState.links[1].nextState->links.size ()<<std::endl;
 	return startFSM;
 }
 
-void FSM::operator |= (FSM& rhs)
+FSM * FSM::operator |= (FSM& rhs)
 {
-	std::cerr << this->startState.links[0].nextState->links[0].nextState->links[1].nextState <<std::endl;
-	std::cerr << this->startState.links[1].nextState <<std::endl;
+	/* Create a new (empty) start and end FSM */
+	FSM *startFSM = new FSM();
+	FSM *endFSM   = new FSM();
+
+	/* Concatenate one of the two fsm-s with the start and end */
+	this->concatenate (*endFSM);
+	startFSM->concatenate (*this);
+
+	/* Create a transition to the start state of other fsm */
+	startFSM->startState.createTransition ('e', EPSILON, &(rhs.startState));
+	/* Create a transition from the end state of other fsm */
+	rhs.acceptState->createTransition ('e', EPSILON, &(endFSM->startState));
+
+	return startFSM;
 }

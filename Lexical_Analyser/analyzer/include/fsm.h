@@ -1,10 +1,10 @@
 #ifndef FSM_INCLUDED
 #define FSM_INCLUDED
 
-#include <vector>
+#include <list>
 #include <string>
 
-using std::vector;
+using std::list;
 using std::string;
 
 /*
@@ -58,7 +58,7 @@ class FSM
 		struct State
 		{
 			bool isFinalState;
-			vector <StateLink> links;	// List of links to other states.
+			list <StateLink> links;	// List of links to other states.
 			State () { isFinalState = false; }
 			State * createTransition (char c, special sym, State * nextState = NULL);
 		};
@@ -71,7 +71,7 @@ class FSM
 		FSM * operator += (FSM& rhs); 
 		void concatenate (FSM& fsm);	// Same as +=
 		FSM * repeat ();		// Modify the fsm to accept repetitions of accepted string. '*' operator.
-		void operator |= (FSM& rhs);
+		FSM * operator |= (FSM& rhs);
 
 		int simulate (string testString);
 
