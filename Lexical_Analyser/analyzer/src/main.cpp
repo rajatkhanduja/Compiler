@@ -3,7 +3,7 @@
 
 int main (int argc, char *argv[])
 {
-	RegexParser r ("b(ab|c)");
+	RegexParser r ("b\\(bc\\)");
 	
 	return 0;
 }

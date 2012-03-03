@@ -24,7 +24,7 @@ static vector <char> opStack;
 /* This function returns the enum operation for the character corresponding 
  * to the operation. In case of no match, it returns -1.
  */
-int isOperator (char c)                                                      
+static int isOperator (char c)
 {
         int t;                                                     
         for (t = STAR; t <= RB; t++)
@@ -106,9 +106,50 @@ static string insertConcatSymbol (string originalRegex)
 	return (finalRegex);
 }
 
-static void insertOperator (operation op, string &finalRegex)
+static void insertOperator (int op, string &finalRegex)
 {
 
+	if ( op == LB )
+	{
+		opStack.push_back (operators[LB]);
+		return;
+	}
+
+	if ( op == STAR )
+	{
+		finalRegex.push_back (operators[STAR]);
+		return;
+	}
+
+	int top;
+
+	while ( opStack.size () > 0 
+		&& 
+		( (top = isOperator (opStack.back ()) ) < op) )
+	{
+		if ( top == LB && op == RB )
+		{
+			opStack.pop_back ();
+			return;
+		}
+		else if ( top != LB )
+		{
+			finalRegex.push_back (opStack.back ());
+			opStack.pop_back ();
+		}
+	}
+
+	switch (op)
+	{
+		case CONCAT	: opStack.push_back(operators[CONCAT]); break;
+		case OR		: opStack.push_back(operators[OR])    ; break;
+
+		#ifdef DEBUG_MODE
+		default		: assert (0);
+		#else
+		default		: std::cerr<<"Unknown operator. Continuing\n";
+		#endif
+	}
 }
 
 static string infix2Postfix (string modifiedRegex)
@@ -128,7 +169,7 @@ static string infix2Postfix (string modifiedRegex)
 
 		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\')
 		{
-			insertOperator ( (operation) operatorVal, finalRegex);
+			insertOperator ( operatorVal, finalRegex);
 		}
 		else
 		{
@@ -162,11 +203,13 @@ RegexParser::RegexParser (string regex)
 {
 	inputRegexString = regex;
 	regexString = internalRegex (regex);
+	std::cerr << regexString << std::endl;
 }
 
 string RegexParser::internalRegex (string inputRegex)
 {
-	string tempRegex = insertConcatSymbol (inputRegex);
+	string finalRegex = insertConcatSymbol (inputRegex);
+	finalRegex = infix2Postfix (finalRegex);
 
-	return tempRegex;
+	return finalRegex;
 }
