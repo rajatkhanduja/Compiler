@@ -3,7 +3,7 @@ OBJ = obj
 BIN = bin
 CC = g++
 DEFINES =
-CFLAGS = -Iinclude/
+CFLAGS = -Wall -Iinclude/
 OBJECTS = $(OBJ)/fsm.o $(OBJ)/regex_parser.o $(OBJ)/main.o
 
 all: ${OBJECTS}

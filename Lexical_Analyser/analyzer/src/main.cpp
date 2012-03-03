@@ -6,10 +6,13 @@ int main (int argc, char *argv[])
 {
 	RegexParser r ("abc");
 
-	FSM fsm1 ('c');
-	FSM fsm2 ('a');
+	FSM *fsm1  = new FSM ('c');
+	FSM *fsm2  = new FSM ('a');
 
-	fsm1 += fsm2;
+	fsm1->concatenate (*fsm2);
+	fsm1 = fsm1->repeat ();
+
+	*fsm1 |= *fsm2;
 	
 	return 0;
 }
