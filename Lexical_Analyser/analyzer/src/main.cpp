@@ -12,10 +12,10 @@ int main (int argc, char *argv[])
 //	fsm1->concatenate (*fsm2);
 //	fsm1 = fsm1->repeat ();
 
-//	*fsm1 |= *fsm2;
+	*fsm1 |= *fsm2;
 
 	std::cout << *fsm1;
-	std::cout << fsm1->simulate ("c")<<std::endl;
+	std::cout << fsm2->simulate ("a")<<std::endl;
 	
 	return 0;
 }

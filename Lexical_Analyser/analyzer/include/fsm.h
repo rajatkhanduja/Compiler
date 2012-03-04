@@ -69,8 +69,6 @@ class FSM
 			State * createTransition (char c, special sym, State * nextState = NULL);
 			set<State*> epsilonClosure ();
 			set<State*> move (char c);
-
-//			friend std::ostream& operator << (std::ostream& o, const State& state);
 		};
 
 	public :
@@ -81,7 +79,7 @@ class FSM
 		FSM * operator += (FSM& rhs); 
 		void concatenate (FSM& fsm);	// Same as +=
 		FSM * repeat ();		// Modify the fsm to accept repetitions of accepted string. '*' operator.
-		FSM * operator | (FSM& rhs);
+		FSM * operator |= (FSM& rhs);
 
 		/* Simulate the NFA */
 		int simulate (const string testString);

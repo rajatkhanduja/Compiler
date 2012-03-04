@@ -91,7 +91,7 @@ FSM * FSM::repeat ()
 }
 
 /* This function rerturns the fsm to be equivalent to (fsm1|fsm2) */
-FSM * FSM::operator | (FSM& rhs)
+FSM * FSM::operator |= (FSM& rhs)
 {
 	/* Create a new (empty) start and end FSM */
 	FSM *startFSM = new FSM();
@@ -115,6 +115,8 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 	set <State*> newStates;
 	list<StateLink>::iterator itr;
 
+	newStates.insert (this);
+
 	for ( itr = this->links.begin (); itr != this->links.end (); itr++)
 	{
 		if ( EPSILON == itr->sym )
@@ -123,12 +125,15 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 		}
 	}
 
+	std::cout << newStates.size() << std::endl;
+
 	return newStates;
 }
 
 /* Function to find the epsilon closure of a set of states */
 set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 {
+	std::cout << curStates.size () << std::endl;
 	set<State*> newStates, tempStates;
 
 	set<State*>::iterator itr;
@@ -223,6 +228,7 @@ set<FSM::State*> FSM::State::move (char c)
  */
 set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 {
+	std::cout << "move : " << curStates.size () << std::endl;
 	set<FSM::State*> nextStates, tempStates;
 	set<FSM::State*>::iterator itr, itr_end;
 
@@ -232,6 +238,7 @@ set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 		nextStates.insert (tempStates.begin(), tempStates.end());
 	}
 	
+	std::cout << "move : " << nextStates.size () << std::endl;
 	return nextStates;
 }
 
@@ -239,6 +246,8 @@ int FSM::simulate (const string testString)
 {
 	set <State*> curStates = epsilonClosure (startState.epsilonClosure());
 	set <State*> newStates;
+
+	std::cout << curStates.size () << std::endl;
 
 	unsigned int i, longestMatch = -1;
 
@@ -248,7 +257,7 @@ int FSM::simulate (const string testString)
 		/* Find the new states by moving on the NFA and using epsilon
 		 * closure. */
 		newStates = epsilonClosure (move (curStates, testString[i]));
-		
+		std::cout << "newStates : " << newStates.size () << std::endl;
 		if (newStates.count (acceptState))
 		{
 			longestMatch = i;
@@ -258,37 +267,6 @@ int FSM::simulate (const string testString)
 	}
 	return (longestMatch + 1);
 }
-
-/*
-std::ostream& FSM::State::operator << (std::ostream& o)
-{
-	list <StateLink>::iterator itr;
-
-	for (itr = links.begin (); itr != links.end (); itr++)
-	{
-		o << this << " - ";
-
-		if (NONE == itr->sym)
-			o << itr->c;
-		else
-		{
-			switch (itr->sym)
-			{
-				case EPSILON         : o << "(e)"; break;
-				case DOT             : o << "(.)"; break;
-				case SMALL_LETTERS   : o << "(%)"; break;
-				case CAPITAL_LETTERS : o << "($)"; break;
-				case DIGITS          : o << "(#)"; break;
-				default              : assert(0) ;
-			}
-		}
-		
-		o << " - " << itr->nextState << std::endl;
-	}
-
-	return o;
-}
-*/
 
 std::ostream& operator << (std::ostream& o, const FSM& fsm)
 {
