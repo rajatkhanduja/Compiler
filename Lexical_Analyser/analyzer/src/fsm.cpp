@@ -1,5 +1,10 @@
 #include <fsm.h>
+#include <cassert>
 #include <iostream>
+#include <vector>
+#include <algorithm>
+
+using std::vector;
 
 FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)
 {
@@ -25,19 +30,20 @@ FSM::FSM ()
 	acceptState  = &startState;
 }
 
-FSM::FSM (char c, special sym)
+FSM::FSM (const char c, const special sym)
 {
 	/* Construct a FSM for a character 'c' or special symbol. */
 	acceptState = startState.createTransition (c, sym);
 	acceptState->isFinalState = true;
 }
 
-FSM::FSM (FSM& fsm)
+FSM::FSM (const FSM& fsm)
 {
 	startState  = fsm.startState;
 	acceptState = fsm.acceptState;
 }
 
+/* Function to concatenate the passed FSM. */
 void FSM::concatenate (FSM& rhs)
 {
 	/* Create an epsilon-transition from the acceptState of first fsm
@@ -53,12 +59,16 @@ void FSM::concatenate (FSM& rhs)
 	rhs.acceptState->isFinalState = true;
 }
 
+/* This function is an alternative to concatenate(FSM &) */
 FSM * FSM::operator+= (FSM& fsm)
 {
 	this->concatenate (fsm);
 	return this;
 }
 
+/* This function returns the fsm that accepts the repetition of strings 
+ * accepted by given fsm.
+ */
 FSM * FSM::repeat ()
 {
 	/* Create a new (empty) FSM. */
@@ -80,7 +90,8 @@ FSM * FSM::repeat ()
 	return startFSM;
 }
 
-FSM * FSM::operator |= (FSM& rhs)
+/* This function rerturns the fsm to be equivalent to (fsm1|fsm2) */
+FSM * FSM::operator | (FSM& rhs)
 {
 	/* Create a new (empty) start and end FSM */
 	FSM *startFSM = new FSM();
@@ -96,4 +107,231 @@ FSM * FSM::operator |= (FSM& rhs)
 	rhs.acceptState->createTransition ('e', EPSILON, &(endFSM->startState));
 
 	return startFSM;
+}
+
+/* Function to find the epsilon closure of a state. */
+set<FSM::State*> FSM::State::epsilonClosure ()
+{
+	set <State*> newStates;
+	list<StateLink>::iterator itr;
+
+	for ( itr = this->links.begin (); itr != this->links.end (); itr++)
+	{
+		if ( EPSILON == itr->sym )
+		{
+			newStates.insert (itr->nextState);
+		}
+	}
+
+	return newStates;
+}
+
+/* Function to find the epsilon closure of a set of states */
+set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
+{
+	set<State*> newStates, tempStates;
+
+	set<State*>::iterator itr;
+	
+	for (itr = curStates.begin (); itr != curStates.end (); itr++)
+	{
+		tempStates = (*itr)->epsilonClosure();
+		newStates.insert (tempStates.begin(), tempStates.end());
+	}
+
+	tempStates.clear ();
+
+	set <State*> tempStates2, tempStates3;
+
+	/* Here onwards curStates is used just as another variable */
+	tempStates2 = newStates;
+	do
+	{
+		for (itr = tempStates2.begin(); itr != tempStates2.end (); itr++)
+		{
+			tempStates = (*itr)->epsilonClosure();
+			
+			set<State*>::iterator itr2;
+
+			for (itr2 = tempStates.begin(); itr2 != tempStates.end(); itr2++)
+			{
+				if ( *itr == *itr2 )
+				{
+					continue;
+				}
+
+				if ( 0 != newStates.count (*itr2) )
+				{
+					newStates.insert (*itr2);
+					tempStates3.insert (*itr2);
+				}
+			}
+		}
+		tempStates2 = tempStates3;
+		tempStates3.clear ();
+	}while (!tempStates2.empty ());
+	
+	return newStates;
+}
+
+/* Function to check if the transition is valid for the character */
+bool FSM::StateLink::accept (const char c) const
+{
+	if (NONE == sym)
+	{
+		if (this->c == c)
+			return true;
+		else
+			return false;
+	}
+	else
+	{
+		/* Check for operator matches */
+		switch (sym)
+		{
+			case EPSILON         : return false;
+			case DOT             : return true;
+			case SMALL_LETTERS   : return (islower (c));
+			case CAPITAL_LETTERS : return (isupper (c));
+			case DIGITS          : return (isdigit (c));
+			default              : assert (0); return false;
+		}
+	}
+}
+
+/* Function returns the set of states that are reached by traversing 
+ * the links that match the character from the state.
+ */
+set<FSM::State*> FSM::State::move (char c)
+{
+	list <StateLink>::iterator itr, itr_end;
+	set<State*> nextStates;
+
+	for (itr = links.begin(), itr_end = links.end(); itr != itr_end; itr++)
+	{
+		if (itr->accept (c))
+		{
+			nextStates.insert (itr->nextState);
+		}
+	}
+
+	return nextStates;
+}
+
+/* Function that returns the set obtained by moving on the NFA from the 
+ * start states taken from the given curStates.
+ */
+set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
+{
+	set<FSM::State*> nextStates, tempStates;
+	set<FSM::State*>::iterator itr, itr_end;
+
+	for (itr = curStates.begin (), itr_end = curStates.end (); itr != itr_end; itr++)
+	{
+		tempStates = (*itr)->move (c);
+		nextStates.insert (tempStates.begin(), tempStates.end());
+	}
+	
+	return nextStates;
+}
+
+int FSM::simulate (const string testString)
+{
+	set <State*> curStates = epsilonClosure (startState.epsilonClosure());
+	set <State*> newStates;
+
+	unsigned int i, longestMatch = -1;
+
+	/* Traverse the entire string */
+	for ( i = 0; i < testString.length (); i++)
+	{
+		/* Find the new states by moving on the NFA and using epsilon
+		 * closure. */
+		newStates = epsilonClosure (move (curStates, testString[i]));
+		
+		if (newStates.count (acceptState))
+		{
+			longestMatch = i;
+		}
+
+		curStates = newStates;
+	}
+	return (longestMatch + 1);
+}
+
+/*
+std::ostream& FSM::State::operator << (std::ostream& o)
+{
+	list <StateLink>::iterator itr;
+
+	for (itr = links.begin (); itr != links.end (); itr++)
+	{
+		o << this << " - ";
+
+		if (NONE == itr->sym)
+			o << itr->c;
+		else
+		{
+			switch (itr->sym)
+			{
+				case EPSILON         : o << "(e)"; break;
+				case DOT             : o << "(.)"; break;
+				case SMALL_LETTERS   : o << "(%)"; break;
+				case CAPITAL_LETTERS : o << "($)"; break;
+				case DIGITS          : o << "(#)"; break;
+				default              : assert(0) ;
+			}
+		}
+		
+		o << " - " << itr->nextState << std::endl;
+	}
+
+	return o;
+}
+*/
+
+std::ostream& operator << (std::ostream& o, const FSM& fsm)
+{
+	/* Print a transition table of sorts */
+	vector <const FSM::State*> statesList;
+
+	unsigned int i;
+
+	statesList.push_back (&(fsm.startState));
+	
+
+	for ( i = 0; i < statesList.size(); i++)
+	{
+		const FSM::State * addr = statesList[i];
+		list <FSM::StateLink>::const_iterator itr;
+
+		for (itr = addr->links.begin (); itr != addr->links.end (); itr++)
+		{
+			o << addr << " - ";
+
+			if (FSM::NONE == itr->sym)
+				o << itr->c;
+			else
+			{	
+				switch (itr->sym)
+				{
+					case FSM::EPSILON         : o << "(e)"; break;
+					case FSM::DOT             : o << "(.)"; break;
+					case FSM::SMALL_LETTERS   : o << "(%)"; break;
+					case FSM::CAPITAL_LETTERS : o << "($)"; break;
+					case FSM::DIGITS          : o << "(#)"; break;
+					default                   : o << itr->sym << " " << itr->c; assert(0) ;
+				}
+			}
+		
+			o << " - " << itr->nextState << std::endl;
+		}
+
+		if (statesList.end() != find (statesList.begin(), statesList.end(), itr->nextState))
+		{
+			statesList.push_back (itr->nextState);
+		}
+	}
+
+	return o;
 }

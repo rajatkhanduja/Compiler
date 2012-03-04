@@ -3,9 +3,12 @@
 
 #include <list>
 #include <string>
+#include <set>
+#include <iostream>
 
 using std::list;
 using std::string;
+using std::set;
 
 /*
  * IMPORTANT :
@@ -47,12 +50,15 @@ class FSM
 			{
 				this->nextState = nextState;
 				this->c = c;
+				this->sym = NONE;
 			};
 			StateLink (State *nextState, special sym)
 			{
 				this->nextState = nextState;
 				this->sym = sym;
 			}
+
+			bool accept (const char c) const;
 		};
 
 		struct State
@@ -61,23 +67,34 @@ class FSM
 			list <StateLink> links;	// List of links to other states.
 			State () { isFinalState = false; }
 			State * createTransition (char c, special sym, State * nextState = NULL);
+			set<State*> epsilonClosure ();
+			set<State*> move (char c);
+
+//			friend std::ostream& operator << (std::ostream& o, const State& state);
 		};
 
 	public :
 		FSM ();
-		FSM (char c, special sym = NONE);	// Construct FSM to match "c".
-		FSM (FSM& fsm);			// (Shallow) Copy Constructor
+		FSM (const char c, const special sym = NONE);	// Construct FSM to match "c".
+		FSM (const FSM& fsm);		// (Shallow) Copy Constructor
 
 		FSM * operator += (FSM& rhs); 
 		void concatenate (FSM& fsm);	// Same as +=
 		FSM * repeat ();		// Modify the fsm to accept repetitions of accepted string. '*' operator.
-		FSM * operator |= (FSM& rhs);
+		FSM * operator | (FSM& rhs);
 
-		int simulate (string testString);
+		/* Simulate the NFA */
+		int simulate (const string testString);
+
+		/* Stream operators */
+		friend std::ostream& operator << (std::ostream& o, const FSM& fsm);
 
 	private:
 		State startState;
 		State *acceptState;
+
+		set<State*> epsilonClosure (const set<State*>& curStates);
+		set<State*> move (set <State*>& curStates, const char c);
 };
 
 #endif // End of file
