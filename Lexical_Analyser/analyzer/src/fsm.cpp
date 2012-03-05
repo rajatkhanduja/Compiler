@@ -132,8 +132,6 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 		}
 	}
 
-	std::cout << newStates.size() << std::endl;
-
 	return newStates;
 }
 
@@ -235,7 +233,7 @@ set<FSM::State*> FSM::State::move (char c)
  */
 set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 {
-	std::cout << "move : " << curStates.size () << std::endl;
+	std::cerr << "move : " << curStates.size () << std::endl;
 	set<FSM::State*> nextStates, tempStates;
 	set<FSM::State*>::iterator itr, itr_end;
 
@@ -245,7 +243,7 @@ set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 		nextStates.insert (tempStates.begin(), tempStates.end());
 	}
 	
-	std::cout << "move : " << nextStates.size () << std::endl;
+	std::cerr << "move : " << nextStates.size () << std::endl;
 	return nextStates;
 }
 
@@ -264,7 +262,7 @@ int FSM::simulate (const string testString)
 	unsigned int i, longestMatch = -2;
 	
 	// In case empty string matches.
-	if (curStates.count (acceptState))
+	if (find (curStates.begin(), curStates.end(), acceptState) != curStates.end())
 	{
 		longestMatch = -1;
 	}
@@ -275,7 +273,7 @@ int FSM::simulate (const string testString)
 		/* Find the new states by moving on the NFA and using epsilon
 		 * closure. */
 		newStates = epsilonClosure (move (curStates, testString[i]));
-		std::cout << "newStates : " << newStates.size () << std::endl;
+		std::cerr << "newStates : " << newStates.size () << std::endl;
 		if (newStates.count (acceptState))
 		{
 			longestMatch = i;
