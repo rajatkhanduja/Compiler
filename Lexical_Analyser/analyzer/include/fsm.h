@@ -79,7 +79,7 @@ class FSM
 		FSM * operator += (FSM& rhs); 
 		void concatenate (FSM& fsm);	// Same as +=
 		FSM * repeat ();		// Modify the fsm to accept repetitions of accepted string. '*' operator.
-		FSM * operator |= (FSM& rhs);
+		FSM * operator | (FSM& rhs);
 
 		/* Simulate the NFA */
 		int simulate (const string testString);

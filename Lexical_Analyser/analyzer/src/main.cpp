@@ -10,12 +10,11 @@ int main (int argc, char *argv[])
 	FSM *fsm2  = new FSM ('a');
 
 //	fsm1->concatenate (*fsm2);
-//	fsm1 = fsm1->repeat ();
-
-	*fsm1 |= *fsm2;
-
+	fsm1 = *fsm1 | *fsm2;
+	fsm1 = fsm1->repeat ();
+	
 	std::cout << *fsm1;
-	std::cout << fsm2->simulate ("a")<<std::endl;
+	std::cout << fsm1->simulate ("cacac")<<std::endl;
 	
 	return 0;
 }
