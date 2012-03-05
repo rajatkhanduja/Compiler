@@ -7,7 +7,6 @@
 // TODO :: CHANGE links from list to set (consider tradeoffs).
 
 using std::vector;
-
 FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)
 {
 	/* Here, it is assumed that there is only one accept state */
@@ -128,9 +127,12 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 	{
 		if ( EPSILON == itr->sym )
 		{
+			std::cerr << itr->nextState << ",";
 			newStates.insert (itr->nextState);
 		}
 	}
+	std::cerr << std::endl;
+
 
 	return newStates;
 }
@@ -160,11 +162,13 @@ set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 		for (itr = tempStates2.begin(); itr != tempStates2.end (); itr++)
 		{
 			tempStates = (*itr)->epsilonClosure();
+			std::cerr << "size : " << tempStates.size() << std::endl;
 			
 			set<State*>::iterator itr2;
 
 			for (itr2 = tempStates.begin(); itr2 != tempStates.end(); itr2++)
 			{
+				std::cerr << *itr << " .. " << std::endl;
 				if ( *itr == *itr2 )
 				{
 					continue;
@@ -181,6 +185,14 @@ set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 		tempStates3.clear ();
 	}while (!tempStates2.empty ());
 	
+	set<State*>::iterator iter;
+
+	for ( iter = newStates.begin(); iter != newStates.end(); iter++)
+	{
+		std::cerr << *(iter) << ",";
+	}
+	std::cerr << std::endl;
+
 	return newStates;
 }
 
