@@ -122,6 +122,7 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 	list<StateLink>::iterator itr;
 
 	newStates.insert (this);
+	std::cerr << this << ",";
 
 	for ( itr = this->links.begin (); itr != this->links.end (); itr++)
 	{
@@ -168,16 +169,18 @@ set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 
 			for (itr2 = tempStates.begin(); itr2 != tempStates.end(); itr2++)
 			{
-				std::cerr << *itr << " .. " << std::endl;
+				std::cerr << *itr2<< " .. ";
 				if ( *itr == *itr2 )
 				{
+					std::cerr << "not added\n";
 					continue;
 				}
 
-				if ( 0 != newStates.count (*itr2) )
+				if ( 0 == newStates.count (*itr2) )
 				{
 					newStates.insert (*itr2);
 					tempStates3.insert (*itr2);
+					std::cerr << "added\n";
 				}
 			}
 		}
