@@ -9,12 +9,12 @@ int main (int argc, char *argv[])
 	FSM *fsm1  = new FSM ('c');
 	FSM *fsm2  = new FSM ('a');
 
-//	fsm1->concatenate (*fsm2);
+	fsm1->concatenate (*fsm2);
 	fsm1 = fsm1->repeat ();
 	fsm1 = *fsm1 | *fsm2;
 	
 	std::cout << *fsm1;
-	std::cout << fsm1->simulate ("")<<std::endl;
+	std::cout << fsm1->simulate ("cac")<<std::endl;
 	
 	return 0;
 }

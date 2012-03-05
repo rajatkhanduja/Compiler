@@ -122,18 +122,14 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 	list<StateLink>::iterator itr;
 
 	newStates.insert (this);
-	std::cerr << this << ",";
 
 	for ( itr = this->links.begin (); itr != this->links.end (); itr++)
 	{
 		if ( EPSILON == itr->sym )
 		{
-			std::cerr << itr->nextState << ",";
 			newStates.insert (itr->nextState);
 		}
 	}
-	std::cerr << std::endl;
-
 
 	return newStates;
 }
@@ -141,7 +137,6 @@ set<FSM::State*> FSM::State::epsilonClosure ()
 /* Function to find the epsilon closure of a set of states */
 set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 {
-	std::cout << curStates.size () << std::endl;
 	set<State*> newStates, tempStates;
 
 	set<State*>::iterator itr;
@@ -163,24 +158,20 @@ set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 		for (itr = tempStates2.begin(); itr != tempStates2.end (); itr++)
 		{
 			tempStates = (*itr)->epsilonClosure();
-			std::cerr << "size : " << tempStates.size() << std::endl;
 			
 			set<State*>::iterator itr2;
 
 			for (itr2 = tempStates.begin(); itr2 != tempStates.end(); itr2++)
 			{
-				std::cerr << *itr2<< " .. ";
 				if ( *itr == *itr2 )
 				{
-					std::cerr << "not added\n";
 					continue;
 				}
 
-				if ( 0 == newStates.count (*itr2) )
+				if ( newStates.find (*itr2) == newStates.end() )
 				{
 					newStates.insert (*itr2);
 					tempStates3.insert (*itr2);
-					std::cerr << "added\n";
 				}
 			}
 		}
@@ -188,14 +179,6 @@ set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)
 		tempStates3.clear ();
 	}while (!tempStates2.empty ());
 	
-	set<State*>::iterator iter;
-
-	for ( iter = newStates.begin(); iter != newStates.end(); iter++)
-	{
-		std::cerr << *(iter) << ",";
-	}
-	std::cerr << std::endl;
-
 	return newStates;
 }
 
@@ -248,7 +231,6 @@ set<FSM::State*> FSM::State::move (char c)
  */
 set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 {
-	std::cerr << "move : " << curStates.size () << std::endl;
 	set<FSM::State*> nextStates, tempStates;
 	set<FSM::State*>::iterator itr, itr_end;
 
@@ -258,7 +240,6 @@ set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)
 		nextStates.insert (tempStates.begin(), tempStates.end());
 	}
 	
-	std::cerr << "move : " << nextStates.size () << std::endl;
 	return nextStates;
 }
 
@@ -271,8 +252,6 @@ int FSM::simulate (const string testString)
 {
 	set <State*> curStates = epsilonClosure (startState.epsilonClosure());
 	set <State*> newStates;
-
-	std::cout << curStates.size () << std::endl;
 
 	unsigned int i, longestMatch = -2;
 	
@@ -288,7 +267,6 @@ int FSM::simulate (const string testString)
 		/* Find the new states by moving on the NFA and using epsilon
 		 * closure. */
 		newStates = epsilonClosure (move (curStates, testString[i]));
-		std::cerr << "newStates : " << newStates.size () << std::endl;
 		if (newStates.count (acceptState))
 		{
 			longestMatch = i;
