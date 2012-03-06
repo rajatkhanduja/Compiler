@@ -7,9 +7,9 @@ using std::vector;
 
 int main (int argc, char *argv[])
 {
-	RegexParser r ("ab*c");
+	RegexParser r ("(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|z)*");
 	
-	std::cout << r.match("ac") << std::endl;
+	std::cout << r.match("abc") << std::endl;
 
 	FSM *fsm1  = new FSM ('b');
 	FSM *fsm2  = new FSM ('c');
