@@ -1,0 +1,73 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BIN	Makefile	/^BIN = bin$/;"	m
+CAPITAL_LETTERS	include/fsm.h	/^			CAPITAL_LETTERS,$/;"	e	enum:FSM::special
+CC	Makefile	/^CC = g++$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall -Iinclude\/$/;"	m
+CONCAT	src/regex_parser.cpp	/^        CONCAT,$/;"	e	enum:operation	file:
+DEFINES	Makefile	/^DEFINES =$/;"	m
+DIGITS	include/fsm.h	/^			DIGITS$/;"	e	enum:FSM::special
+DOT	include/fsm.h	/^			DOT,$/;"	e	enum:FSM::special
+EPSILON	include/fsm.h	/^			EPSILON,$/;"	e	enum:FSM::special
+FSM	include/fsm.h	/^class FSM$/;"	c
+FSM	src/fsm.cpp	/^FSM::FSM ()$/;"	f	class:FSM
+FSM	src/fsm.cpp	/^FSM::FSM (const FSM& fsm)$/;"	f	class:FSM
+FSM	src/fsm.cpp	/^FSM::FSM (const char c, const special sym)$/;"	f	class:FSM
+FSM_INCLUDED	include/fsm.h	2;"	d
+LB	src/regex_parser.cpp	/^        LB,$/;"	e	enum:operation	file:
+MAX_ENUM	include/fsm.h	/^		static const int MAX_ENUM = DIGITS;$/;"	m	class:FSM
+NONE	include/fsm.h	/^			NONE = 0,		\/\/ No special symbol$/;"	e	enum:FSM::special
+OBJ	Makefile	/^OBJ = obj$/;"	m
+OBJECTS	Makefile	/^OBJECTS = $(OBJ)\/fsm.o $(OBJ)\/regex_parser.o $(OBJ)\/main.o$/;"	m
+OR	src/regex_parser.cpp	/^        OR,$/;"	e	enum:operation	file:
+RB	src/regex_parser.cpp	/^        RB$/;"	e	enum:operation	file:
+REGEX_PARSER_INCLUDED	include/regex_parser.h	2;"	d
+RegexParser	include/regex_parser.h	/^class RegexParser$/;"	c
+RegexParser	src/regex_parser.cpp	/^RegexParser::RegexParser (string regex)$/;"	f	class:RegexParser
+SMALL_LETTERS	include/fsm.h	/^			SMALL_LETTERS,$/;"	e	enum:FSM::special
+SRC	Makefile	/^SRC = src$/;"	m
+STAR	src/regex_parser.cpp	/^        STAR,$/;"	e	enum:operation	file:
+State	include/fsm.h	/^			State () { isFinalState = false; }$/;"	f	struct:FSM::State
+State	include/fsm.h	/^		struct State$/;"	s	class:FSM
+StateLink	include/fsm.h	/^			StateLink () { nextState = NULL; sym = NONE;}$/;"	f	struct:FSM::StateLink
+StateLink	include/fsm.h	/^			StateLink (State *nextState, char c)$/;"	f	struct:FSM::StateLink
+StateLink	include/fsm.h	/^			StateLink (State *nextState, special sym)$/;"	f	struct:FSM::StateLink
+StateLink	include/fsm.h	/^		struct StateLink$/;"	s	class:FSM
+accept	src/fsm.cpp	/^bool FSM::StateLink::accept (const char c) const$/;"	f	class:FSM::StateLink
+acceptState	include/fsm.h	/^		State *acceptState;$/;"	m	class:FSM
+c	include/fsm.h	/^			char c;			\/\/ The character for which the state link exists$/;"	m	struct:FSM::StateLink
+concatenate	src/fsm.cpp	/^void FSM::concatenate (FSM& rhs)$/;"	f	class:FSM
+createTransition	src/fsm.cpp	/^FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)$/;"	f	class:FSM::State
+epsilonClosure	src/fsm.cpp	/^set<FSM::State*> FSM::State::epsilonClosure ()$/;"	f	class:FSM::State
+epsilonClosure	src/fsm.cpp	/^set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)$/;"	f	class:FSM
+fsm	include/regex_parser.h	/^		FSM fsm;$/;"	m	class:RegexParser
+generateFSM	src/regex_parser.cpp	/^void RegexParser::generateFSM(FSM& fsm)$/;"	f	class:RegexParser
+infix2Postfix	src/regex_parser.cpp	/^static string infix2Postfix (string modifiedRegex)$/;"	f	file:
+inputRegexString	include/regex_parser.h	/^		string inputRegexString;	\/\/ The string by user$/;"	m	class:RegexParser
+insertConcatSymbol	src/regex_parser.cpp	/^static string insertConcatSymbol (string originalRegex)$/;"	f	file:
+insertOperator	src/regex_parser.cpp	/^static void insertOperator (int op, string &finalRegex)$/;"	f	file:
+internalRegex	src/regex_parser.cpp	/^string RegexParser::internalRegex (string inputRegex)$/;"	f	class:RegexParser
+isFinalState	include/fsm.h	/^			bool isFinalState;$/;"	m	struct:FSM::State
+isOperator	src/regex_parser.cpp	/^static int isOperator (char c)$/;"	f	file:
+links	include/fsm.h	/^			list <StateLink> links;	\/\/ List of links to other states.$/;"	m	struct:FSM::State
+main	src/main.cpp	/^int main (int argc, char *argv[])$/;"	f
+match	src/regex_parser.cpp	/^int RegexParser::match (string pattern)$/;"	f	class:RegexParser
+move	src/fsm.cpp	/^set<FSM::State*> FSM::State::move (char c)$/;"	f	class:FSM::State
+move	src/fsm.cpp	/^set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)$/;"	f	class:FSM
+nextState	include/fsm.h	/^			State *nextState;	\/\/ The state to which it leads$/;"	m	struct:FSM::StateLink
+opStack	src/regex_parser.cpp	/^static vector <char> opStack;$/;"	v	file:
+operation	src/regex_parser.cpp	/^enum operation          $/;"	g	file:
+operator +=	src/fsm.cpp	/^FSM * FSM::operator+= (FSM& fsm)$/;"	f	class:FSM
+operator <<	src/fsm.cpp	/^std::ostream& operator << (std::ostream& o, const FSM& fsm)$/;"	f
+operator |	src/fsm.cpp	/^FSM * FSM::operator | (FSM& rhs)$/;"	f	class:FSM
+operators	src/regex_parser.cpp	/^char operators[] = { '*', '@', '|', '(', ')' };$/;"	v
+regexString	include/regex_parser.h	/^		string regexString;		\/\/ Internal form.$/;"	m	class:RegexParser
+repeat	src/fsm.cpp	/^FSM * FSM::repeat ()$/;"	f	class:FSM
+simulate	src/fsm.cpp	/^int FSM::simulate (const string testString)$/;"	f	class:FSM
+special	include/fsm.h	/^		enum special $/;"	g	class:FSM
+startState	include/fsm.h	/^		State startState;$/;"	m	class:FSM
+sym	include/fsm.h	/^			special sym;		\/\/ enum special type indicating the special symbol being used like (dot) $/;"	m	struct:FSM::StateLink

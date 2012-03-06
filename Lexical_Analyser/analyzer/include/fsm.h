@@ -59,7 +59,9 @@ class FSM
 			}
 
 			bool accept (const char c) const;
+		//	~StateLink();
 		};
+
 
 		struct State
 		{
@@ -75,7 +77,7 @@ class FSM
 		FSM ();
 		FSM (const char c, const special sym = NONE);	// Construct FSM to match "c".
 		FSM (const FSM& fsm);		// (Shallow) Copy Constructor
-
+	//	~FSM();
 		FSM * operator += (FSM& rhs); 
 		void concatenate (FSM& fsm);	// Same as +=
 		FSM * repeat ();		// Modify the fsm to accept repetitions of accepted string. '*' operator.

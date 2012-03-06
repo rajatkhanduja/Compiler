@@ -6,6 +6,7 @@
  */
 
 #include <string>
+#include <fsm.h>
 
 using std::string;
 
@@ -13,16 +14,17 @@ class RegexParser
 {
 	public:
 		RegexParser (string regex);
-		bool match (string pattern);	// true if pattern matches regexString.
+		int match (string pattern);	// true if pattern matches regexString.
 		
 		
 	private:
 		string inputRegexString;	// The string by user
 		string regexString;		// Internal form.
-//		FSM fsm;
+		FSM fsm;
 		
 		// Private functions
 		string internalRegex (string inputRegex);
+		void generateFSM (FSM& fsm);
 };
 
 #endif // End of file

@@ -1,4 +1,5 @@
 #include <regex_parser.h>
+#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -45,7 +46,7 @@ static string insertConcatSymbol (string originalRegex)
 {
 	string finalRegex;
 
-	char prevCh = '*';
+	char prevCh = '@';
 	char concatSymbol = operators[CONCAT];
 	unsigned int i;
 	int op;
@@ -87,7 +88,7 @@ static string insertConcatSymbol (string originalRegex)
 		else if ( (op = isOperator (prevCh)) > -1 )
 		{
 			// Previous character was an operator.
-			if ( op == RB )
+			if ( op == RB || op == STAR )
 			{
 				finalRegex.push_back (concatSymbol);
 			}
@@ -148,7 +149,7 @@ static void insertOperator (int op, string &finalRegex)
 		default		: assert (0);
 		#else
 		default		: std::cerr<<"Unknown operator. Continuing\n";
-		#endif
+#endif
 	}
 }
 
@@ -204,6 +205,7 @@ RegexParser::RegexParser (string regex)
 	inputRegexString = regex;
 	regexString = internalRegex (regex);
 	std::cerr << regexString << std::endl;
+	generateFSM (fsm);
 }
 
 string RegexParser::internalRegex (string inputRegex)
@@ -212,4 +214,66 @@ string RegexParser::internalRegex (string inputRegex)
 	finalRegex = infix2Postfix (finalRegex);
 
 	return finalRegex;
+}
+
+
+/* This function uses the internalRegex expression to construct the FSM
+ * The internal representation is in Postfix. Using a stack, it can be 
+ * evaluated/converted.
+ */
+void RegexParser::generateFSM(FSM& fsm)
+{
+	vector<FSM*> stack;
+	int op;
+	string::iterator itr, itr_end;
+	FSM *fsm1, *fsm2;
+
+	for (itr = regexString.begin (), itr_end = regexString.end(); itr != itr_end; itr++)
+	{
+		if ( (op = isOperator (*itr)) == -1 )
+		{
+			fsm1 = new FSM(*itr);
+			stack.push_back ( fsm1 );
+		}
+		else
+		{
+			switch (op)
+			{
+				case STAR :
+					fsm1 = stack.back();
+					stack.pop_back();
+					fsm1= fsm1->repeat();
+					stack.push_back(fsm1);
+					break;
+				
+				case OR :
+					fsm2 = stack.back();
+					stack.pop_back();
+					fsm1 = stack.back();
+					stack.pop_back();
+					fsm1 = *fsm1 | *fsm2;
+					stack.push_back (fsm1);
+					break;
+				case CONCAT:
+					fsm2 = stack.back();
+					stack.pop_back();
+					fsm1 = stack.back();
+					stack.pop_back();
+					fsm1->concatenate(*fsm2);
+					stack.push_back (fsm1);
+					break;
+				default:
+					assert(0);
+
+			}
+		}
+	}
+
+	fsm = * (stack.back());
+}
+
+/* Function to use the regular expression to match with input String */
+int RegexParser::match (string pattern)
+{
+	return fsm.simulate (pattern);
 }

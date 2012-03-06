@@ -4,8 +4,6 @@
 #include <vector>
 #include <algorithm>
 
-// TODO :: CHANGE links from list to set (consider tradeoffs).
-
 using std::vector;
 FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)
 {
@@ -325,3 +323,21 @@ std::ostream& operator << (std::ostream& o, const FSM& fsm)
 
 	return o;
 }
+
+/*
+FSM::StateLink::~StateLink()
+{
+	
+}
+*/
+
+/* FSM Destructor. This should ensure that only the reference to the 
+ * states is deleted and the states themselves are left intact.
+ * This is required as destructors are called often when using vectors, 
+ * whenever it is popped out of the vector ( required in RegexParser).
+ */
+/*
+FSM::~FSM ()
+{
+	
+} */
