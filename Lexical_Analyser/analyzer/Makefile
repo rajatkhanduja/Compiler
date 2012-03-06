@@ -4,7 +4,7 @@ BIN = bin
 CC = g++
 DEFINES =
 CFLAGS = -Wall -Iinclude/
-OBJECTS = $(OBJ)/fsm.o $(OBJ)/regex_parser.o $(OBJ)/symbol_table.o $(OBJ)/main.o
+OBJECTS = $(OBJ)/fsm.o $(OBJ)/regex_parser.o $(OBJ)/symbol_table.o $(OBJ)/lexical_analyser.o $(OBJ)/main.o
 
 all: ${OBJECTS}
 	${CC} $^ -g -o ${BIN}/lexical_analyzer.out
