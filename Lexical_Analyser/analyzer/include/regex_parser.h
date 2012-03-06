@@ -16,7 +16,6 @@ class RegexParser
 		RegexParser (string regex);
 		int match (string pattern);	// true if pattern matches regexString.
 		
-		
 	private:
 		string inputRegexString;	// The string by user
 		string regexString;		// Internal form.
