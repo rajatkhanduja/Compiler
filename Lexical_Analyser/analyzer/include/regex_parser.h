@@ -1,28 +1,30 @@
-/* This file contains the declarations for parsing regular expressions 
- * Author : Rajat Khanduja
- *
- * Currently supported expressions :-
- *      - Simple strings ( all characters except |, \, -, (,),[,]) are accepted as such
- *      
+#ifndef REGEX_PARSER_INCLUDED
+#define REGEX_PARSER_INCLUDED
+
+/* Class to parse regular expressions and generate a NFA for the 
+ * expression. 
  */
 
-#ifndef REGEX_PARSER_H_INCLUDED
-#define REGEX_PARSER_H_INCLUDED
+#include <string>
+#include <fsm.h>
 
-#define MAX_REGEX_LEN 100
+using std::string;
 
-/* Supported REGEX operations with priority. Lower the 'value', higher the priority */
-enum operation		
+class RegexParser
 {
-	STAR,
-	CONCAT,
-	OR,
-	LB,
-	RB
-	// Keep LB-RB at the lowest priority
+	public:
+		RegexParser (string regex);
+		int match (string pattern);	// true if pattern matches regexString.
+		
+		
+	private:
+		string inputRegexString;	// The string by user
+		string regexString;		// Internal form.
+		FSM fsm;
+		
+		// Private functions
+		string internalRegex (string inputRegex);
+		void generateFSM (FSM& fsm);
 };
-
-int is_operator (char c);	// Function returns -1 if it is not an operator, otherwise returns 'enum operation' value for the operator
-void infix2postfix (char *original_regex, char *final_regex);	// Converts original_regex to postfix format.
 
 #endif // End of file
