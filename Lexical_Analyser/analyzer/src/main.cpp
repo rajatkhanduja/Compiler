@@ -1,7 +1,7 @@
 #include <iostream>
-#include <regex_parser.h>
+#include <RegexParser.h>
 #include <vector>
-#include <fsm.h>
+#include <FSM.h>
 
 using std::vector;
 

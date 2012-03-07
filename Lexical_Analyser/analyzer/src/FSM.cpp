@@ -1,4 +1,4 @@
-#include <fsm.h>
+#include <FSM.h>
 #include <cassert>
 #include <iostream>
 #include <vector>

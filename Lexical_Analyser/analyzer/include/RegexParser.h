@@ -6,7 +6,7 @@
  */
 
 #include <string>
-#include <fsm.h>
+#include <FSM.h>
 
 using std::string;
 
@@ -15,7 +15,6 @@ class RegexParser
 	public:
 		RegexParser (string regex);
 		int match (string pattern);	// true if pattern matches regexString.
-		
 		
 	private:
 		string inputRegexString;	// The string by user
