@@ -5,69 +5,92 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 BIN	Makefile	/^BIN = bin$/;"	m
-CAPITAL_LETTERS	include/fsm.h	/^			CAPITAL_LETTERS,$/;"	e	enum:FSM::special
+CAPITAL_LETTERS	include/FSM.h	/^			CAPITAL_LETTERS,$/;"	e	enum:FSM::special
 CC	Makefile	/^CC = g++$/;"	m
 CFLAGS	Makefile	/^CFLAGS = -Wall -Iinclude\/$/;"	m
-CONCAT	src/regex_parser.cpp	/^        CONCAT,$/;"	e	enum:operation	file:
+CONCAT	src/RegexParser.cpp	/^        CONCAT,$/;"	e	enum:operation	file:
 DEFINES	Makefile	/^DEFINES =$/;"	m
-DIGITS	include/fsm.h	/^			DIGITS$/;"	e	enum:FSM::special
-DOT	include/fsm.h	/^			DOT,$/;"	e	enum:FSM::special
-EPSILON	include/fsm.h	/^			EPSILON,$/;"	e	enum:FSM::special
-FSM	include/fsm.h	/^class FSM$/;"	c
-FSM	src/fsm.cpp	/^FSM::FSM ()$/;"	f	class:FSM
-FSM	src/fsm.cpp	/^FSM::FSM (const FSM& fsm)$/;"	f	class:FSM
-FSM	src/fsm.cpp	/^FSM::FSM (const char c, const special sym)$/;"	f	class:FSM
-FSM_INCLUDED	include/fsm.h	2;"	d
-LB	src/regex_parser.cpp	/^        LB,$/;"	e	enum:operation	file:
-MAX_ENUM	include/fsm.h	/^		static const int MAX_ENUM = DIGITS;$/;"	m	class:FSM
-NONE	include/fsm.h	/^			NONE = 0,		\/\/ No special symbol$/;"	e	enum:FSM::special
+DIGITS	include/FSM.h	/^			DIGITS$/;"	e	enum:FSM::special
+DOT	include/FSM.h	/^			DOT,$/;"	e	enum:FSM::special
+EPSILON	include/FSM.h	/^			EPSILON,$/;"	e	enum:FSM::special
+FSM	include/FSM.h	/^class FSM$/;"	c
+FSM	src/FSM.cpp	/^FSM::FSM ()$/;"	f	class:FSM
+FSM	src/FSM.cpp	/^FSM::FSM (const FSM& fsm)$/;"	f	class:FSM
+FSM	src/FSM.cpp	/^FSM::FSM (const char c, const special sym)$/;"	f	class:FSM
+FSM_INCLUDED	include/FSM.h	2;"	d
+LB	src/RegexParser.cpp	/^        LB,$/;"	e	enum:operation	file:
+LEXICAL_ANALYSER_INCLUDED	include/LexicalAnalyser.h	3;"	d
+LexicalAnalyser	include/LexicalAnalyser.h	/^class LexicalAnalyser$/;"	c
+MAX_ENUM	include/FSM.h	/^		static const int MAX_ENUM = DIGITS;$/;"	m	class:FSM
+NONE	include/FSM.h	/^			NONE = 0,		\/\/ No special symbol$/;"	e	enum:FSM::special
 OBJ	Makefile	/^OBJ = obj$/;"	m
-OBJECTS	Makefile	/^OBJECTS = $(OBJ)\/fsm.o $(OBJ)\/regex_parser.o $(OBJ)\/main.o$/;"	m
-OR	src/regex_parser.cpp	/^        OR,$/;"	e	enum:operation	file:
-RB	src/regex_parser.cpp	/^        RB$/;"	e	enum:operation	file:
-REGEX_PARSER_INCLUDED	include/regex_parser.h	2;"	d
-RegexParser	include/regex_parser.h	/^class RegexParser$/;"	c
-RegexParser	src/regex_parser.cpp	/^RegexParser::RegexParser (string regex)$/;"	f	class:RegexParser
-SMALL_LETTERS	include/fsm.h	/^			SMALL_LETTERS,$/;"	e	enum:FSM::special
+OBJECTS	Makefile	/^OBJECTS = $(OBJ)\/FSM.o $(OBJ)\/RegexParser.o $(OBJ)\/SymbolTable.o $(OBJ)\/LexicalAnalyser.o $(OBJ)\/main.o$/;"	m
+OR	src/RegexParser.cpp	/^        OR,$/;"	e	enum:operation	file:
+Position	include/SymbolTable.h	/^		struct Position$/;"	s	class:SymbolTableElement
+RB	src/RegexParser.cpp	/^        RB$/;"	e	enum:operation	file:
+REGEX_PARSER_INCLUDED	include/RegexParser.h	2;"	d
+RegexParser	include/RegexParser.h	/^class RegexParser$/;"	c
+RegexParser	src/RegexParser.cpp	/^RegexParser::RegexParser (string regex)$/;"	f	class:RegexParser
+SMALL_LETTERS	include/FSM.h	/^			SMALL_LETTERS,$/;"	e	enum:FSM::special
 SRC	Makefile	/^SRC = src$/;"	m
-STAR	src/regex_parser.cpp	/^        STAR,$/;"	e	enum:operation	file:
-State	include/fsm.h	/^			State () { isFinalState = false; }$/;"	f	struct:FSM::State
-State	include/fsm.h	/^		struct State$/;"	s	class:FSM
-StateLink	include/fsm.h	/^			StateLink () { nextState = NULL; sym = NONE;}$/;"	f	struct:FSM::StateLink
-StateLink	include/fsm.h	/^			StateLink (State *nextState, char c)$/;"	f	struct:FSM::StateLink
-StateLink	include/fsm.h	/^			StateLink (State *nextState, special sym)$/;"	f	struct:FSM::StateLink
-StateLink	include/fsm.h	/^		struct StateLink$/;"	s	class:FSM
-accept	src/fsm.cpp	/^bool FSM::StateLink::accept (const char c) const$/;"	f	class:FSM::StateLink
-acceptState	include/fsm.h	/^		State *acceptState;$/;"	m	class:FSM
-c	include/fsm.h	/^			char c;			\/\/ The character for which the state link exists$/;"	m	struct:FSM::StateLink
-concatenate	src/fsm.cpp	/^void FSM::concatenate (FSM& rhs)$/;"	f	class:FSM
-createTransition	src/fsm.cpp	/^FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)$/;"	f	class:FSM::State
-epsilonClosure	src/fsm.cpp	/^set<FSM::State*> FSM::State::epsilonClosure ()$/;"	f	class:FSM::State
-epsilonClosure	src/fsm.cpp	/^set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)$/;"	f	class:FSM
-fsm	include/regex_parser.h	/^		FSM fsm;$/;"	m	class:RegexParser
-generateFSM	src/regex_parser.cpp	/^void RegexParser::generateFSM(FSM& fsm)$/;"	f	class:RegexParser
-infix2Postfix	src/regex_parser.cpp	/^static string infix2Postfix (string modifiedRegex)$/;"	f	file:
-inputRegexString	include/regex_parser.h	/^		string inputRegexString;	\/\/ The string by user$/;"	m	class:RegexParser
-insertConcatSymbol	src/regex_parser.cpp	/^static string insertConcatSymbol (string originalRegex)$/;"	f	file:
-insertOperator	src/regex_parser.cpp	/^static void insertOperator (int op, string &finalRegex)$/;"	f	file:
-internalRegex	src/regex_parser.cpp	/^string RegexParser::internalRegex (string inputRegex)$/;"	f	class:RegexParser
-isFinalState	include/fsm.h	/^			bool isFinalState;$/;"	m	struct:FSM::State
-isOperator	src/regex_parser.cpp	/^static int isOperator (char c)$/;"	f	file:
-links	include/fsm.h	/^			list <StateLink> links;	\/\/ List of links to other states.$/;"	m	struct:FSM::State
+STAR	src/RegexParser.cpp	/^        STAR,$/;"	e	enum:operation	file:
+SYMBOL_TABLE_INCLUDE	include/SymbolTable.h	3;"	d
+State	include/FSM.h	/^			State () { isFinalState = false; }$/;"	f	struct:FSM::State
+State	include/FSM.h	/^		struct State$/;"	s	class:FSM
+StateLink	include/FSM.h	/^			StateLink () { nextState = NULL; sym = NONE;}$/;"	f	struct:FSM::StateLink
+StateLink	include/FSM.h	/^			StateLink (State *nextState, char c)$/;"	f	struct:FSM::StateLink
+StateLink	include/FSM.h	/^			StateLink (State *nextState, special sym)$/;"	f	struct:FSM::StateLink
+StateLink	include/FSM.h	/^		struct StateLink$/;"	s	class:FSM
+SymbolTable	include/SymbolTable.h	/^class SymbolTable $/;"	c
+SymbolTableElement	include/SymbolTable.h	/^class SymbolTableElement$/;"	c
+SymbolTableElement	src/SymbolTable.cpp	/^SymbolTableElement::SymbolTableElement(string lexeme, string token, unsigned int row, unsigned int col)$/;"	f	class:SymbolTableElement
+accept	src/FSM.cpp	/^bool FSM::StateLink::accept (const char c) const$/;"	f	class:FSM::StateLink
+acceptState	include/FSM.h	/^		State *acceptState;$/;"	m	class:FSM
+addPosition	src/SymbolTable.cpp	/^void SymbolTableElement::addPosition (unsigned int row, unsigned int col)$/;"	f	class:SymbolTableElement
+addRule	src/LexicalAnalyser.cpp	/^void LexicalAnalyser::addRule (const string regex, const string token)$/;"	f	class:LexicalAnalyser
+c	include/FSM.h	/^			char c;			\/\/ The character for which the state link exists$/;"	m	struct:FSM::StateLink
+col	include/SymbolTable.h	/^			unsigned int col;$/;"	m	struct:SymbolTableElement::Position
+concatenate	src/FSM.cpp	/^void FSM::concatenate (FSM& rhs)$/;"	f	class:FSM
+createTransition	src/FSM.cpp	/^FSM::State * FSM::State::createTransition (char c, special sym, State *nextState)$/;"	f	class:FSM::State
+epsilonClosure	src/FSM.cpp	/^set<FSM::State*> FSM::State::epsilonClosure ()$/;"	f	class:FSM::State
+epsilonClosure	src/FSM.cpp	/^set<FSM::State*> FSM::epsilonClosure (const set<FSM::State*> &curStates)$/;"	f	class:FSM
+findLexeme	src/SymbolTable.cpp	/^SymbolTableElement * SymbolTable::findLexeme (const string lexeme)$/;"	f	class:SymbolTable
+fsm	include/RegexParser.h	/^		FSM fsm;$/;"	m	class:RegexParser
+generateFSM	src/RegexParser.cpp	/^void RegexParser::generateFSM(FSM& fsm)$/;"	f	class:RegexParser
+getLexeme	src/SymbolTable.cpp	/^string SymbolTableElement::getLexeme () const$/;"	f	class:SymbolTableElement
+getToken	src/SymbolTable.cpp	/^string SymbolTableElement::getToken () const$/;"	f	class:SymbolTableElement
+index	include/SymbolTable.h	/^		list<SymbolTableElement> index[26];	\/\/ Indices according to first character of the lexeme.$/;"	m	class:SymbolTable
+infix2Postfix	src/RegexParser.cpp	/^static string infix2Postfix (string modifiedRegex)$/;"	f	file:
+inputRegexString	include/RegexParser.h	/^		string inputRegexString;	\/\/ The string by user$/;"	m	class:RegexParser
+insert	src/SymbolTable.cpp	/^void SymbolTable::insert (const string lexeme, const string token, unsigned int row, unsigned int col)$/;"	f	class:SymbolTable
+insertConcatSymbol	src/RegexParser.cpp	/^static string insertConcatSymbol (string originalRegex)$/;"	f	file:
+insertOperator	src/RegexParser.cpp	/^static void insertOperator (int op, string &finalRegex)$/;"	f	file:
+internalRegex	src/RegexParser.cpp	/^string RegexParser::internalRegex (string inputRegex)$/;"	f	class:RegexParser
+isFinalState	include/FSM.h	/^			bool isFinalState;$/;"	m	struct:FSM::State
+isOperator	src/RegexParser.cpp	/^static int isOperator (char c)$/;"	f	file:
+lexeme	include/SymbolTable.h	/^		string lexeme;$/;"	m	class:SymbolTableElement
+lexicalRules	include/LexicalAnalyser.h	/^		vector <pair<RegexParser*, string> > lexicalRules;$/;"	m	class:LexicalAnalyser
+links	include/FSM.h	/^			list <StateLink> links;	\/\/ List of links to other states.$/;"	m	struct:FSM::State
 main	src/main.cpp	/^int main (int argc, char *argv[])$/;"	f
-match	src/regex_parser.cpp	/^int RegexParser::match (string pattern)$/;"	f	class:RegexParser
-move	src/fsm.cpp	/^set<FSM::State*> FSM::State::move (char c)$/;"	f	class:FSM::State
-move	src/fsm.cpp	/^set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)$/;"	f	class:FSM
-nextState	include/fsm.h	/^			State *nextState;	\/\/ The state to which it leads$/;"	m	struct:FSM::StateLink
-opStack	src/regex_parser.cpp	/^static vector <char> opStack;$/;"	v	file:
-operation	src/regex_parser.cpp	/^enum operation          $/;"	g	file:
-operator +=	src/fsm.cpp	/^FSM * FSM::operator+= (FSM& fsm)$/;"	f	class:FSM
-operator <<	src/fsm.cpp	/^std::ostream& operator << (std::ostream& o, const FSM& fsm)$/;"	f
-operator |	src/fsm.cpp	/^FSM * FSM::operator | (FSM& rhs)$/;"	f	class:FSM
-operators	src/regex_parser.cpp	/^char operators[] = { '*', '@', '|', '(', ')' };$/;"	v
-regexString	include/regex_parser.h	/^		string regexString;		\/\/ Internal form.$/;"	m	class:RegexParser
-repeat	src/fsm.cpp	/^FSM * FSM::repeat ()$/;"	f	class:FSM
-simulate	src/fsm.cpp	/^int FSM::simulate (const string testString)$/;"	f	class:FSM
-special	include/fsm.h	/^		enum special $/;"	g	class:FSM
-startState	include/fsm.h	/^		State startState;$/;"	m	class:FSM
-sym	include/fsm.h	/^			special sym;		\/\/ enum special type indicating the special symbol being used like (dot) $/;"	m	struct:FSM::StateLink
+match	src/RegexParser.cpp	/^int RegexParser::match (string pattern)$/;"	f	class:RegexParser
+move	src/FSM.cpp	/^set<FSM::State*> FSM::State::move (char c)$/;"	f	class:FSM::State
+move	src/FSM.cpp	/^set<FSM::State*> FSM::move (set <FSM::State*>& curStates, const char c)$/;"	f	class:FSM
+nextState	include/FSM.h	/^			State *nextState;	\/\/ The state to which it leads$/;"	m	struct:FSM::StateLink
+opStack	src/RegexParser.cpp	/^static vector <char> opStack;$/;"	v	file:
+operation	src/RegexParser.cpp	/^enum operation          $/;"	g	file:
+operator +=	src/FSM.cpp	/^FSM * FSM::operator+= (FSM& fsm)$/;"	f	class:FSM
+operator <<	src/FSM.cpp	/^std::ostream& operator << (std::ostream& o, const FSM& fsm)$/;"	f
+operator |	src/FSM.cpp	/^FSM * FSM::operator | (FSM& rhs)$/;"	f	class:FSM
+operators	src/RegexParser.cpp	/^char operators[] = { '*', '@', '|', '(', ')' };$/;"	v
+positions	include/SymbolTable.h	/^		list<Position> positions;$/;"	m	class:SymbolTableElement
+regexString	include/RegexParser.h	/^		string regexString;		\/\/ Internal form.$/;"	m	class:RegexParser
+repeat	src/FSM.cpp	/^FSM * FSM::repeat ()$/;"	f	class:FSM
+row	include/SymbolTable.h	/^			unsigned int row;$/;"	m	struct:SymbolTableElement::Position
+simulate	src/FSM.cpp	/^int FSM::simulate (const string testString)$/;"	f	class:FSM
+special	include/FSM.h	/^		enum special $/;"	g	class:FSM
+startState	include/FSM.h	/^		State startState;$/;"	m	class:FSM
+sym	include/FSM.h	/^			special sym;		\/\/ enum special type indicating the special symbol being used like (dot) $/;"	m	struct:FSM::StateLink
+symTable	include/LexicalAnalyser.h	/^		SymbolTable symTable;$/;"	m	class:LexicalAnalyser
+tableIndex	src/SymbolTable.cpp	/^static inline unsigned int tableIndex (const string& lexeme)$/;"	f	file:
+token	include/SymbolTable.h	/^		string token;$/;"	m	class:SymbolTableElement
+tokenize	src/LexicalAnalyser.cpp	/^string LexicalAnalyser::tokenize (const string lexeme)$/;"	f	class:LexicalAnalyser
