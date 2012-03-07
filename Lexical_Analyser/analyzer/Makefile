@@ -16,3 +16,6 @@ ${OBJ}/%.o : ${SRC}/%.cpp
 clean:
 	rm -f ${OBJ}/*.o
 	rm -f ${BIN}/*.out
+
+tags:
+	ctags -R *
