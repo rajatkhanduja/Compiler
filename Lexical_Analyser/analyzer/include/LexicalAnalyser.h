@@ -2,8 +2,8 @@
 #ifndef LEXICAL_ANALYSER_INCLUDED
 #define LEXICAL_ANALYSER_INCLUDED
 
-#include <regex_parser.h>
-#include <symbol_table.h>
+#include <RegexParser.h>
+#include <SymbolTable.h>
 #include <vector>
 #include <map>
 

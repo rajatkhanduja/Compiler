@@ -1,6 +1,6 @@
 /* This file defines the functions for Lexical Analyser class */
 
-#include <lexical_analyser.h>
+#include <LexicalAnalyser.h>
 
 void LexicalAnalyser::addRule (const string regex, const string token)
 {

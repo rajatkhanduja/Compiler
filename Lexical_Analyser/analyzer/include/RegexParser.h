@@ -6,7 +6,7 @@
  */
 
 #include <string>
-#include <fsm.h>
+#include <FSM.h>
 
 using std::string;
 

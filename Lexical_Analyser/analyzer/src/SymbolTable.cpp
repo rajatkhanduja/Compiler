@@ -1,4 +1,4 @@
-#include <symbol_table.h>
+#include <SymbolTable.h>
 #include <cctype>
 
 SymbolTableElement::SymbolTableElement(string lexeme, string token, unsigned int row, unsigned int col)
