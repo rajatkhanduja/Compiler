@@ -4,7 +4,6 @@ using namespace std;
 Grammar::Grammar()
 {
 	Rule* r = new Rule();
-	rules.push_back(*r);
 }
 
 Grammar::Grammar(vector<Rule> r)
@@ -20,7 +19,8 @@ void Grammar::GrammarAddRule(Rule r)
 
 void Grammar::GrammarRemoveRule(int i)
 {
-	this->rules.erase(this->rules.begin() + i);
+	if(i < GrammarNRules())
+		this->rules.erase(this->rules.begin() + i);
 }
 
 void Grammar::GrammarRemoveRule(Rule r)
@@ -36,6 +36,19 @@ int Grammar::GrammarFindRule(Rule r)
 		if(this->rules[i] == r)
 			return i;
 	return -1;
+}
+
+int Grammar::GrammarFindRule(std::string head)
+{
+	for(int i = 0; i< this->GrammarNRules(); i++)
+		if(this->rules[i].RuleHead() == head)
+			return i;
+	return -1;
+}
+
+Rule Grammar::GrammarRule(int i)
+{
+	return this->rules[i];
 }
 
 int Grammar::GrammarNRules()

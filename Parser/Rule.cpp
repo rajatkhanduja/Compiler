@@ -4,13 +4,14 @@ using namespace std;
 Rule::Rule()
 {
 	head = "";
+	vector<std::string> tail;
 	tail.push_back("");
+	tails.push_back(tail);
 }
 
-Rule::Rule(const string h, vector<string> t)
+Rule::Rule(const string h)
 {
 	head = h;
-	tail = t;
 }
 
 std::string Rule::RuleHead()
@@ -18,40 +19,46 @@ std::string Rule::RuleHead()
 	return this->head;
 }
 
-vector<std::string> Rule::RuleTail()
+vector<std::string> Rule::RuleTail(int i)
 {
-	return this->tail;
+	return this->tails[i];
 }
 
-void Rule::RuleAddTail(std::string t)
+vector<vector<std::string> > Rule::RuleTails()
+{
+	return this->tails;
+}
+
+void Rule::RuleAddTail(vector<std::string> t)
 {
 	if(this->RuleFindTail(t) < 0)
-		this->tail.push_back(t);
+		this->tails.push_back(t);
 }
 
 void Rule::RuleRemoveTail(int i)
 {
-	this->tail.erase(this->tail.begin() + i);
+	if(i < this->RuleNTails())
+		this->tails.erase(this->tails.begin() + i);
 }
 
-void Rule::RuleRemoveTail(std::string s)
+void Rule::RuleRemoveTail(vector<std::string> v)
 {
 	int i;
-	if((i = this->RuleFindTail(s)) > 0)
+	if((i = this->RuleFindTail(v)) > 0)
 		this->RuleRemoveTail(i);
 }
 
-int Rule::RuleFindTail(const std::string t)
+int Rule::RuleFindTail(vector<std::string> t)
 {
 	for(int i = 0; i < this->RuleNTails(); i++)
-		if(this->tail[i] == t)
+		if(equals(this->tails[i], t))
 			return i;
 	return -1;
 }
 
 int Rule::RuleNTails()
 {
-	return this->tail.size();
+	return this->tails.size();
 }
 
 void Rule::RuleOutput()
@@ -61,11 +68,28 @@ void Rule::RuleOutput()
 		cout<<"<empty or invalid rule>"<<endl;
 		return;
 	}
-	cout<<"Rule:\t"<<this->head<<" -> "<<this->tail[0];
-	int i = 1;
-	while(i < this->RuleNTails())
-		cout<<" | "<<tail[i++];
-	cout<<std::endl;
+	cout<<"Rule:\t"<<this->head<<" -> ";
+	for(int i = 0; i < this->RuleNTails(); i++)
+	{
+		for(int j = 0; j < this->tails[i].size(); j++)
+			cout<<tails[i][j];
+		if(i == this->RuleNTails() - 1)
+			cout<<"\n";
+		else
+			cout<<" | ";
+	}
+}
+
+bool Rule::equals(vector<std::string> a, vector<std::string> b)
+{
+	int l;
+	if((l == a.size()) != b.size())
+		return false;
+	else
+		for(int i = 0; i < l; i++)
+			if(a[i] != b[i])
+				return false;
+	return true;
 }
 
 bool Rule::operator==(Rule rhs)
@@ -74,7 +98,7 @@ bool Rule::operator==(Rule rhs)
 	if(this->head == rhs.head && (l = this->RuleNTails()) == rhs.RuleNTails())
 	{
 		for(int i = 0; i < l; i++)
-			if(this->tail[i] != rhs.tail[i])
+			if(!equals(this->tails[i], rhs.tails[i]))
 				return false;
 		return true;
 	}

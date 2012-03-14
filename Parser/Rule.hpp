@@ -16,18 +16,20 @@ class Rule
 {
 	private:
 		std::string head;
-		vector<std::string> tail;
+		vector<vector<std::string> > tails;
 	
 	public:
 		Rule();
-		Rule(const std::string, vector<std::string>);
+		Rule(const std::string);
 		std::string RuleHead();
-		vector<std::string> RuleTail();
-		void RuleAddTail(std::string);
-		void RuleRemoveTail(std::string);
+		vector<std::string> RuleTail(int);
+		vector<vector<std::string> > RuleTails();
+		void RuleAddTail(vector<std::string>);
+		void RuleRemoveTail(vector<std::string>);
 		void RuleRemoveTail(int);
-		int RuleFindTail(const std::string);
+		int RuleFindTail(vector<std::string>);
 		int RuleNTails();
 		void RuleOutput();
+		bool equals(vector<std::string>, vector<std::string>);
 		bool operator==(Rule);
 };

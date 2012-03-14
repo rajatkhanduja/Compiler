@@ -7,7 +7,7 @@ CFLAGS = -I./
 OBJECTS = ${OBJ}/Rule.opp ${OBJ}/Grammar.opp ${OBJ}/xtoLL1driver.opp
 
 all: ${OBJECTS}
-	${CC} $^ -g -o ${BIN}/xtoLL1drivier.outpp
+	${CC} $^ -g -o ${BIN}/xtoLL1driver.outpp
 
 ${OBJ}/%.opp : ${SRC}/%.cpp
 	${CC} -c -g ${DEFINES} ${CFLAGS} $< -o $@
