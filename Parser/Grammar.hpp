@@ -6,6 +6,10 @@ class Grammar
 {
 	private:
 		vector<Rule> rules;
+		/* Added by Bharat Khatri */
+		map<string, bool> isTerm;
+		string startSym;	// Start Symbol.
+		/* Added by Bharat Khatri */
 	
 	public:
 		Grammar();
@@ -14,6 +18,10 @@ class Grammar
 		void GrammarRemoveRule(int);
 		void GrammarRemoveRule(Rule);
 		int GrammarFindRule(Rule);
+		/* Added by Bharat Khatri */
+		vector<Rule> GrammarFindRule(string head);
+		vector<Rule> GrammarAllRules();
+		/* Added by Bharat Khatri */
 		int GrammarNRules();
 		void GrammarOutput();
 		bool operator==(Grammar*);
