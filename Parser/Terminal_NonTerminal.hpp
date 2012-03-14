@@ -1,4 +1,4 @@
-#include <commons.h>
+#include <commons.hpp>
 
 #define T	Terminal
 #define NT	NonTerminal

@@ -3,18 +3,18 @@
 static vector<std::string> Terminal;
 static vector<std::string> NonTerminal;
 
-static void add(vector<std::string> X, std::string x)
-{
-	if(find(X, x) < 0)
-		X.push_back(x);
-}
-
 static int find(vector<std::string> X, std::string x)
 {
 	for(int i = 0; i < X.size(); i++)
 		if(X[i] == x)
 			return i;
 	return -1;
+}
+
+static void add(vector<std::string> X, std::string x)
+{
+	if(find(X, x) < 0)
+		X.push_back(x);
 }
 
 static void remove(vector<std::string> X, int i)

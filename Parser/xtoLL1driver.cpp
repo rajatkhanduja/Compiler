@@ -1,4 +1,5 @@
 #include <commons.hpp>
+#include <Terminal_NonTerminal.hpp>
 #include <Grammar.hpp>
 using namespace std;
 

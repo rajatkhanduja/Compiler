@@ -4,7 +4,7 @@ BIN = .
 CC = g++
 DEFINES =
 CFLAGS = -I./
-OBJECTS = ${OBJ}/Rule.opp ${OBJ}/Grammar.opp ${OBJ}/xtoLL1driver.opp
+OBJECTS = ${OBJ}/Rule.opp ${OBJ}/Grammar.opp ${OBJ}/Terminal_NonTerminal.opp ${OBJ}/xtoLL1driver.opp
 
 all: ${OBJECTS}
 	${CC} $^ -g -o ${BIN}/xtoLL1driver.outpp
