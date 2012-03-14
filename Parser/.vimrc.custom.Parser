@@ -1,0 +1,15 @@
+"This is rb's custom .vimrc file. If you need to change something, better make your own!! :P
+set nu
+set ts=8
+set autoindent
+set noexpandtab
+
+e commons.hpp
+tabnew Rule.cpp
+vs Rule.hpp
+tabnew Grammar.cpp
+vs Grammar.hpp
+tabnew xtoLL1.cpp
+vs xtoLL1.hpp
+tabnew xtoLL1driver.cpp
+tabnew Makefile
