@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 /* File that declares the Lexical Analyser class and its functions */
 #ifndef LEXICAL_ANALYSER_INCLUDED
 #define LEXICAL_ANALYSER_INCLUDED
@@ -13,13 +14,13 @@ using std::pair;
 class LexicalAnalyser
 {
 	public:
-		LexicalAnalyser ();
+//		LexicalAnalyser ();
 
 		// Function to add a rule.
 		void addRule (const string regex, const string token);
 
 		// Function to return the SymbolTable
-		SymbolTable getSymbolTable () const;
+	//	SymbolTable getSymbolTable () const;
 
 		/* Tokenize an input string (lexeme)
 		 * This function uses the given rules and returns
@@ -29,12 +30,12 @@ class LexicalAnalyser
 		string tokenize (const string lexeme);
 
 	private:
-		vector <pair<RegexParser*, string> > lexicalRules;
 		SymbolTable symTable;
 
 		/* Vector is used instead of a map to allow the order of 
 		 * importance be decided by the order of insertion of the
 		 * rules. */
+		vector <pair<RegexParser*, string> > lexicalRules;
 };
 
 #endif	// End of file

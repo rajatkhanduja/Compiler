@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 /* This file declares the SymbolTable class and its functions */
 #ifndef SYMBOL_TABLE_INCLUDE
 #define SYMBOL_TABLE_INCLUDE

@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #include <SymbolTable.h>
 #include <cctype>
 

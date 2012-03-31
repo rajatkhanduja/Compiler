@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 /* This file defines the functions for Lexical Analyser class */
 
 #include <LexicalAnalyser.h>

@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #ifndef REGEX_PARSER_INCLUDED
 #define REGEX_PARSER_INCLUDED
 
