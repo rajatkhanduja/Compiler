@@ -10,7 +10,7 @@ void LexicalAnalyser::addRule (const string regex, const string token)
 	lexicalRules.push_back (make_pair(parser, token));
 }
 
-string LexicalAnalyser::tokenize (const string lexeme)
+string LexicalAnalyser::tokenize (const string& lexeme)
 {
 	vector <pair<RegexParser*, string> >::iterator itr, itr_end;
 
@@ -32,5 +32,8 @@ string LexicalAnalyser::tokenize (const string lexeme)
 	
 	}
 
-	return token;
+	if (!token.compare (""))
+		return lexeme;	
+	else
+		return token;
 }

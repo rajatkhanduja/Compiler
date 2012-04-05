@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #ifndef FSM_INCLUDED
 #define FSM_INCLUDED
 

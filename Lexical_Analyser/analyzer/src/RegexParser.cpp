@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #include <RegexParser.h>
 #include <cassert>
 #include <iostream>
@@ -63,7 +64,8 @@ static string insertConcatSymbol (string originalRegex)
 		if ( prevCh == '\\')
 		{
 			// Not operator but escaped character
-			finalRegex.push_back (concatSymbol);
+      if (i != 1 )    // The escaped character is not the first thing in the regex
+  			finalRegex.push_back (concatSymbol);
 			finalRegex.push_back ('\\');
 			finalRegex.push_back (originalRegex[i]);
 
@@ -103,7 +105,7 @@ static string insertConcatSymbol (string originalRegex)
 		prevCh = originalRegex[i];
 	}
 
-	std::cerr << finalRegex << std::endl;
+	std::cerr << "Final Regex : " << finalRegex << std::endl;
 	return (finalRegex);
 }
 
@@ -186,8 +188,6 @@ static string infix2Postfix (string modifiedRegex)
 		prevCh = ch;
 	}
 
-	operation op;
-
 	// Empty the stack
 	while (opStack.size () > 0)
 	{
@@ -225,15 +225,23 @@ void RegexParser::generateFSM(FSM& fsm)
 {
 	vector<FSM*> stack;
 	int op;
+	bool escaped;
 	string::iterator itr, itr_end;
 	FSM *fsm1, *fsm2;
 
-	for (itr = regexString.begin (), itr_end = regexString.end(); itr != itr_end; itr++)
+	for (itr = regexString.begin(), itr_end = regexString.end(); itr != itr_end; itr++)
 	{
-		if ( (op = isOperator (*itr)) == -1 )
+		if ( *itr == '\\' && !escaped )
+		{
+			escaped = true;
+			continue;
+		}
+
+		if (escaped || (op = isOperator (*itr)) == -1)
 		{
 			fsm1 = new FSM(*itr);
 			stack.push_back ( fsm1 );
+			escaped = false;
 		}
 		else
 		{

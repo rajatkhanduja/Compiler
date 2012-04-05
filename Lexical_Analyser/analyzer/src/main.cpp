@@ -8,18 +8,20 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <RegexParser.h>
 #include <vector>
 #include <FSM.h>
 #include <LexicalAnalyser.h>
 
-#define N_CMD_ARGS 2
+#define N_CMD_ARGS 3
 
 using std::ifstream;
+using std::vector;
+using std::istringstream;
 
 enum errorCodes { InsufficientArg = 1, InvalidArg };
 
-using std::vector;
 
 int main (int argc, char *argv[])
 {
@@ -28,7 +30,7 @@ int main (int argc, char *argv[])
 	// Check number of arguments
 	if (argc != N_CMD_ARGS)
 	{
-	return InsufficientArg;
+		return InsufficientArg;
 	}
 
 	ifstream rulesFile (argv[1]);
@@ -47,6 +49,23 @@ int main (int argc, char *argv[])
 		if ( rulesFile.eof())
 			break;
   	}
+
+	string lexeme, line;
+
+	while (true)
+	{
+		getline (inputFile, line);
+		istringstream lexemeStream (line);
+//		std::cout << line << std::endl;
+		while (lexemeStream >> lexeme)
+		{
+			std::cout << lexer.tokenize (lexeme) << " ";
+		}
+		std::cout << std::endl;
+
+		if ( inputFile.eof())
+			break;
+	}
 
 	return 0;
 }

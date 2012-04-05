@@ -27,7 +27,7 @@ class LexicalAnalyser
 		 * the token. If there is no token, an empty string is
 		 * returned.
 		 */
-		string tokenize (const string lexeme);
+		string tokenize (const string& lexeme);
 
 	private:
 		SymbolTable symTable;
