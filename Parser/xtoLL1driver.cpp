@@ -1,9 +1,17 @@
 #include <commons.hpp>
-#include <Terminal_NonTerminal.hpp>
-#include <Grammar.hpp>
+#include <xtoLL1.hpp>
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
+{
+	assert(argc > 1);
+	Grammar G_scanned;
+	ScanGrammarFromFile(G_scanned, argv[1]);
+	G_scanned.GrammarOutput();
+	return 0;
+}
+
+int foo()
 {
 	Rule* r2 = new Rule();
 	r2->RuleOutput();

@@ -72,7 +72,7 @@ void Rule::RuleOutput()
 	for(int i = 0; i < this->RuleNTails(); i++)
 	{
 		for(int j = 0; j < this->tails[i].size(); j++)
-			cout<<tails[i][j];
+			cout<<"("<<tails[i][j]<<")";
 		if(i == this->RuleNTails() - 1)
 			cout<<"\n";
 		else

@@ -1,0 +1,11 @@
+# Convention:
+# each entity has to be separated by a space
+# the file should end in a blank line
+# any line beginning with "#" would be ignored
+#
+# Grammar:
+foo --> bar Baz lorem ipsum | SashaGrey | Natalie Portman
+TheWire --> drugs | sex | money | whores | detectives
+fuck --> anal oral pussy boob | doggy missionary cowboy | protected unprotected
+H --> T1 T2 | T3 T4 | T5 T6 T6
+
