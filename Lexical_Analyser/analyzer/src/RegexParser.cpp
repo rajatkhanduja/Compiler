@@ -12,12 +12,14 @@ enum operation
         STAR,
         CONCAT,
         OR,
+	EPSILON,
+	DOT,
         LB,
         RB
         // Keep RB at the lowest priority
 };
 
-char operators[] = { '*', '@', '|', '(', ')' };
+char operators[] = { '*', '@', '|', '^', '.', '(', ')' };
 
 
 static vector <char> opStack;
@@ -50,7 +52,7 @@ static string insertConcatSymbol (string originalRegex)
 	char prevCh = '@';
 	char concatSymbol = operators[CONCAT];
 	unsigned int i;
-	int op;
+	int op, prevOp;
 
 	for ( i = 0; i < originalRegex.length(); i++)
 	{
@@ -79,7 +81,8 @@ static string insertConcatSymbol (string originalRegex)
 			
 			if ( op == LB)
 			{
-				if ( isOperator (prevCh ) == -1)
+				prevOp = isOperator (prevCh );
+				if ( prevOp == -1 || prevOp == RB )
 				{
 					finalRegex.push_back (concatSymbol);
 				}
@@ -146,6 +149,7 @@ static void insertOperator (int op, string &finalRegex)
 	{
 		case CONCAT	: opStack.push_back(operators[CONCAT]); break;
 		case OR		: opStack.push_back(operators[OR])    ; break;
+		case EPSILON	: opStack.push_back(operators[EPSILON]); break;
 
 		#ifdef DEBUG_MODE
 		default		: assert (0);
@@ -170,7 +174,7 @@ static string infix2Postfix (string modifiedRegex)
 	{
 		ch = modifiedRegex[i];
 
-		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\')
+		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\' && operatorVal != EPSILON)
 		{
 			insertOperator ( operatorVal, finalRegex);
 		}
@@ -231,6 +235,7 @@ void RegexParser::generateFSM(FSM& fsm)
 
 	for (itr = regexString.begin(), itr_end = regexString.end(); itr != itr_end; itr++)
 	{
+		std::cerr << *itr;
 		if ( *itr == '\\' && !escaped )
 		{
 			escaped = true;
@@ -268,6 +273,16 @@ void RegexParser::generateFSM(FSM& fsm)
 					fsm1 = stack.back();
 					stack.pop_back();
 					fsm1->concatenate(*fsm2);
+					stack.push_back (fsm1);
+					break;
+				case EPSILON:
+					std::cerr << "IN EPS\n";
+					fsm1 = new FSM (*itr, FSM::EPSILON);
+					stack.push_back (fsm1);
+					break;
+				case DOT:
+					std::cerr << "IN DOT\n";
+					fsm1 = new FSM (*itr, FSM::DOT);
 					stack.push_back (fsm1);
 					break;
 				default:
