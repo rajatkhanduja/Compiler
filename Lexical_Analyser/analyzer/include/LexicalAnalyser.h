@@ -24,6 +24,10 @@ class LexicalAnalyser
 				       const string& token, 
 				       const int& line, const int& col);
 
+		// Function to get the positions of a symbol in symbol table
+		list <SymbolTableElement::Position> 
+		getPositions (const string& lexeme);
+
 		// Function to return the SymbolTable
 	//	SymbolTable getSymbolTable () const;
 

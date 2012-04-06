@@ -38,6 +38,12 @@ string LexicalAnalyser::tokenize (const string& lexeme)
 		return token;
 }
 
+list <SymbolTableElement::Position> 
+LexicalAnalyser::getPositions (const string& lexeme)
+{
+	return symTable.getPositions (lexeme);
+}
+
 void LexicalAnalyser::addToSymbolTable (const string& lexeme, const string& token, const int& line, const int& col)
 {
 	symTable.insert (lexeme, token, line, col);

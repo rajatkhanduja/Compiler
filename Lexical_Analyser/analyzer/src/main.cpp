@@ -68,7 +68,8 @@ int main (int argc, char *argv[])
 				// Put IDs into symbol table
 				col = lexemeStream.tellg ();
 				col -= lexeme.length () - 1;
-				lexer.addToSymbolTable (lexeme, token, row, col);
+				lexer.addToSymbolTable (lexeme, token, row,
+							col);
 			}
 		}
 		std::cout << std::endl;
