@@ -42,7 +42,7 @@ int main (int argc, char *argv[])
 		rulesFile >> regex;
 		rulesFile >> token;
 
-		std::cerr << regex << " " << token << std::endl;
+//		std::cerr << regex << " " << token << std::endl;
 
 		lexer.addRule (regex, token);
     
