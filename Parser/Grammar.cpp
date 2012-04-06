@@ -64,6 +64,7 @@ void Grammar::GrammarOutput()
 		cout<<"\t";
 		this->rules[i].RuleOutput();
 	}
+	cout<<endl;
 }
 
 bool Grammar::operator==(Grammar* rhs)

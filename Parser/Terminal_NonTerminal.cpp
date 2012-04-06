@@ -1,9 +1,9 @@
 #include <Terminal_NonTerminal.hpp>
 
-static vector<std::string> Terminal;
-static vector<std::string> NonTerminal;
+static vector<std::string> Terminals;
+static vector<std::string> NonTerminals;
 
-static int find(vector<std::string> X, std::string x)
+static int find(vector<std::string>& X, std::string x)
 {
 	for(int i = 0; i < X.size(); i++)
 		if(X[i] == x)
@@ -11,36 +11,36 @@ static int find(vector<std::string> X, std::string x)
 	return -1;
 }
 
-static void add(vector<std::string> X, std::string x)
+static void add(vector<std::string>& X, std::string x)
 {
 	if(find(X, x) < 0)
 		X.push_back(x);
 }
 
-static void remove(vector<std::string> X, int i)
+static void remove(vector<std::string>& X, int i)
 {
 	if(i < X.size())
 		X.erase(X.begin() + i);
 }
 
-static void remove(vector<std::string> X, std::string x)
+static void remove(vector<std::string>& X, std::string x)
 {
 	int i;
 	if((i = find(X, x)) >= 0)
 		remove(X, i);
 }
 
-static bool is(vector<std::string> X, std::string x)
+static bool is(vector<std::string>& X, std::string x)
 {
 	if(find(X, x) > -1)
 		return true;
 	return false;
 }
 
-static void output(vector<std::string> X)
+static void output(vector<std::string>& X)
 {
 	for(int i = 0; i < X.size(); i++)
-		cout<<X[i]<<" ";
+		cout<<"\t"<<X[i]<<endl;
 	cout<<endl;
 }
 

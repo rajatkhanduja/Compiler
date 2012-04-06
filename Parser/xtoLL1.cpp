@@ -55,9 +55,74 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 		}
 	}while(f.good());
 	f.close();
-	
-	outputTerminals();
-	cout<<endl;
-	outputNonTerminals();
-	cout<<endl;
+}
+
+static bool HasCycles(Grammar& g, Rule r)
+{
+	static std::string S = r.RuleHead();
+	std::string T;
+	int Ti;
+	for(int i = 0; i < r.RuleNTails(); i++)
+		if(r.RuleTail(i).size() == 1)
+		{
+			T = r.RuleTail(i)[0];
+			if(!S.compare(T))
+				return true;
+			else if((Ti = g.GrammarFindRule(T)) >= 0)
+				return HasCycles(g, g.GrammarRule(Ti));
+		}
+	return false;
+}
+
+bool HasCycles(Grammar& g)	// wrapper for the above function
+{
+	for(int i = 0; i < g.GrammarNRules(); i++)
+		if(HasCycles(g, g.GrammarRule(i)))
+			return true;
+	return false;
+}
+
+bool HasNonTerminatingRules(Grammar& g)
+{
+	Rule r;
+	vector<std::string> tail;
+	int tail_nonterminals;
+	bool headmatches;
+	std::string head;
+	for(int i = 0; i < g.GrammarNRules(); i++)
+	{
+		r = g.GrammarRule(i);
+		head = r.RuleHead();
+		for(int j = 0; j < r.RuleNTails(); j++)
+		{
+			tail = r.RuleTail(j);
+			tail_nonterminals = 0;
+			headmatches = false;
+			for(int k = 0; k < tail.size(); k++)
+			{
+				if(!head.compare(tail[k]))
+					headmatches = true;
+				if(isNonTerminal(tail[k]))
+					tail_nonterminals++;
+			}
+			if(tail_nonterminals == 1 && headmatches)
+				return true;
+		}
+	}
+	return false;
+}
+
+void EliminateEpsilonProductions(Grammar& g)
+{
+	return;
+}
+
+void EliminateLeftRecursion(Grammar& g)
+{
+	return;
+}
+
+void LeftFactorize(Grammar& g)
+{
+	return;
 }

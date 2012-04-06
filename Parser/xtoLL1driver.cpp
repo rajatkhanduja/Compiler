@@ -6,14 +6,19 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	assert(argc > 1);
+	
 	Grammar G_scanned;
 	ScanGrammarFromFile(G_scanned, argv[1]);
+	
 	G_scanned.GrammarOutput();
-	cout<<endl;
 	outputTerminals();
-	cout<<endl;
 	outputNonTerminals();
-	cout<<endl;
+
+	if(HasCycles(G_scanned))
+		cout<<"The grammar has cycles."<<endl;
+	if(HasNonTerminatingRules(G_scanned))
+		cout<<"The grammar has non-terminating rules."<<endl;
+	
 	return 0;
 }
 

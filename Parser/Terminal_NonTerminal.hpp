@@ -1,7 +1,7 @@
 #include <commons.hpp>
 
-#define T	Terminal
-#define NT	NonTerminal
+#define T	Terminals
+#define NT	NonTerminals
 
 void addTerminal(std::string);
 void removeTerminal(std::string);

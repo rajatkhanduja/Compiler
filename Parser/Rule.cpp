@@ -68,7 +68,7 @@ void Rule::RuleOutput()
 		cout<<"<empty or invalid rule>"<<endl;
 		return;
 	}
-	cout<<"Rule:\t"<<this->head<<" -> ";
+	cout<<"Rule:\t("<<this->head<<") --> ";
 	for(int i = 0; i < this->RuleNTails(); i++)
 	{
 		for(int j = 0; j < this->tails[i].size(); j++)
