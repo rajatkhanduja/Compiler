@@ -1,5 +1,6 @@
 #include <commons.hpp>
 #include <xtoLL1.hpp>
+#include <Terminal_NonTerminal.hpp>
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -8,6 +9,11 @@ int main(int argc, char* argv[])
 	Grammar G_scanned;
 	ScanGrammarFromFile(G_scanned, argv[1]);
 	G_scanned.GrammarOutput();
+	cout<<endl;
+	outputTerminals();
+	cout<<endl;
+	outputNonTerminals();
+	cout<<endl;
 	return 0;
 }
 

@@ -60,7 +60,10 @@ void Grammar::GrammarOutput()
 {
 	cout<<"Grammar contains:"<<endl;
 	for(int i = 0; i < this->GrammarNRules(); i++)
+	{
+		cout<<"\t";
 		this->rules[i].RuleOutput();
+	}
 }
 
 bool Grammar::operator==(Grammar* rhs)

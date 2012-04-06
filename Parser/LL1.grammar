@@ -1,11 +1,13 @@
-# Convention:
+# Conventions:
 # each entity has to be separated by a space
 # the file should end in a blank line
 # any line beginning with "#" would be ignored
+# all heads are treated as non-terminals, so better is to begin them with a capital letter
+# all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
 #
 # Grammar:
-foo --> bar Baz lorem ipsum | SashaGrey | Natalie Portman
+Foo --> bar Baz lorem ipsum | SashaGrey | Natalie Portman
 TheWire --> drugs | sex | money | whores | detectives
-fuck --> anal oral pussy boob | doggy missionary cowboy | protected unprotected
+Fuck --> anal oral pussy boob | doggy missionary cowboy | protected unprotected
 H --> T1 T2 | T3 T4 | T5 T6 T6
 

@@ -96,10 +96,12 @@ bool isNonTerminal(std::string nt)
 
 void outputTerminals()
 {
+	cout<<"Terminals:"<<endl;
 	output(T);
 }
 
 void outputNonTerminals()
 {
+	cout<<"Non-Terminals:"<<endl;
 	output(NT);
 }
