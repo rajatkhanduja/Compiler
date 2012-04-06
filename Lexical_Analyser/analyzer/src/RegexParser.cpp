@@ -108,7 +108,7 @@ static string insertConcatSymbol (string originalRegex)
 		prevCh = originalRegex[i];
 	}
 
-	std::cerr << "Final Regex : " << finalRegex << std::endl;
+//	std::cerr << "Final Regex : " << finalRegex << std::endl;
 	return (finalRegex);
 }
 
@@ -121,9 +121,9 @@ static void insertOperator (int op, string &finalRegex)
 		return;
 	}
 
-	if ( op == STAR )
+	if ( op == STAR || op == EPSILON || op == DOT)
 	{
-		finalRegex.push_back (operators[STAR]);
+		finalRegex.push_back (operators[op]);
 		return;
 	}
 
@@ -149,7 +149,6 @@ static void insertOperator (int op, string &finalRegex)
 	{
 		case CONCAT	: opStack.push_back(operators[CONCAT]); break;
 		case OR		: opStack.push_back(operators[OR])    ; break;
-		case EPSILON	: opStack.push_back(operators[EPSILON]); break;
 
 		#ifdef DEBUG_MODE
 		default		: assert (0);
@@ -208,7 +207,7 @@ RegexParser::RegexParser (string regex)
 {
 	inputRegexString = regex;
 	regexString = internalRegex (regex);
-	std::cerr << regexString << std::endl;
+	//std:cerr << regexString << std::endl;
 	generateFSM (fsm);
 }
 
@@ -235,7 +234,7 @@ void RegexParser::generateFSM(FSM& fsm)
 
 	for (itr = regexString.begin(), itr_end = regexString.end(); itr != itr_end; itr++)
 	{
-		std::cerr << *itr;
+		//std:cerr << *itr;
 		if ( *itr == '\\' && !escaped )
 		{
 			escaped = true;
@@ -276,12 +275,12 @@ void RegexParser::generateFSM(FSM& fsm)
 					stack.push_back (fsm1);
 					break;
 				case EPSILON:
-					std::cerr << "IN EPS\n";
+					//std:cerr << "IN EPS\n";
 					fsm1 = new FSM (*itr, FSM::EPSILON);
 					stack.push_back (fsm1);
 					break;
 				case DOT:
-					std::cerr << "IN DOT\n";
+					//std:cerr << "IN DOT\n";
 					fsm1 = new FSM (*itr, FSM::DOT);
 					stack.push_back (fsm1);
 					break;

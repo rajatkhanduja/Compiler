@@ -1,6 +1,7 @@
 int main ( void )
 {
   printf ( "A test program, \" if else while\n" ) ;
+  printf ( "test" );
   float a = 0.0 ;
   a = +5 ;
   char c_int = 'a' ;

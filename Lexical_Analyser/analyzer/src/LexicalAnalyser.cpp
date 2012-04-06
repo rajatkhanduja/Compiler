@@ -37,3 +37,9 @@ string LexicalAnalyser::tokenize (const string& lexeme)
 	else
 		return token;
 }
+
+void LexicalAnalyser::addToSymbolTable (const string& lexeme, const string& token, const int& line, const int& col)
+{
+	symTable.insert (lexeme, token, line, col);
+}
+

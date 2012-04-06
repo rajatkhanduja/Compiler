@@ -10,7 +10,6 @@ int	INT
 char	CHAR
 float	FLOAT
 \+\+ INC
-\; ;
 \/	DIV
 \* MUL
 \+	PLUS

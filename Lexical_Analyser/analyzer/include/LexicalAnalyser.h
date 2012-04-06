@@ -19,12 +19,17 @@ class LexicalAnalyser
 		// Function to add a rule.
 		void addRule (const string regex, const string token);
 
+		// Function to add a token and lexeme to symbol table
+		void addToSymbolTable (const string& lexeme,
+				       const string& token, 
+				       const int& line, const int& col);
+
 		// Function to return the SymbolTable
 	//	SymbolTable getSymbolTable () const;
 
 		/* Tokenize an input string (lexeme)
 		 * This function uses the given rules and returns
-		 * the token. If there is no token, an empty string is
+		 * the token. If there is no token, input string is
 		 * returned.
 		 */
 		string tokenize (const string& lexeme);

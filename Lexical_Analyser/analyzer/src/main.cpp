@@ -51,15 +51,25 @@ int main (int argc, char *argv[])
   	}
 
 	string lexeme, line;
+	unsigned int row = 0, col;
 
 	while (true)
 	{
 		getline (inputFile, line);
+		row++;
 		istringstream lexemeStream (line);
-//		std::cout << line << std::endl;
 		while (lexemeStream >> lexeme)
 		{
-			std::cout << lexer.tokenize (lexeme) << " ";
+			token = lexer.tokenize (lexeme);
+			std::cout << token << " ";
+
+			if ( !token.compare ("ID"))
+			{
+				// Put IDs into symbol table
+				col = lexemeStream.tellg ();
+				col -= lexeme.length () - 1;
+				lexer.addToSymbolTable (lexeme, token, row, col);
+			}
 		}
 		std::cout << std::endl;
 
