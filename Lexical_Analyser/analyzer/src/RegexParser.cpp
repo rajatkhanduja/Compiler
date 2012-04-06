@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #include <RegexParser.h>
 #include <cassert>
 #include <iostream>
@@ -11,12 +12,14 @@ enum operation
         STAR,
         CONCAT,
         OR,
+	EPSILON,
+	DOT,
         LB,
         RB
         // Keep RB at the lowest priority
 };
 
-char operators[] = { '*', '@', '|', '(', ')' };
+char operators[] = { '*', '@', '|', '^', '.', '(', ')' };
 
 
 static vector <char> opStack;
@@ -49,7 +52,7 @@ static string insertConcatSymbol (string originalRegex)
 	char prevCh = '@';
 	char concatSymbol = operators[CONCAT];
 	unsigned int i;
-	int op;
+	int op, prevOp;
 
 	for ( i = 0; i < originalRegex.length(); i++)
 	{
@@ -63,7 +66,8 @@ static string insertConcatSymbol (string originalRegex)
 		if ( prevCh == '\\')
 		{
 			// Not operator but escaped character
-			finalRegex.push_back (concatSymbol);
+      if (i != 1 )    // The escaped character is not the first thing in the regex
+  			finalRegex.push_back (concatSymbol);
 			finalRegex.push_back ('\\');
 			finalRegex.push_back (originalRegex[i]);
 
@@ -77,7 +81,8 @@ static string insertConcatSymbol (string originalRegex)
 			
 			if ( op == LB)
 			{
-				if ( isOperator (prevCh ) == -1)
+				prevOp = isOperator (prevCh );
+				if ( prevOp == -1 || prevOp == RB )
 				{
 					finalRegex.push_back (concatSymbol);
 				}
@@ -103,7 +108,7 @@ static string insertConcatSymbol (string originalRegex)
 		prevCh = originalRegex[i];
 	}
 
-	std::cerr << finalRegex << std::endl;
+//	std::cerr << "Final Regex : " << finalRegex << std::endl;
 	return (finalRegex);
 }
 
@@ -116,9 +121,9 @@ static void insertOperator (int op, string &finalRegex)
 		return;
 	}
 
-	if ( op == STAR )
+	if ( op == STAR || op == EPSILON || op == DOT)
 	{
-		finalRegex.push_back (operators[STAR]);
+		finalRegex.push_back (operators[op]);
 		return;
 	}
 
@@ -168,7 +173,7 @@ static string infix2Postfix (string modifiedRegex)
 	{
 		ch = modifiedRegex[i];
 
-		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\')
+		if ( (operatorVal = isOperator (ch)) != -1 && prevCh != '\\' && operatorVal != EPSILON)
 		{
 			insertOperator ( operatorVal, finalRegex);
 		}
@@ -186,8 +191,6 @@ static string infix2Postfix (string modifiedRegex)
 		prevCh = ch;
 	}
 
-	operation op;
-
 	// Empty the stack
 	while (opStack.size () > 0)
 	{
@@ -204,7 +207,7 @@ RegexParser::RegexParser (string regex)
 {
 	inputRegexString = regex;
 	regexString = internalRegex (regex);
-	std::cerr << regexString << std::endl;
+	//std:cerr << regexString << std::endl;
 	generateFSM (fsm);
 }
 
@@ -225,15 +228,24 @@ void RegexParser::generateFSM(FSM& fsm)
 {
 	vector<FSM*> stack;
 	int op;
+	bool escaped;
 	string::iterator itr, itr_end;
 	FSM *fsm1, *fsm2;
 
-	for (itr = regexString.begin (), itr_end = regexString.end(); itr != itr_end; itr++)
+	for (itr = regexString.begin(), itr_end = regexString.end(); itr != itr_end; itr++)
 	{
-		if ( (op = isOperator (*itr)) == -1 )
+		//std:cerr << *itr;
+		if ( *itr == '\\' && !escaped )
+		{
+			escaped = true;
+			continue;
+		}
+
+		if (escaped || (op = isOperator (*itr)) == -1)
 		{
 			fsm1 = new FSM(*itr);
 			stack.push_back ( fsm1 );
+			escaped = false;
 		}
 		else
 		{
@@ -260,6 +272,16 @@ void RegexParser::generateFSM(FSM& fsm)
 					fsm1 = stack.back();
 					stack.pop_back();
 					fsm1->concatenate(*fsm2);
+					stack.push_back (fsm1);
+					break;
+				case EPSILON:
+					//std:cerr << "IN EPS\n";
+					fsm1 = new FSM (*itr, FSM::EPSILON);
+					stack.push_back (fsm1);
+					break;
+				case DOT:
+					//std:cerr << "IN DOT\n";
+					fsm1 = new FSM (*itr, FSM::DOT);
 					stack.push_back (fsm1);
 					break;
 				default:

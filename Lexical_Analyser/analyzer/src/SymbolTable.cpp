@@ -1,14 +1,17 @@
+// vim:ts=8:noexpandtab
 #include <SymbolTable.h>
 #include <cctype>
 
-SymbolTableElement::SymbolTableElement(string lexeme, string token, unsigned int row, unsigned int col)
+SymbolTableElement::SymbolTableElement(const string& lexeme,
+	const string& token, const unsigned int& row, const unsigned int& col)
 {
 	this->lexeme = lexeme;
 	this->token  = token;
 	this->addPosition (row, col);
 }
 
-void SymbolTableElement::addPosition (unsigned int row, unsigned int col)
+void SymbolTableElement::addPosition (const unsigned int& row,
+				      const unsigned int& col)
 {
 	Position tmp_position;
 	tmp_position.row = row;
@@ -26,12 +29,17 @@ string SymbolTableElement::getLexeme () const
 	return this->lexeme;
 }
 
+list<SymbolTableElement::Position> SymbolTableElement::getPositions () const
+{
+	return this->positions;
+}
+
 static inline unsigned int tableIndex (const string& lexeme)
 {
 	return (tolower(lexeme[0] - 'a'));
 }
 
-SymbolTableElement * SymbolTable::findLexeme (const string lexeme)
+SymbolTableElement * SymbolTable::findLexeme (const string& lexeme)
 {
 	unsigned int n = tableIndex(lexeme);
 	list <SymbolTableElement>::iterator iter, iter_end;
@@ -47,7 +55,9 @@ SymbolTableElement * SymbolTable::findLexeme (const string lexeme)
 	return NULL;
 }
 
-void SymbolTable::insert (const string lexeme, const string token, unsigned int row, unsigned int col)
+void SymbolTable::insert (const string& lexeme, const string& token,
+			  const unsigned int& row, 
+			  const unsigned int& col)
 {
 	SymbolTableElement * element = findLexeme (lexeme);
 
@@ -59,4 +69,10 @@ void SymbolTable::insert (const string lexeme, const string token, unsigned int 
 	{
 		index[tableIndex(lexeme)].push_back (SymbolTableElement(lexeme, token, row, col));
 	}
+}
+
+list<SymbolTableElement::Position> 
+SymbolTable::getPositions (const string& lexeme)
+{
+	return (this->findLexeme(lexeme))->getPositions();
 }

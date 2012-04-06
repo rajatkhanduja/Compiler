@@ -1,3 +1,4 @@
+// vim:ts=8:noexpandtab
 #include <FSM.h>
 #include <cassert>
 #include <iostream>
