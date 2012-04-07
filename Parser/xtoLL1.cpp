@@ -57,27 +57,39 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 	f.close();
 }
 
-static bool HasCycles(Grammar& g, Rule r)
+static bool HasCycles(Grammar& g, Rule r, std::string rhead)
 {
-	static std::string S = r.RuleHead();
-	std::string T;
-	int Ti;
+	cerr<<"HasCycles():r = ";
+	r.RuleOutput();
+	cerr<<"HasCycles():rhead = "<<rhead<<endl;
+	std::string t;
+	int ti;
 	for(int i = 0; i < r.RuleNTails(); i++)
+	{
+		cerr<<"HasCycles():r.RuleTail("<<i<<").size() = "<<r.RuleTail(i).size()<<endl;
 		if(r.RuleTail(i).size() == 1)
 		{
-			T = r.RuleTail(i)[0];
-			if(!S.compare(T))
+			t = r.RuleTail(i)[0];
+			cerr<<"HasCycles():t = "<<t<<endl;
+			if(!rhead.compare(t))
+			{
+				cerr<<"HasCycles():returning true"<<endl;
 				return true;
-			else if((Ti = g.GrammarFindRule(T)) >= 0)
-				return HasCycles(g, g.GrammarRule(Ti));
+			}
+			else if((ti = g.GrammarFindRule(t)) >= 0)
+			{
+				cerr<<"HasCycles():recuring"<<endl;
+				return HasCycles(g, g.GrammarRule(ti), rhead);
+			}
 		}
+	}
 	return false;
 }
 
 bool HasCycles(Grammar& g)	// wrapper for the above function
 {
 	for(int i = 0; i < g.GrammarNRules(); i++)
-		if(HasCycles(g, g.GrammarRule(i)))
+		if(HasCycles(g, g.GrammarRule(i), g.GrammarRule(i).RuleHead()))
 			return true;
 	return false;
 }
