@@ -2,6 +2,7 @@
 #include "commons.hpp"
 
 
+
 class FirstSet
 {
 	private:
@@ -9,10 +10,13 @@ class FirstSet
 	public:
 		FirstSet();
 		vector<string> First(const string Gsym/* Any Grammar Symbol */, Grammar grammar);
-		FirstSetAddEntry(string key, vector<string > value);
-		
+		void FirstSetAddEntry(string key, vector<string> value);
+		map<string, vector<string>> GetFirstSet();	
 
 };
+
+
+vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart);
 
 class FollowSet
 {
@@ -20,7 +24,8 @@ class FollowSet
 		map<string, vector<string>> followSet;
 	public:
 		FollowSet();
-		vector<string> Follow(const string Gsym /* Any Grammar Symbol */, Grammar grammar);
-		FollowSetAddEntry(string key, vector<string> value);
+		vector<string> Follow(FirstSet firstSet, const string Gsym /* Any Grammar Symbol */, Grammar grammar);
+		void FollowSetAddEntry(string key, vector<string> value);
+		map<string, vector<string>> GetFollowSet();	
 
 };

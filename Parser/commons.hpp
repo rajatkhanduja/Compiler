@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 using namespace std;
 
 #endif
