@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 
 	if(HasCycles(G_scanned))
 		cout<<"The grammar has cycles."<<endl;
+	cout<<endl;
 	if(HasNonTerminatingRules(G_scanned))
 		cout<<"The grammar has non-terminating rules."<<endl;
 	

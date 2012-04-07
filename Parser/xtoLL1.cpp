@@ -91,10 +91,18 @@ bool HasNonTerminatingRules(Grammar& g)
 	for(int i = 0; i < g.GrammarNRules(); i++)
 	{
 		r = g.GrammarRule(i);
+		cerr<<"HasNonTerminatingRules():r = ";
+		r.RuleOutput();
 		head = r.RuleHead();
+		cerr<<"HasNonTerminatingRules():head = "<<head<<endl;
 		for(int j = 0; j < r.RuleNTails(); j++)
 		{
 			tail = r.RuleTail(j);
+			cerr<<"HasNonTerminatingRules():tail.size() = "<<tail.size()<<endl;
+			cerr<<"HasNonTerminatingRules():tail = ";
+			for(int k = 0; k < tail.size(); k++)
+				cerr<<tail[k]<<" ";
+			cerr<<endl;
 			tail_nonterminals = 0;
 			headmatches = false;
 			for(int k = 0; k < tail.size(); k++)
@@ -104,6 +112,8 @@ bool HasNonTerminatingRules(Grammar& g)
 				if(isNonTerminal(tail[k]))
 					tail_nonterminals++;
 			}
+			cerr<<"HasNonTerminatingRules():headmatches = "<<headmatches<<endl;
+			cerr<<"HasNonTerminatingRules():tail_nonterminals = "<<tail_nonterminals<<endl;
 			if(tail_nonterminals == 1 && headmatches)
 				return true;
 		}
