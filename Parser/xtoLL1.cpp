@@ -59,30 +59,17 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 
 static bool HasCycles(Grammar& g, Rule r, std::string rhead)
 {
-	cerr<<"HasCycles():r = ";
-	r.RuleOutput();
-	cerr<<"HasCycles():rhead = "<<rhead<<endl;
 	std::string t;
 	int ti;
 	for(int i = 0; i < r.RuleNTails(); i++)
-	{
-		cerr<<"HasCycles():r.RuleTail("<<i<<").size() = "<<r.RuleTail(i).size()<<endl;
 		if(r.RuleTail(i).size() == 1)
 		{
 			t = r.RuleTail(i)[0];
-			cerr<<"HasCycles():t = "<<t<<endl;
 			if(!rhead.compare(t))
-			{
-				cerr<<"HasCycles():returning true"<<endl;
 				return true;
-			}
 			else if((ti = g.GrammarFindRule(t)) >= 0)
-			{
-				cerr<<"HasCycles():recuring"<<endl;
 				return HasCycles(g, g.GrammarRule(ti), rhead);
-			}
 		}
-	}
 	return false;
 }
 
