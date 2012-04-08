@@ -1,3 +1,4 @@
+#include "commons.hpp"
 #include "Table.hpp"
 #include "Grammar.hpp"
 

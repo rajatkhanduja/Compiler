@@ -81,15 +81,15 @@ Table<TableKey>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followS
 		setFirst = FirstOfAggSym(firstSet, tail, tail.begin());
 		for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
 		{
-			if ( *its1 == "#" )		
+			if ( *its1 == EPSILON )		
 			{
 				//######## Application of Rule(2) ###########.
 				setFollow = (followSet.GetFollowSet())[head];
 				for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
 				{
-					if ( *its2 == "$" )
+					if ( *its2 == ENDMARKER )
 					{
-						key.SetKey(head, "$");
+						key.SetKey(head, ENDMARKER);
 						TableInsert(key, *itr);
 					}
 					

@@ -9,5 +9,6 @@
 using namespace std;
 
 #define EPSILON	"%"
+#define ENDMARKER "$"
 
 #endif

@@ -1,3 +1,4 @@
+#include "NonRecursivePredictiveParser.hpp"
 
 void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
 {
@@ -9,7 +10,7 @@ void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
 	vector<string> tail;
 
 	vector<string>::iterator X = (this->parserStack).end() - 1;	/* Top of the stack */	
-	while ( *X != "$" )
+	while ( *X != ENDMARKER )
 	{
 		key.SetKey(*X, (this->input)[ip]);
 		foundRule = (this->parsingTable).TableFind(key);  

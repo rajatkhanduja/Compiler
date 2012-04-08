@@ -40,7 +40,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
  	vector<string> retval;
 	bool continueOnEpsilon = false;
 
-	if ( Gsym == "#" )
+	if ( Gsym == EPSILON )
 	{
 		std::cerr << "FIRST[epsilon] does not exist" << std::endl;
 		return retval;
@@ -78,9 +78,9 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 					// ########################## TRAVERSING A MATCHED RULE #############################################
 
 					// ################ APPLICATION OF RULE(3) ###############################
-					if ( *(tail.begin()) == "#" )	// i.e we have a production of the form :: A -> epsilon
+					if ( *(tail.begin()) == EPSILON )	// i.e we have a production of the form :: A -> epsilon
 					{
-						retval.push_back("#");
+						retval.push_back(EPSILON);
 					}
 					
 					// ################ APPLICATION OF RULE(2) ################################
@@ -93,7 +93,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 								// Hoping the leftmost symbol in the reduction is a terminal or even if it's a non-terminal, 
 								// it's firstSet does not contain an epsilon. Hence nextHasEpsilon is set to 0 in this hope.
 
-								if ( *its1 == "#" )	
+								if ( *its1 == EPSILON )	
 								{
 									std::cerr << "Unexpected epsilon symbol in the tail of a grammar rule" << std::endl;
 									break;	//Break from this rule, proceed to next grammar rule.
@@ -140,7 +140,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 										// firstvals is a vector of strings.
 										for ( its2 = firstVals.begin(); its < firstVals.end(); its2++ )
 											{
-												if ( *its2 == "#" ) 
+												if ( *its2 == EPSILON ) 
 												{	// We have an epsilon production, Hence we need 
 													// to continue in the loop.
 													continueOnEpsilon = true;
@@ -155,7 +155,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 													// will contain an epsilon.
 													if ( (its1 + 1) == tail.end() )
 													{
-														retval.push_back("#");
+														retval.push_back(EPSILON);
 													}
 												}	
 												else
@@ -193,7 +193,7 @@ vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<stri
 		tmpFirstSet = firstSet[*it];	// Find the firstSet of this non-terminal.
 		retval.insert(retval.end(), tmpFirstSet.begin(), tmpFirstSet.end());
 			
-		if ( (epsilonPosition = find(retval.begin(), retval.end(), "#")) != retval.end() )			
+		if ( (epsilonPosition = find(retval.begin(), retval.end(), EPSILON)) != retval.end() )			
 		{	
 			if ( (it + 1) != tail.end() )	// i.e this is not the LAST symbol of the aggregate symbol.
 				retval.erase(epsilonPosition);
@@ -235,7 +235,7 @@ vector<string> FollowSet::Follow (FirstSet firstSet, string Gsym, Grammar CFG)
 	vector<string> retval;
 	if ( Gsym == CFG.startSym )
 	{
-		retval.push_back("$");		// We place the "$" symbol in follow of the start symbol.
+		retval.push_back(ENDMARKER);		// We place the "$" symbol in follow of the start symbol.
 	}
 
 	vector<Rule> GRules = CFG.GrammarAllRules();	
@@ -295,7 +295,7 @@ vector<string> FollowSet::Follow (FirstSet firstSet, string Gsym, Grammar CFG)
 										
 					firstOfNextSym = FirstOfAggSym(firstSet, tail, its + 1);	// Find the firstSet of this non-terminal.
 
-					if ( find(firstOfNextSym.begin(), firstOfNextSym.end(), "#") != firstOfNextSym.end() ) 
+					if ( find(firstOfNextSym.begin(), firstOfNextSym.end(), EPSILON) != firstOfNextSym.end() ) 
 					{
 						// Application of Rule(3). Since we have :: A -> [alpha] [Gsym] [beta] where FIRST([beta]) contains an epsilon.
 						// Hence everything in Follow(A) is in Follow(Gsym). 						
