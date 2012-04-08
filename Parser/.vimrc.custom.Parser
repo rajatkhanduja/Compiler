@@ -13,12 +13,12 @@ tabnew Grammar.cpp
 vs Grammar.hpp
 tabnew xtoLL1.cpp
 vs xtoLL1.hpp
-tabnew xtoLL1driver.cpp
 tabnew ParserFunctions.cpp
 vs ParserFunctions.hpp
 tabnew Table.cpp
 vs Table.hpp
 tabnew NonRecursivePredictiveParser.cpp
 vs NonRecursivePredictiveParser.hpp
+tabnew xtoLL1driver.cpp
 tabnew Makefile
-tabnew LL1.grammar
+tabnew test.grammar
