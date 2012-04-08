@@ -5,11 +5,11 @@ using namespace std;
 Grammar::Grammar()
 {
 	startSym = "";
-	Rule* r = new Rule();
 }
 
-Grammar::Grammar(vector<Rule> r)
+Grammar::Grammar(std::string s, vector<Rule> r)
 {
+	startSym = s;
 	rules = r;
 }
 		
@@ -60,6 +60,7 @@ int Grammar::GrammarFindRule(std::string head)
 
 Rule Grammar::GrammarRule(int i)
 {
+	assert(i < this->GrammarNRules());
 	return this->rules[i];
 }
 

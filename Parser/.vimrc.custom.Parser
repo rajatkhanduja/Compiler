@@ -22,4 +22,3 @@ vs NonRecursivePredictiveParser.hpp
 tabnew xtoLL1driver.cpp
 tabnew Makefile
 tabnew test.grammar
-tabnew TODO
