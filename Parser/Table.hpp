@@ -1,5 +1,6 @@
 #include "commons.hpp"
 #include "Grammar.hpp"
+#include "ParserFunctions.hpp"
 #include <map>
 using namespace std;
 
@@ -59,4 +60,5 @@ class Table
 		Table();
 		void TableInsert(TableKey key, Rule rule);
 		vector<Rule> TableFind(TableKey key);
+		void PopulateTable(Grammar CFG, FirstSet firstSet); 
 };

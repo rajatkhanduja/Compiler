@@ -38,6 +38,12 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 {
  	vector<string> retval;
 	bool continueOnEpsilon = false;
+
+	if ( Gsym == "#" )
+	{
+		std::cerr << "FIRST[epsilon] does not exist" << std::endl;
+		return retval;
+	}
 	// Gsym is a terminal.
 	if ( CFG.isTerm[Gsym] ) 
 		{
@@ -86,6 +92,13 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 								// Hoping the leftmost symbol in the reduction is a terminal or even if it's a non-terminal, 
 								// it's firstSet does not contain an epsilon. Hence nextHasEpsilon is set to 0 in this hope.
 
+								if ( *its1 == "#" )	
+								{
+									std::cerr << "Unexpected epsilon symbol in the tail of a grammar rule" << std::endl;
+									break;	//Break from this rule, proceed to next grammar rule.
+								}
+								
+								
 								// The condition below states that the leftmost symbol of this reduction is a terminal.
 								if ( CFG.isTerm[*its1] )		// Terminating condition for Recursion.
 								{	

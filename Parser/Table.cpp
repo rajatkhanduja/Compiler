@@ -58,6 +58,64 @@ Table<TableKey>::TableFind(TableKey key)
 	return retval;
 }
 
+
+
+/* Here we will fill the table according to the algorithm. */
+template<class TableKey>
+void
+Table<TableKey>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet)
+{
+	vector<Rule> grammarRules = CFG.GrammarAllRules();
+	vector<Rule>::iterator itr;
+	vector<string>::iterator its1, its2;
+	vector<string> tail, setFirst, setFollow;
+	string head;
+	TableKey key;
+	
+	for ( itr = grammarRules.begin(); itr < grammarRules.end(); itr++ )
+	{
+		tail = (*itr).tail;	//#TODO tail has to be a public member.
+		head = (*itr).head;	//#TODO head has to be a public member.
+
+		// Now the whole tail has to be considered as a SINGLE AGGREGATE symbol.
+		setFirst = FirstOfAggSym(firstSet, tail, tail.begin());
+		for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
+		{
+			if ( *its1 == "#" )		
+			{
+				//######## Application of Rule(2) ###########.
+				setFollow = (followSet.GetFollowSet())[head];
+				for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
+				{
+					if ( *its2 == "$" )
+					{
+						key.SetKey(head, "$");
+						TableInsert(key, *itr);
+					}
+					
+					else if ( CFG.isTerm[*its2] )	// '$' is not a TERMINAL.
+					{
+						key.SetKey(head, *its2);
+						TableInsert(key, *itr);
+					}
+				}
+
+			}
+			else if ( CFG.isTerm[*its1] )	// Note:: 'epsilon' is not a terminal.
+			{
+				//####### Application of Rule(1) ###########.
+
+				key.SetKey(head, *its1);//#TODO The type of 'head' and '*its' should depend on the template parameter TableKey unlike strings here.
+				TableInsert(key, *itr);
+			}	
+
+		}	
+
+	}
+	// We need to consider each rule in the form :: A -> [alpha], where [alpha] is an AGGREGATE symbol.
+}
+
+
 //###### EXPLICIT INSTANTIATIONS ##########
 template class TableKey < string, string >;
 template class Table < TableKey<string, string> >;
