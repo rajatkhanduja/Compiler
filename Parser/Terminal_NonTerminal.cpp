@@ -5,8 +5,8 @@ static vector<std::string> NonTerminals;
 
 static std::string get(vector<std::string>& X, int i)
 {
-	assert(i < X.size())
-		return X[i];
+	assert(i < X.size());
+	return X[i];
 }	
 
 static int find(vector<std::string>& X, std::string x)
@@ -25,15 +25,15 @@ static void add(vector<std::string>& X, std::string x)
 
 static void remove(vector<std::string>& X, int i)
 {
-	assert(i < X.size())
-		X.erase(X.begin() + i);
+	assert(i < X.size());
+	X.erase(X.begin() + i);
 }
 
 static void remove(vector<std::string>& X, std::string x)
 {
 	int i;
-	assert((i = find(X, x)) >= 0)
-		remove(X, i);
+	assert((i = find(X, x)) >= 0);
+	remove(X, i);
 }
 
 static bool is(vector<std::string>& X, std::string x)
