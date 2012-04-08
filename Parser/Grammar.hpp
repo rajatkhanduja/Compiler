@@ -1,7 +1,7 @@
-#include <commons.hpp>
-#include <Rule.hpp>
 #ifndef GRAMMAR_HPP
 #define GRAMMAR_HPP
+#include <commons.hpp>
+#include <Rule.hpp>
 
 using namespace std;
 

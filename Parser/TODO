@@ -1,0 +1,2 @@
+implement void BreakRulesCorrespondingToTails(Grammar& g) in xtoLL1.c/hpp
+implement vector<Rule> AllRulesCorrespondingToHead(Grammar& g, std::string head) in xtoLL1.c/hpp

@@ -8,7 +8,7 @@
 #include <algorithm>
 using namespace std;
 
-#define EPSILON	"%"
-#define ENDMARKER "$"
+#define EPSILON		"%"
+#define ENDMARKER	"$"
 
 #endif
