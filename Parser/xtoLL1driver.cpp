@@ -9,14 +9,24 @@ int main(int argc, char* argv[])
 	
 	Grammar G_scanned;
 	ScanGrammarFromFile(G_scanned, argv[1]);
-	
 	G_scanned.GrammarOutput();
 	outputTerminals();
 	outputNonTerminals();
 
 	assert(!HasCycles(G_scanned));
 	assert(!HasNonTerminatingRules(G_scanned));
-	
+
+	if(G_scanned.GrammarHasEpsilonProductions())
+		cerr<<"Grammar has epsilon productions."<<endl;
+
+	EliminateDuplicateProductions(G_scanned);
+	G_scanned.GrammarOutput();
+
+	/*
+	while(G_scanned.GrammarHasEpsilonProductions())
+		EliminateEpsilonProductions(G_scanned);
+	*/
+
 	return 0;
 }
 

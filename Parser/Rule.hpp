@@ -30,6 +30,7 @@ class Rule
 		int RuleFindTail(vector<std::string>);
 		int RuleNTails();
 		void RuleOutput();
+		int RuleFindEpsilonProduction();
 		bool equals(vector<std::string>, vector<std::string>);
 		bool operator==(Rule);
 };

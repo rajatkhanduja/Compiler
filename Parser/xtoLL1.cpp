@@ -113,7 +113,23 @@ bool HasNonTerminatingRules(Grammar& g)
 
 void EliminateEpsilonProductions(Grammar& g)
 {
-	return;
+	Rule r;
+	int index;
+	for(int i = 0; i < g.GrammarNRules(); i++)
+	{
+		// find a rule (say, A) having epsilon production
+		r = g.GrammarRule(i);
+		if((index = r.RuleFindEpsilonProduction()) >= 0)
+		{
+			cerr<<"Rule has epsilon production: ";
+			g.GrammarRule(i).RuleOutput();
+
+			// remove epsilon production from A
+			r.RuleRemoveTail(index);
+
+
+		}
+	}
 }
 
 void EliminateLeftRecursion(Grammar& g)
@@ -124,4 +140,18 @@ void EliminateLeftRecursion(Grammar& g)
 void LeftFactorize(Grammar& g)
 {
 	return;
+}
+
+void EliminateDuplicateProductions(Grammar& g)
+{
+	Rule r;
+	int rulentails, i, j, k;
+	for(i = 0; i < g.GrammarNRules(); i++)
+		for(j = 0, r = g.GrammarRule(i), rulentails = r.RuleNTails(); j < rulentails; j++)
+			for(k = j + 1; k < rulentails; k++)
+				if(r.equals(r.RuleTail(j), r.RuleTail(k)))
+				{
+					r.RuleRemoveTail(k);
+					rulentails--;
+				}
 }

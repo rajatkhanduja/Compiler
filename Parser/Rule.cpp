@@ -80,10 +80,18 @@ void Rule::RuleOutput()
 	}
 }
 
+int Rule::RuleFindEpsilonProduction()
+{
+	for(int i = 0; i < this->RuleNTails(); i++)
+		if(this->tails[i].size() == 1 && !(this->tails[i][0].compare(EPSILON)))
+			return i;
+	return -1;
+}
+
 bool Rule::equals(vector<std::string> a, vector<std::string> b)
 {
 	int l;
-	if((l == a.size()) != b.size())
+	if((l = a.size()) != b.size())
 		return false;
 	else
 		for(int i = 0; i < l; i++)

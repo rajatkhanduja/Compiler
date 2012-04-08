@@ -7,3 +7,4 @@ bool HasNonTerminatingRules(Grammar&);
 void EliminateEpsilonProductions(Grammar&);
 void EliminateLeftRecursion(Grammar&);
 void LeftFactorize(Grammar&);
+void EliminateDuplicateProductions(Grammar&);

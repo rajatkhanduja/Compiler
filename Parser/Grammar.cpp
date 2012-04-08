@@ -56,6 +56,14 @@ int Grammar::GrammarNRules()
 	return this->rules.size();
 }
 
+bool Grammar::GrammarHasEpsilonProductions()
+{
+	for(int i = 0; i < this->GrammarNRules(); i++)
+		if(this->rules[i].RuleFindEpsilonProduction() >= 0)
+			return true;
+	return false;
+}
+
 void Grammar::GrammarOutput()
 {
 	cout<<"Grammar contains:"<<endl;

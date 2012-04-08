@@ -7,4 +7,6 @@
 #include <cassert>
 using namespace std;
 
+#define EPSILON	"%"
+
 #endif

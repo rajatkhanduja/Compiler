@@ -18,6 +18,7 @@ class Grammar
 		Rule GrammarRule(int);
 		//vector<Rule> GrammarAllRules();	I am unable to comprehend the use of this function.
 		int GrammarNRules();
+		bool GrammarHasEpsilonProductions();
 		void GrammarOutput();
 		bool operator==(Grammar*);
 };
