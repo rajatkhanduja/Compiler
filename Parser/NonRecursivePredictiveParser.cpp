@@ -19,7 +19,7 @@ void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
 			(this->parserStack).pop_back();
 			ip++;
 		}
-		else if ( CFG.isTerm[*X] )
+		else if ( CFG.isTerminal(*X) )
 		{
 			std::cerr << "Error in parsing." << std::endl;
 		}

@@ -93,7 +93,7 @@ Table<TableKey>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followS
 						TableInsert(key, *itr);
 					}
 					
-					else if ( CFG.isTerm[*its2] )	// '$' is not a TERMINAL.
+					else if ( CFG.isTerminal(*its2) )	// '$' is not a TERMINAL.
 					{
 						key.SetKey(head, *its2);
 						TableInsert(key, *itr);
@@ -101,7 +101,7 @@ Table<TableKey>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followS
 				}
 
 			}
-			else if ( CFG.isTerm[*its1] )	// Note:: 'epsilon' is not a terminal.
+			else if ( CFG.isTerminal(*its1) )	// Note:: 'epsilon' is not a terminal.
 			{
 				//####### Application of Rule(1) ###########.
 

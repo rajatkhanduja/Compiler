@@ -1,4 +1,5 @@
-#include "ParserFunctions.hpp"
+#include <ParserFunctions.hpp>
+#include <Terminal_NonTerminal.hpp>
 
 /* The extern keyword means "declare without defining". In other words ,it is a way to explicitly declare a variable, 
    or to force a declaration without a definition. It is also possible to explicitly define a variable, i.e. to force 
@@ -28,7 +29,7 @@ void FirstSet::FirstSetAddEntry(string key, vector<string> value)
 }
 
 
-map<string, vector<string>> FirstSet::GetFirstSet()
+map<string, vector<string> > FirstSet::GetFirstSet()
 {
 	return (this->firstSet);
 }
@@ -45,7 +46,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 		return retval;
 	}
 	// Gsym is a terminal.
-	if ( CFG.isTerm[Gsym] ) 
+	if ( CFG.isTerminal(Gsym) ) 
 		{
 			// Application of Rule(1).
 			retval.push_back(Gsym);
@@ -100,7 +101,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 								
 								
 								// The condition below states that the leftmost symbol of this reduction is a terminal.
-								if ( CFG.isTerm[*its1] )		// Terminating condition for Recursion.
+								if ( CFG.isTerminal(*its1) )		// Terminating condition for Recursion.
 								{	
 									retval.push_back(*its1);
 								}

@@ -1,14 +1,26 @@
 #include <Grammar.hpp>
+#include <Terminal_NonTerminal.hpp>
 using namespace std;
 
 Grammar::Grammar()
 {
+	startSym = "";
 	Rule* r = new Rule();
 }
 
 Grammar::Grammar(vector<Rule> r)
 {
 	rules = r;
+}
+		
+void Grammar::GrammarSetStartSymbol()
+{
+	this->startSym = getNonTerminal(0);
+}
+
+std::string Grammar::GrammarStartSymbol()
+{
+	return this->startSym;
 }
 
 void Grammar::GrammarAddRule(Rule r)
@@ -51,6 +63,11 @@ Rule Grammar::GrammarRule(int i)
 	return this->rules[i];
 }
 
+vector<Rule> Grammar::GrammarAllRules()
+{
+	return this->rules;
+}
+
 int Grammar::GrammarNRules()
 {
 	return this->rules.size();
@@ -73,6 +90,7 @@ void Grammar::GrammarOutput()
 		this->rules[i].RuleOutput();
 	}
 	cout<<endl;
+	//cout<<"blahblah"<<endl;
 }
 
 bool Grammar::operator==(Grammar* rhs)

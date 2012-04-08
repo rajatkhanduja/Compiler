@@ -44,7 +44,7 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 					tail.push_back(t);
 					if(isupper(t[0]))
 						addNonTerminal(t);
-					else
+					else if(islower(t[0]))
 						addTerminal(t);
 				}
 			}
