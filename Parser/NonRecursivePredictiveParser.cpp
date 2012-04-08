@@ -1,4 +1,4 @@
-#include "NonRecursivePredictiveParser.hpp"
+#include <NonRecursivePredictiveParser.hpp>
 
 void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
 {

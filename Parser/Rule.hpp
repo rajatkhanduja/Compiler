@@ -8,7 +8,8 @@
  * Rules of the following type cannot be accomodated (yet):
  *	AbB->cD|DDB
  */
-
+#ifndef RULE_HPP
+#define RULE_HPP
 #include <commons.hpp>
 using namespace std;
 
@@ -34,3 +35,5 @@ class Rule
 		bool equals(vector<std::string>, vector<std::string>);
 		bool operator==(Rule);
 };
+
+#endif

@@ -23,7 +23,8 @@ void FirstSet::FirstSetAddEntry(string key, vector<string> value)
 	}
 	else
 	{
-		std::cerr << "Key \"" << key << "\" already exists in firstSet with value " << (this->firstSet)[key] << std::endl;
+		//std::cerr << "Key " << key << " already exists in firstSet with value " << (this->firstSet)[key] << std::endl;
+		std::cerr << "Error in adding entry to firstSet. Key already exists.\n";
 	}
 
 }
@@ -46,7 +47,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 		return retval;
 	}
 	// Gsym is a terminal.
-	if ( CFG.isTerminal(Gsym) ) 
+	if ( isTerminal(Gsym) ) //#TODO isTerminal() should be a part of the Grammar class. ;)
 		{
 			// Application of Rule(1).
 			retval.push_back(Gsym);
@@ -101,7 +102,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 								
 								
 								// The condition below states that the leftmost symbol of this reduction is a terminal.
-								if ( CFG.isTerminal(*its1) )		// Terminating condition for Recursion.
+								if ( isTerminal(*its1) )		// Terminating condition for Recursion.
 								{	
 									retval.push_back(*its1);
 								}

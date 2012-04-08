@@ -1,5 +1,8 @@
-#include "Grammar.hpp"
-#include "ParserFunctions.hpp"
+#ifndef TABLE_HPP
+#define TABLE_HPP
+#include <commons.hpp>
+#include <Grammar.hpp>
+#include <ParserFunctions.hpp>
 #include <map>
 using namespace std;
 
@@ -61,3 +64,5 @@ class Table
 		vector<Rule> TableFind(TableKey key);
 		void PopulateTable(Grammar CFG, FirstSet firstSet); 
 };
+
+#endif

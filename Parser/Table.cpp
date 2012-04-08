@@ -1,5 +1,5 @@
-#include "xtoLL1.hpp"
-#include "Table.hpp"
+#include <xtoLL1.hpp>
+#include <Table.hpp>
 
 using namespace std;
 

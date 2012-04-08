@@ -1,5 +1,8 @@
 #include <commons.hpp>
 #include <Rule.hpp>
+#ifndef GRAMMAR_HPP
+#define GRAMMAR_HPP
+
 using namespace std;
 
 class Grammar
@@ -25,3 +28,5 @@ class Grammar
 		void GrammarOutput();
 		bool operator==(Grammar*);
 };
+
+#endif

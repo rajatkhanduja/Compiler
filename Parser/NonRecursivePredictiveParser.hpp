@@ -1,6 +1,9 @@
-#include "commons.hpp"
-#include "Table.hpp"
-#include "Grammar.hpp"
+#ifndef NON_RECURSIVE_PREDICTIVE_PARSER_HPP
+#define NON_RECURSIVE_PREDICTIVE_PARSER_HPP
+
+#include <commons.hpp>
+#include <Table.hpp>
+#include <Grammar.hpp>
 
 /* At each step of a top-down parse, the key-problem is that of determining the production to be applied for a non-terminal, say A. Once an A-production is
  * chosen, the rest of the parsing process consists of " MATCHING " THE TERMINAL SYMBOLS IN THE PRODUCTION BODY WITH THE INPUT STRING.
@@ -25,3 +28,4 @@ class NonRecursivePredictiveParser
 		NonRecursivePredictiveParser();
 		void ParseInput(Grammar CFG);
 };
+#endif
