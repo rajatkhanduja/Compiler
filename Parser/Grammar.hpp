@@ -3,7 +3,11 @@
 #include <commons.hpp>
 #include <Rule.hpp>
 
-using namespace std;
+using std::vector;
+using std::cin;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 class Grammar
 {
@@ -22,7 +26,7 @@ class Grammar
 		// sets startSym to the head of the \
 		first rule encountered in the .grammar \
 		file being read.
-		void GrammarSetStartSymbol();
+		void GrammarSetStartSymbol(string startSymbol = string ("") );
 		// returns startSym of the grammar.
 		std::string GrammarStartSymbol();
 		// adds the Rule in the argument at the \

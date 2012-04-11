@@ -14,6 +14,9 @@ all: ${OBJECTS}
 ${OBJ}/%.opp : ${SRC}/%.cpp
 	${CC} -c -g ${DEFINES} ${CFLAGS} $< -o $@
 
+grammar: $(OBJ)/Rule.opp $(OBJ)/Terminal_NonTerminal.opp $(OBJ)/Grammar.opp $(OBJ)/xtoLL1.opp
+	
+
 clean:
 	rm -f ${OBJ}/*.opp
 	rm -f ${BIN}/*.outpp

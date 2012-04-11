@@ -13,9 +13,17 @@ Grammar::Grammar(std::string s, vector<Rule> r)
 	rules = r;
 }
 		
-void Grammar::GrammarSetStartSymbol()
+void Grammar::GrammarSetStartSymbol(string startSymbol)
 {
-	this->startSym = getNonTerminal(0);
+	// TODO : Ensure that the string being set as startSym is a non-terminal already.
+	if (!startSymbol.compare (""))
+	{
+		this->startSym = getNonTerminal(0);
+	}
+	else 
+	{
+		this->startSym = startSymbol;
+	}
 }
 
 std::string Grammar::GrammarStartSymbol()
