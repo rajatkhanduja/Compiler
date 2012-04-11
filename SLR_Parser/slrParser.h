@@ -46,7 +46,7 @@ class slrParser
 		// Private (non-static) variables
 		Grammar slrGrammar;
 		set<ItemSet> canonicalCollection;
-		map<ItemTerminalPair, Item*> GOTO;
+		map<ItemTerminalPair, ItemSet*> GOTO;
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
 
 		// Private functions
@@ -56,11 +56,26 @@ class slrParser
 		 */
 		void constructCanonicalCollection ();
 		
-		/* Function to convert a rule to an Item */
-		Item rule2Item (Rule& rule);
-		
-		ItemSet * ItemSetsClosure (ItemSet& items, ItemSet);
+		/* Function to convert a rule (a particular tail) to an Item
+		 * This function returns an item such that the 'dot' is 
+		 * right in the beginning.
+		 */
+		Item rule2Item (Rule& rule, unsigned int ruleIndex);
 
+		/* Function to convert a rule to an ItemSet using rule2Item
+		 * This function needs to be passed an ItemSet for results
+		 * A pointer to the same variable (result) is returned.
+		 */
+		ItemSet* rule2ItemSet(Rule& rule,ItemSet& result);
+
+		/* Function to take closure given an ItemSet 
+		 * This function needs to be passed an ItemSet for results
+		 * A pointer to the same variable (result) is returned.
+		 */
+		ItemSet* ItemSetsClosure (const ItemSet& items, ItemSet& result);
+		/* Function to return the set of symbols that will have 
+		 * a corresponding value in GOTO */
+		set<string> requiredSymbols (const ItemSet& itemSet);
 };
 
 // Declare the augmentedStartSymbol to be complex so that it 
