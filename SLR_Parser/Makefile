@@ -7,7 +7,7 @@ CC = g++
 DEFINES =
 CFLAGS = -Wall -I./ -I$(LL1)/
 GRAMMAR_OBJECTS = $(OBJ_GRAMMAR)/Terminal_NonTerminal.opp $(OBJ_GRAMMAR)/Rule.opp $(OBJ_GRAMMAR)/Grammar.opp $(OBJ_GRAMMAR)/xtoLL1.opp
-OBJECTS = $(OBJ)/slrParser.o $(OBJ)/main.o
+OBJECTS = $(OBJ)/LR0Automaton.o $(OBJ)/main.o
 
 all: $(GRAMMAR_OBJECTS) $(OBJECTS)
 	${CC} $^ -g -o ${BIN}/slr-parser.out

@@ -1,7 +1,7 @@
 // vim:ts=8:noexpandtab
-/* This file defines the functions/methods of the slrParser class. */
+/* This file defines the functions/methods of the LR0Automaton class. */
 
-#include <slrParser.h>
+#include <LR0Automaton.h>
 #include <Terminal_NonTerminal.hpp>
 #include <xtoLL1.hpp>
 #include <vector>
@@ -10,10 +10,9 @@ using std::vector;
 
 static Rule * startRule;
 
-slrParser::slrParser (char * grammarFileName)
+// This function can be called after the grammar has been initialized
+void LR0Automaton::initialize ()
 {
-	ScanGrammarFromFile (slrGrammar, grammarFileName);
-
 	// Add the rule S' -> S to create the augmented grammar
 	Rule startSymRule (augmentedStartSymbol);
 	startSymRule.RuleAddTail (vector<string> (1, augmentedStartSymbol));
@@ -26,7 +25,20 @@ slrParser::slrParser (char * grammarFileName)
 	constructCanonicalCollection ();
 }
 
-slrParser::ItemSet* slrParser::rule2ItemSet(Rule& rule,ItemSet& result)
+
+LR0Automaton::LR0Automaton (char * grammarFileName)
+{
+	ScanGrammarFromFile (slrGrammar, grammarFileName);
+	initialize ();
+}
+
+LR0Automaton::LR0Automaton (const Grammar& grammar)
+{
+	slrGrammar = grammar;
+	initialize ();
+}
+
+LR0Automaton::ItemSet* LR0Automaton::rule2ItemSet(Rule& rule,ItemSet& result)
 {
 	unsigned int i, n;
 	for ( i = 0, n = rule.RuleNTails(); i < n; i++)
@@ -36,13 +48,14 @@ slrParser::ItemSet* slrParser::rule2ItemSet(Rule& rule,ItemSet& result)
 	return &result;
 }
 
-slrParser::Item slrParser::rule2Item (Rule& rule, unsigned int ruleIndex)
+LR0Automaton::Item LR0Automaton::rule2Item (Rule& rule, unsigned int ruleIndex)
 {
 	return (make_pair (rule.RuleHead(), 
-			make_pair (string(),rule.RuleTail(0)[ruleIndex])));
+			make_pair (vector <string> (),
+				rule.RuleTail(ruleIndex))));
 }
 
-void slrParser::constructCanonicalCollection ()
+void LR0Automaton::constructCanonicalCollection ()
 {
 	// Start with inserting the set of item containing only S'->S
 	ItemSet startSet, tmpSet;
@@ -68,7 +81,7 @@ void slrParser::constructCanonicalCollection ()
 	}
 }
 
-slrParser::ItemSet* slrParser::ItemSetsClosure (const ItemSet& items, 
+LR0Automaton::ItemSet* LR0Automaton::ItemSetsClosure (const ItemSet& items, 
 						ItemSet& result)
 {
 	result.insert (items.begin(), items.end());
@@ -85,10 +98,10 @@ slrParser::ItemSet* slrParser::ItemSetsClosure (const ItemSet& items,
 		for (itr = result.begin(), itr_end = result.end();
 			itr != itr_end; itr++)
 		{
-			if ( isNonTerminal ((itr->second).second) )
+			if ( isNonTerminal ((itr->second).second[0]) )
 			{
 				ruleIndex = slrGrammar.GrammarFindRule(
-						(itr->second).second);
+						(itr->second).second[0]);
 				if ( ruleIndex >= 0)
 				{
 					rule = slrGrammar.GrammarRule (
@@ -106,6 +119,7 @@ slrParser::ItemSet* slrParser::ItemSetsClosure (const ItemSet& items,
 							result.end ())
 						{
 							result.insert (*itr);
+							newElemAdded = true;
 						}
 					}
 				}
@@ -114,4 +128,29 @@ slrParser::ItemSet* slrParser::ItemSetsClosure (const ItemSet& items,
 	}
 
 	return &result;
+}
+
+LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
+{
+	/* First check GOTO */
+	map<ItemTerminalPair, ItemSet*>::iterator itr;
+	if ( (itr = GOTO.find (make_pair (I, X))) != GOTO.end ())
+	{
+		return itr->second;	
+	}
+	
+	ItemSet * result = new ItemSet();
+	ItemSet tmpSet;
+	Item tmpItem;
+
+	ItemSet::iterator itemItr;
+	for ( itemItr = I->begin(); itemItr != I->end(); itemItr++)
+	{
+		if ( ! X.compare (itemItr->second.second[0]))
+		{
+			
+		}
+	}
+
+	return (ItemSetsClosure (tmpSet, *result));
 }
