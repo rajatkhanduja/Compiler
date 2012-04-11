@@ -38,7 +38,21 @@ LR0Automaton::LR0Automaton (const Grammar& grammar)
 	initialize ();
 }
 
-LR0Automaton::ItemSet* LR0Automaton::rule2ItemSet(Rule& rule,ItemSet& result)
+/* Function to convert a rule (a particular tail) to an Item
+ * This function returns an item such that the 'dot' is 
+ * right in the beginning.
+ */
+Item rule2Item (Rule& rule, unsigned int ruleIndex)
+{
+	return (make_pair (rule.RuleHead(), 
+			make_pair (vector <string> (),
+				rule.RuleTail(ruleIndex))));
+}
+/* Function to convert a rule to an ItemSet using rule2Item
+ * This function needs to be passed an ItemSet for results
+ * A pointer to the same variable (result) is returned.
+ */
+ItemSet* rule2ItemSet(Rule& rule,ItemSet& result)
 {
 	unsigned int i, n;
 	for ( i = 0, n = rule.RuleNTails(); i < n; i++)
@@ -48,41 +62,12 @@ LR0Automaton::ItemSet* LR0Automaton::rule2ItemSet(Rule& rule,ItemSet& result)
 	return &result;
 }
 
-LR0Automaton::Item LR0Automaton::rule2Item (Rule& rule, unsigned int ruleIndex)
-{
-	return (make_pair (rule.RuleHead(), 
-			make_pair (vector <string> (),
-				rule.RuleTail(ruleIndex))));
-}
-
-void LR0Automaton::constructCanonicalCollection ()
-{
-	// Start with inserting the set of item containing only S'->S
-	ItemSet startSet, tmpSet;
-	rule2ItemSet (*startRule, startSet);
-	bool newElemAdded = true;
-
-	set<ItemSet>::iterator itr, itr_end;
-	/* Verify if this remains constant 
-	ItemSet::iterator itr_end = canonicalCollection.end();
-	*/
-
-	canonicalCollection.insert (*(ItemSetsClosure (startSet, tmpSet)));
-
-	while (newElemAdded)
-	{
-		newElemAdded = false;
-		for (itr = canonicalCollection.begin(), 
-		     itr_end = canonicalCollection.end();
-		     itr != itr_end; itr++)
-		{
-			
-		}
-	}
-}
-
-LR0Automaton::ItemSet* LR0Automaton::ItemSetsClosure (const ItemSet& items, 
-						ItemSet& result)
+/* Function to take closure given an ItemSet 
+ * This function needs to be passed an ItemSet for results
+ * A pointer to the same variable (result) is returned.
+ */
+ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
+				ItemSet& result)
 {
 	result.insert (items.begin(), items.end());
 	ItemSet::iterator itr, itr_end;
@@ -121,6 +106,7 @@ LR0Automaton::ItemSet* LR0Automaton::ItemSetsClosure (const ItemSet& items,
 							result.insert (*itr);
 							newElemAdded = true;
 						}
+						itr++;
 					}
 				}
 			}
@@ -130,9 +116,73 @@ LR0Automaton::ItemSet* LR0Automaton::ItemSetsClosure (const ItemSet& items,
 	return &result;
 }
 
-static LR0Automaton::Item shiftDot (const LR0Automaton::Item& item)
+/* Function to return the set of symbols that will have 
+ * a corresponding value in GOTO. Basically, all the symbols that follow
+ * the 'dot', i.e. the first string in the second vector in Item.
+ */
+set<string> requiredSymbols (const ItemSet& itemSet)
 {
-	LR0Automaton::Item result(item);
+	ItemSet::iterator itr, itr_end;
+	set<string> symbols;
+
+	for (itr = itemSet.begin(), itr_end = itemSet.end();
+		itr != itr_end; itr++)
+	{
+		if (itr->second.second.size() > 0)
+			symbols.insert (itr->second.second[0]);
+	}
+
+	return symbols;
+}
+
+void LR0Automaton::constructCanonicalCollection ()
+{
+	// Start with inserting the set of item containing only S'->S
+	ItemSet startSet, *tmpSet = new ItemSet();
+	rule2ItemSet (*startRule, startSet);
+	bool newElemAdded = true;
+
+	set<ItemSet*>::iterator itr, itr_end;
+	/* Verify if this remains constant 
+	ItemSet::iterator itr_end = canonicalCollection.end();
+	*/
+
+	canonicalCollection.insert (
+		(ItemSetsClosure (startSet, slrGrammar, *tmpSet)));
+
+	while (newElemAdded)
+	{
+		newElemAdded = false;
+		for (itr = canonicalCollection.begin(), 
+		     itr_end = canonicalCollection.end();
+		     itr != itr_end; itr++)
+		{
+			/* For each symbol, check GOTO */
+			set<string> symGoTo = requiredSymbols (**itr);
+			set<string>::iterator strSetItr = symGoTo.begin();
+			set<string>::iterator strSetItrEnd = symGoTo.end();
+			while (strSetItr != strSetItrEnd)
+			{
+				ItemSet * gotoSet = goTo (*itr, *strSetItr);
+
+				/* If gotoSet is not empty and is not in
+				 * in canonicalCollection. */
+				if ( !gotoSet->empty() && 
+					(canonicalCollection.find (*itr) !=
+						canonicalCollection.end()) )
+				{
+					canonicalCollection.insert (gotoSet);
+				}
+				itr++;
+			}
+		}
+	}
+}
+
+
+static Item shiftDot (const Item& item)
+{
+	Item result(item);
 	
 	// Shift the 'dot' virtually by erasing the first element
 	// from the second part of the item and inserting into the first part
@@ -142,7 +192,7 @@ static LR0Automaton::Item shiftDot (const LR0Automaton::Item& item)
 	return result;
 }
 
-LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
+ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 {
 	/* First check GOTO */
 	map<ItemTerminalPair, ItemSet*>::iterator itr;
@@ -167,5 +217,6 @@ LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 		}
 	}
 
-	return (ItemSetsClosure (tmpSet, *result));
-}
+	return (ItemSetsClosure (tmpSet, slrGrammar, *result));
+}	
+

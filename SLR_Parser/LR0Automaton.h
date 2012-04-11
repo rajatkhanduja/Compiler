@@ -21,16 +21,16 @@ using std::map;
 using std::multimap;
 using std::string;
 
+typedef pair<vector<string>, vector <string> > ItemBody; 
+typedef pair<string, ItemBody> Item;
+typedef set<Item> ItemSet; 
+typedef pair<ItemSet*, string> ItemTerminalPair;
+
 class LR0Automaton 
 {
 	public:
 		// Public Data structures
 		enum Action { None, Shift, Reduce, Accept};
-		
-		typedef pair<vector<string>, vector <string> > ItemBody; 
-		typedef pair<string, ItemBody> Item;
-		typedef set<Item> ItemSet; 
-		typedef pair<ItemSet*, string> ItemTerminalPair;
 		typedef pair<Action, Item*> ActionArgPair;
 
 		// Constructor
@@ -43,40 +43,20 @@ class LR0Automaton
 
 		// Private (non-static) variables
 		Grammar slrGrammar;
-		set<ItemSet> canonicalCollection;
+		set<ItemSet*> canonicalCollection;
 		map<ItemTerminalPair, ItemSet*> GOTO;
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
 
 		// Private functions
 
 		void initialize ();
-		/* Function to compute the canonical collection using slrGrammar.
-		 * The result is stored in the variable canonicalCollection.
+		/* Function to compute the canonical collection using 
+		 * slrGrammar. The result is stored in the variable 
+		 * canonicalCollection.
 		 */
 		void constructCanonicalCollection ();
 		
-		/* Function to convert a rule (a particular tail) to an Item
-		 * This function returns an item such that the 'dot' is 
-		 * right in the beginning.
-		 */
-		Item rule2Item (Rule& rule, unsigned int ruleIndex);
-
-		/* Function to convert a rule to an ItemSet using rule2Item
-		 * This function needs to be passed an ItemSet for results
-		 * A pointer to the same variable (result) is returned.
-		 */
-		ItemSet* rule2ItemSet(Rule& rule,ItemSet& result);
-
-		/* Function to take closure given an ItemSet 
-		 * This function needs to be passed an ItemSet for results
-		 * A pointer to the same variable (result) is returned.
-		 */
-		ItemSet* ItemSetsClosure (const ItemSet& items, ItemSet& result);
-
-		/* Function to return the set of symbols that will have 
-		 * a corresponding value in GOTO */
-		set<string> requiredSymbols (const ItemSet& itemSet);
-
+	
 		ItemSet* goTo (ItemSet* I, const string& X);
 };
 
