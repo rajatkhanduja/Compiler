@@ -4,9 +4,11 @@ int main ( void )
   float a = 0.0 ;
   
   if ( a > 0 )
-    printf ( "yes\n" );
+    if ( 5 < 15 )
+      printf ( "yes\n" );
   else
-    printf ( "no\n" );
+    if ( 1 <= 1 )
+      printf ( "no\n" );
 
   a = +5 ;
   char c_int = 'a' ;
