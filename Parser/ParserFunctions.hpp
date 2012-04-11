@@ -1,26 +1,35 @@
-#include "xtoLL1.hpp"
-#include "commons.hpp"
+#ifndef PARSER_FUNCTIONS_HPP
+#define PARSER_FUNCTIONS_HPP
 
-
+#include <xtoLL1.hpp>
+#include <Grammar.hpp>
+#include <commons.hpp>
+#include <map>
 class FirstSet
 {
 	private:
-		map<string, vector<string>> firstSet;
+		map< string, vector<string> > firstSet;
 	public:
 		FirstSet();
 		vector<string> First(const string Gsym/* Any Grammar Symbol */, Grammar grammar);
-		FirstSetAddEntry(string key, vector<string > value);
-		
+		void FirstSetAddEntry(string key, vector<string> value);
+		map< string, vector<string> > GetFirstSet();	
 
 };
+
+
+vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart);
 
 class FollowSet
 {
 	private:
-		map<string, vector<string>> followSet;
+		map< string, vector<string> > followSet;
 	public:
 		FollowSet();
-		vector<string> Follow(const string Gsym /* Any Grammar Symbol */, Grammar grammar);
-		FollowSetAddEntry(string key, vector<string> value);
+		vector<string> Follow(FirstSet firstSet, const string Gsym /* Any Grammar Symbol */, Grammar grammar);
+		void FollowSetAddEntry(string key, vector<string> value);
+		map< string, vector<string> > GetFollowSet();	
 
 };
+
+#endif
