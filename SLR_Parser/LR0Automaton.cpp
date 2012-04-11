@@ -130,6 +130,18 @@ LR0Automaton::ItemSet* LR0Automaton::ItemSetsClosure (const ItemSet& items,
 	return &result;
 }
 
+static LR0Automaton::Item shiftDot (const LR0Automaton::Item& item)
+{
+	LR0Automaton::Item result(item);
+	
+	// Shift the 'dot' virtually by erasing the first element
+	// from the second part of the item and inserting into the first part
+	result.second.first.push_back (result.second.second[0]);
+	result.second.second.erase (result.second.second.begin());
+
+	return result;
+}
+
 LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 {
 	/* First check GOTO */
@@ -139,8 +151,7 @@ LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 		return itr->second;	
 	}
 	
-	ItemSet * result = new ItemSet();
-	ItemSet tmpSet;
+	ItemSet tmpSet, *result = new ItemSet();
 	Item tmpItem;
 
 	ItemSet::iterator itemItr;
@@ -148,7 +159,11 @@ LR0Automaton::ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	{
 		if ( ! X.compare (itemItr->second.second[0]))
 		{
-			
+			// Store the changed item in tmpItem
+			tmpItem = shiftDot (*itemItr);
+
+			// Insert tmpItem to tmpSet
+			tmpSet.insert (tmpItem);
 		}
 	}
 
