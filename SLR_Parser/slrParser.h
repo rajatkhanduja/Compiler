@@ -33,8 +33,9 @@ class slrParser
 	private: 
 		// Private Data structures
 		enum Action { None, Shift, Reduce, Accept};
-
-		typedef pair <string, string[2]> Item;
+		
+		typedef pair<string, string> ItemBody; 
+		typedef pair<string, ItemBody> Item;
 		typedef set<Item> ItemSet; 
 		typedef pair<Item*, string> ItemTerminalPair;
 		typedef pair<Action, Item*> ActionArgPair;
@@ -44,13 +45,22 @@ class slrParser
 
 		// Private (non-static) variables
 		Grammar slrGrammar;
-		set<ItemSet> cannonicalCollection;
+		set<ItemSet> canonicalCollection;
 		map<ItemTerminalPair, Item*> GOTO;
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
 
 		// Private functions
+
+		/* Function to compute the canonical collection using slrGrammar.
+		 * The result is stored in the variable canonicalCollection.
+		 */
 		void constructCanonicalCollection ();
+		
+		/* Function to convert a rule to an Item */
+		Item rule2Item (Rule& rule);
+		
 		ItemSet * ItemSetsClosure (ItemSet& items, ItemSet);
+
 };
 
 // Declare the augmentedStartSymbol to be complex so that it 
