@@ -26,8 +26,11 @@ typedef pair<string, ItemBody> Item;
 typedef set<Item> ItemSet; 
 typedef pair<ItemSet*, string> ItemTerminalPair;
 
+class SLRParser;
+
 class LR0Automaton 
 {
+	friend class SLRParser;
 	public:
 		// Public static variables
 		static const string augmentedStartSymbol;
@@ -36,11 +39,6 @@ class LR0Automaton
 		LR0Automaton (char * grammarFileName);
 		LR0Automaton (const Grammar& grammar);
 
-		/* Function that returns the value of GOTO for 
-		 * ItemSet*I and symbol (terminal or non-terminal) X
-		 */
-		ItemSet* goTo (ItemSet* I, const string& X);
-		
 		/* Function that returns the ItemSet with which the
 		 * parsing begins. 
 		 */
@@ -60,5 +58,10 @@ class LR0Automaton
 		 * canonicalCollection.
 		 */
 		void constructCanonicalCollection ();
+		
+		/* Function that returns the value of GOTO for 
+		 * ItemSet*I and symbol (terminal or non-terminal) X
+		 */
+		ItemSet* goTo (ItemSet* I, const string& X);
 };
 #endif	// End of file
