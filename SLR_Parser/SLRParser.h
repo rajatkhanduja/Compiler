@@ -6,6 +6,7 @@
 #include <LexicalAnalyser.h>
 #include <LR0Automaton.h>
 #include <stack>
+#include <ParserFunctions.hpp>
 
 using std::stack;
 
@@ -36,6 +37,8 @@ class SLRParser
 		ItemSet * startSet;
 		LexicalAnalyser lex;
 		stack<ItemSet*> parseStack;
+		FirstSet firstSet;
+		FollowSet followSet;
 		
 		// Private functions
 

@@ -3,7 +3,6 @@
 #include <SLRParser.h>
 #include <Terminal_NonTerminal.hpp>
 #include <fstream>
-#include <ParserFunctions.hpp>
 
 using std::ifstream;
 
@@ -15,6 +14,35 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	lex.readRules (lexRulesFile);
 
 	startSet = lr0automaton.startItemSet ();
+	
+	int numTerminals = NTerminals();
+	int numNonTerminals = NNonTerminals();
+	int i;
+	string Gsym;
+	FirstSet firstSet;
+	FollowSet followSet; 
+
+	//############################# FIRST ##################################
+	for ( i = 0; i < numTerminals; i++ )
+	{
+		Gsym = getTerminal(i);
+		firstSet.First(Gsym, lr0automaton.slrGrammar);	
+	}   	
+
+	for ( i = 0; i < numNonTerminals; i++ )
+	{
+		Gsym = getNonTerminal(i);
+		firstSet.First(Gsym, lr0automaton.slrGrammar);
+	}
+	//#############################  FIRST ##################################
+
+	//############################# FOLLOW #############################################	
+	for ( i = 0; i < numNonTerminals; i++ )
+	{
+		Gsym = getNonTerminal(i);
+		followSet.Follow(firstSet, Gsym, lr0automaton.slrGrammar);
+	}
+	//############################# FOLLOW #############################################
 	constructActionTable ();
 }
 
@@ -98,8 +126,7 @@ void SLRParser::constructActionTable ()
 			if ( isReduceReady (*itemSetItr))
 			{
 				// TODO : Use FOLLOW and complete this part 
-
-				
+				vector<string> follow;
 			}
 
 			if ( isAcceptReady (*itemSetItr) )

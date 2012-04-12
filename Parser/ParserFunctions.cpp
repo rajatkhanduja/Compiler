@@ -12,6 +12,15 @@
 
 
 
+FirstSet::FirstSet ()
+{
+	//Empty
+}
+
+FollowSet::FollowSet ()
+{
+	//Empty
+}
 
 void FirstSet::FirstSetAddEntry(string key, vector<string> value)
 {
