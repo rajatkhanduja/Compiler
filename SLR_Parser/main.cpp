@@ -24,6 +24,6 @@ int main (int argc, char * argv[])
 	}
 
 	SLRParser slrParser (argv[1], argv[2]);
-
+	slrParser.printCanonicalCollection ();
 	return 0;
 }

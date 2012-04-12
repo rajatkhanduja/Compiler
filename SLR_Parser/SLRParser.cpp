@@ -190,3 +190,8 @@ void SLRParser::parse (ifstream& inputFile)
 	}
 
 }
+
+void SLRParser::printCanonicalCollection ()
+{
+	lr0automaton.printCanonicalCollection ();
+}

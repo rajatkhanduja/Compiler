@@ -5,6 +5,7 @@
 #include <Terminal_NonTerminal.hpp>
 #include <xtoLL1.hpp>
 #include <vector>
+#include <iostream>
 
 using std::vector;
 
@@ -232,4 +233,46 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 ItemSet * LR0Automaton::startItemSet ()
 {
 	return &(this->startSet);
+}
+
+#define vectorIterate(v,itr) \
+for (itr = v.begin(); itr != v.end(); itr++) \
+{\
+	std::cout << "(" << *itr << ")" << " ";\
+}
+
+void printItem (const Item& item)
+{
+	std::cout << item.first << " --> ";
+	vector<string>::const_iterator itr;
+
+	vectorIterate (item.second.first, itr);
+	std::cout << ".";
+	vectorIterate (item.second.second, itr);
+	
+	return;
+}
+
+void printItemSet (const ItemSet& items)
+{
+	ItemSet::const_iterator itr, itr_end;
+
+	for (itr = items.begin(), itr_end = items.end(); itr != itr_end; itr++)
+	{
+		printItem(*itr);
+	}
+}
+
+void LR0Automaton::printCanonicalCollection (void)
+{
+	set<ItemSet*>::iterator itr, itr_end;
+	int i;
+	for (i = 0, itr = canonicalCollection.begin(),
+		itr_end = canonicalCollection.end(); itr != itr_end; itr++, i++)
+	{
+		std::cout << "ItemSet " << i << ":" << std::endl;
+		printItemSet (**itr);
+
+		std::cout << "\n";
+	}
 }

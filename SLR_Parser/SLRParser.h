@@ -26,6 +26,9 @@ class SLRParser
 
 		/* Call this function to parse. The output is printed directly.*/
 		void parse (ifstream& inputFile);
+		
+		/* Function to print the canonicalCollection of LR0Automaton */
+		void printCanonicalCollection ();
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
