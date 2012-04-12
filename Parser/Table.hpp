@@ -4,6 +4,9 @@
 #include <Grammar.hpp>
 #include <ParserFunctions.hpp>
 #include <map>
+#include <Terminal_NonTerminal.hpp>
+#include <xtoLL1.hpp>
+
 using namespace std;
 
 /*
@@ -45,24 +48,28 @@ class TableKey
 		Row rowIndex;		
 		Column columnIndex;
 	public:
+		TableKey();
 		TableKey(Row rowIndex, Column columnIndex);
 		void SetKey(Row rowIndex, Column columnIndex);
 		pair<Row, Column> GetKey();
+		Column GetColumn() const;
+		bool operator<(const TableKey<Row, Column>& ) const;
+		
 };
 
 
 /* Table is implemented as a multimap (Associative Container) */
-template<class TableKey>
+template<class Key>
 class Table
 {
 	private:
-		multimap<TableKey, Rule> table;
+		multimap<Key, Rule> table;
 
 	public:
 		Table();
-		void TableInsert(TableKey key, Rule rule);
-		vector<Rule> TableFind(TableKey key);
-		void PopulateTable(Grammar CFG, FirstSet firstSet); 
+		void TableInsert(Key key, Rule rule);
+		vector<Rule> TableFind(Key key);
+		void PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet); 
 };
 
 #endif

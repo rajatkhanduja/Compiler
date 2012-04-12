@@ -31,6 +31,11 @@ class Rule
 		std::string RuleHead();
 		// returns the tail of the rule at the \
 		index position of the argument passed.
+
+		//#TODO
+		void RuleCleanAll(const std::string head);
+		//#TODO
+
 		vector<std::string> RuleTail(int);
 		// returns all the tails of the rule.
 		vector<vector<std::string> > RuleTails();

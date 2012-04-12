@@ -1,4 +1,3 @@
-#include <xtoLL1.hpp>
 #include <Table.hpp>
 
 using namespace std;
@@ -6,46 +5,64 @@ using namespace std;
 template<class Row, class Column>
 TableKey<Row, Column>::TableKey(Row rowIndex, Column columnIndex)
 {
-	this.rowIndex = rowIndex;
-	this.columnIndex = columnIndex;
+	this->rowIndex = rowIndex;
+	this->columnIndex = columnIndex;
 }
 
 template<class Row, class Column>
 void 
 TableKey<Row, Column>::SetKey(Row rowIndex, Column columnIndex)
 {
-	this.rowIndex = rowIndex;
-	this.columnIndex = columnIndex;
+	this->rowIndex = rowIndex;
+	this->columnIndex = columnIndex;
 }
 
 template<class Row, class Column>
 pair<Row, Column> 
 TableKey<Row, Column>::GetKey()
 {
-	return pair<string, string>(this.Nterm, this.term);
+	return pair<string, string>(this->rowIndex, this->columnIndex);
 }
 
-
-template<class TableKey>
-void 
-Table<TableKey>::TableInsert(TableKey key, Rule rule)
+// Note this is required because the 'map' data structure requires an operator '<' for COMPARISON of it's elements and since the 'TableInsert' function inserts
+// a template type object into the template type table. A generic/specific COMPARISON function is required before any INSERTION can take place.
+template<class Row, class Column>
+Column
+TableKey<Row, Column>::GetColumn() const
 {
-	(this->table).insert( pair<TableKey,Rule>(key, rule) );
+	return this->columnIndex;
+}
+
+
+template<class Row, class Column> 
+bool 
+TableKey<Row, Column>::operator<(const TableKey<Row, Column>& key ) const
+{
+	return ( this->columnIndex > key.GetColumn() );
+}
+
+template<class Key>
+void 
+Table<Key>::TableInsert(Key key, Rule rule)
+{
+	pair <Key, Rule> insertPair;
+	insertPair = make_pair(key, rule);
+	(this->table).insert(insertPair);
 
 }
 
-template<class TableKey>
+template<class Key>
 vector<Rule> 
-Table<TableKey>::TableFind(TableKey key)
+Table<Key>::TableFind(Key key)
 {
 	vector<Rule> retval;
 	/* multimap class has an inbuilt 'class' iterator ;
-	   so, multimap<TableKey, Rule>::iterator is a class type.
+	   so, multimap<Key, Rule>::iterator is a class type.
 	*/
 
-       
-	multimap<TableKey, Rule>::iterator it;
-	pair< multimap<TableKey, Rule>::iterator, multimap<TableKey, Rule>::iterator > iterBoundPair; 
+	typedef typename multimap<Key, Rule>::iterator TemplateIterator;	// Template iterator	
+	TemplateIterator it;
+	pair<TemplateIterator, TemplateIterator> iterBoundPair; 
       
 	/* Returns the bounds of a range that includes all the elements in the container with a key that compares equal to x. */
 	iterBoundPair = (this->table).equal_range(key);
@@ -61,56 +78,67 @@ Table<TableKey>::TableFind(TableKey key)
 
 
 /* Here we will fill the table according to the algorithm. */
-template<class TableKey>
+//#TODO Although this is a template function, but it works only when template parameter 'Key' has the form TableKey <string, string> due to the way SetKey() is called
+template<class Key>
 void
-Table<TableKey>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet)
+Table<Key>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet)
 {
 	vector<Rule> grammarRules = CFG.GrammarAllRules();
 	vector<Rule>::iterator itr;
 	vector<string>::iterator its1, its2;
 	vector<string> tail, setFirst, setFollow;
 	string head;
-	TableKey key;
+	Key key;
+	vector < vector<std::string> > tailsWithCommonHead;
+	vector < vector<std::string> >::iterator itvs;
+	Rule rule;
 	
 	for ( itr = grammarRules.begin(); itr < grammarRules.end(); itr++ )
 	{
-		tail = (*itr).tail;	//#TODO tail has to be a public member.
-		head = (*itr).head;	//#TODO head has to be a public member.
+		tailsWithCommonHead = (*itr).RuleTails();
 
-		// Now the whole tail has to be considered as a SINGLE AGGREGATE symbol.
-		setFirst = FirstOfAggSym(firstSet, tail, tail.begin());
-		for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
+		head = (*itr).RuleHead();
+		rule.RuleCleanAll(head);
+
+		for ( itvs = tailsWithCommonHead.begin(); itvs < tailsWithCommonHead.end(); itvs++ )
 		{
-			if ( *its1 == EPSILON )		
+			tail = *itvs;
+			rule.RuleAddTail(tail);
+			// Now the whole tail has to be considered as a SINGLE AGGREGATE symbol.
+			setFirst = FirstOfAggSym(firstSet, tail, tail.begin());
+			for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
 			{
-				//######## Application of Rule(2) ###########.
-				setFollow = (followSet.GetFollowSet())[head];
-				for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
+				if ( *its1 == EPSILON )		
 				{
-					if ( *its2 == ENDMARKER )
+					//######## Application of Rule(2) ###########.
+					setFollow = (followSet.GetFollowSet())[head];
+					for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
 					{
-						key.SetKey(head, ENDMARKER);
-						TableInsert(key, *itr);
+						if ( *its2 == ENDMARKER )
+						{
+							key.SetKey(head, ENDMARKER);
+							TableInsert(key, rule);
+						}
+						
+						else if ( isTerminal(*its2) )	// '$' is not a TERMINAL.
+						{
+							key.SetKey(head, *its2);
+							TableInsert(key, rule);
+						}
 					}
-					
-					else if ( CFG.isTerminal(*its2) )	// '$' is not a TERMINAL.
-					{
-						key.SetKey(head, *its2);
-						TableInsert(key, *itr);
-					}
+
 				}
+				else if ( isTerminal(*its1) )	// Note:: 'epsilon' is not a terminal.
+				{
+					//####### Application of Rule(1) ###########.
+
+					key.SetKey(head, *its1);//#TODO The type of 'head' and '*its' should depend on the template parameter Key unlike strings here.
+					TableInsert(key, rule);
+				}	
 
 			}
-			else if ( CFG.isTerminal(*its1) )	// Note:: 'epsilon' is not a terminal.
-			{
-				//####### Application of Rule(1) ###########.
-
-				key.SetKey(head, *its1);//#TODO The type of 'head' and '*its' should depend on the template parameter TableKey unlike strings here.
-				TableInsert(key, *itr);
-			}	
-
-		}	
-
+			rule.RuleRemoveTail(tail);	
+		} 
 	}
 	// We need to consider each rule in the form :: A -> [alpha], where [alpha] is an AGGREGATE symbol.
 }
