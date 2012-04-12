@@ -11,6 +11,7 @@
 #ifndef RULE_HPP
 #define RULE_HPP
 #include <commons.hpp>
+#include <Terminal_NonTerminal.hpp>
 using namespace std;
 
 class Rule
@@ -61,6 +62,17 @@ class Rule
 		// returns the index of an epsilon production \
 		in tails of the rule.
 		int RuleFindEpsilonProduction();
+		// checks whether the tail passed as index is a \
+		terminal production or not.
+		bool RuleIsTerminalProduction(int);
+		// returns whether the rule has a terminal \
+		production in tails of the rule or not. \
+		A terminal production is a production consisting \
+		entirely of terminals.
+		bool RuleHasTerminalProduction();
+		// checks whether the tail passed as index is a \
+		left recursive production or the rule or not.
+		bool RuleIsLeftRecursiveProduction(int);
 		// compares two vector<std::string>s \
 		and returns the truth value.
 		bool equals(vector<std::string>, vector<std::string>);

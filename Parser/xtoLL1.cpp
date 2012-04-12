@@ -44,7 +44,8 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 					tail.push_back(t);
 					if(isupper(t[0]))
 						addNonTerminal(t);
-					else if(islower(t[0]))
+					else if(t.compare(EPSILON) &&
+						t.compare(ENDMARKER))
 						addTerminal(t);
 				}
 			}
@@ -55,6 +56,7 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 		}
 	}while(f.good());
 	f.close();
+	g.GrammarSetStartSymbol();
 }
 
 static bool HasCycles(Grammar& g, Rule r, std::string rhead)
@@ -81,32 +83,42 @@ bool HasCycles(Grammar& g)	// wrapper for the above function
 	return false;
 }
 
-bool HasNonTerminatingRules(Grammar& g)
+bool HasNonTerminatingProductions(Rule& r)
 {
-	Rule r;
 	vector<std::string> tail;
 	int tail_nonterminals;
 	bool headmatches;
 	std::string head;
+	head = r.RuleHead();
+	for(int j = 0; j < r.RuleNTails(); j++)
+	{
+		tail = r.RuleTail(j);
+		tail_nonterminals = 0;
+		headmatches = false;
+		for(int k = 0; k < tail.size(); k++)
+		{
+			if(!head.compare(tail[k]))
+				headmatches = true;
+			if(isNonTerminal(tail[k]))
+				tail_nonterminals++;
+		}
+		if(tail_nonterminals == 1 &&
+			headmatches &&
+			!r.RuleHasTerminalProduction() &&
+			r.RuleFindEpsilonProduction() == -1)
+			return true;
+	}
+	return false;
+}
+
+bool HasNonTerminatingRules(Grammar& g)
+{
+	Rule r;
 	for(int i = 0; i < g.GrammarNRules(); i++)
 	{
 		r = g.GrammarRule(i);
-		head = r.RuleHead();
-		for(int j = 0; j < r.RuleNTails(); j++)
-		{
-			tail = r.RuleTail(j);
-			tail_nonterminals = 0;
-			headmatches = false;
-			for(int k = 0; k < tail.size(); k++)
-			{
-				if(!head.compare(tail[k]))
-					headmatches = true;
-				if(isNonTerminal(tail[k]))
-					tail_nonterminals++;
-			}
-			if(tail_nonterminals == 1 && headmatches)
-				return true;
-		}
+		if(HasNonTerminatingProductions(r))
+			return true;
 	}
 	return false;
 }
@@ -132,9 +144,88 @@ void EliminateEpsilonProductions(Grammar& g)
 	}
 }
 
+#define PLR	ProductionsLeftRecursive
+#define PNLR	ProductionsNonLeftRecursive
+static vector<int> ProductionsLeftRecursive, ProductionsNonLeftRecursive;
+
+bool HasLeftRecursion(Rule& r)
+{
+	PLR.clear();
+	PNLR.clear();
+	// Atleast one production should begin with \
+	the same Non-Terminal as the head of the rule. \
+	(Additionally, that production should have at \
+	least one other Terminal/Non-Terminal but that \
+	is guaranteed since there are no cycles.)
+	// At least one production should NOT begin with \
+	the same Non-Terminal as the head of the rule.
+	for(int i = 0; i < r.RuleNTails(); i++)
+	{
+		if(r.RuleIsLeftRecursiveProduction(i))
+			PLR.push_back(i);
+		else
+			PNLR.push_back(i);
+	}
+	if(PLR.size() > 0 && PNLR.size() > 0)
+		return true;
+	else
+		return false;
+}
+
+vector<Rule> EliminateImmediateLeftRecursion(Rule& r)
+{
+	vector<Rule> replacementrules;
+	replacementrules.push_back(Rule(r.RuleHead()));
+	replacementrules.push_back(
+		Rule(r.RuleHead().append(std::string("_PRIME"))));
+	vector<std::string> tail;
+	for(int i = 0; i < PNLR.size(); i++)
+	{
+		tail = r.RuleTail(PNLR[i]);
+		if(!tail[0].compare(EPSILON))
+			tail.clear();
+		tail.push_back(replacementrules[1].RuleHead());
+		replacementrules[0].RuleAddTail(tail);
+	}
+	for(int i = 0; i < PLR.size(); i++)
+	{
+		tail = r.RuleTail(PLR[i]);
+		tail.erase(tail.begin() + 0);
+		tail.push_back(replacementrules[1].RuleHead());
+		replacementrules[1].RuleAddTail(tail);
+	}
+	tail.clear();
+	tail.push_back(EPSILON);
+	replacementrules[1].RuleAddTail(tail);
+	return replacementrules;
+}
+
+void EliminateImmediateLeftRecursion(Grammar& g)
+{
+	Rule r;
+	vector<Rule> temp, rulestoadd;
+	vector<int> rulestoremove;
+	int n = g.GrammarNRules(), rulestoremove_modifier = 0;
+	for(int i = 0; i < n; i++)
+	{
+		r = g.GrammarRule(i);
+		if(HasLeftRecursion(r))
+		{
+			temp = EliminateImmediateLeftRecursion(r);
+			rulestoremove.push_back(i);
+			rulestoadd.push_back(temp[0]);
+			rulestoadd.push_back(temp[1]);
+		}
+	}
+	for(int i = 0; i < rulestoadd.size(); i++)
+		g.GrammarAddRule(rulestoadd[i]);
+	for(int i = 0; i < rulestoremove.size(); i++, rulestoremove_modifier++)
+		g.GrammarRemoveRule(rulestoremove[i] - rulestoremove_modifier);
+}
+
 void EliminateLeftRecursion(Grammar& g)
 {
-	return;
+	EliminateImmediateLeftRecursion(g);
 }
 
 void LeftFactorize(Grammar& g)

@@ -68,16 +68,19 @@ void Rule::RuleOutput()
 		cout<<"<empty or invalid rule>"<<endl;
 		return;
 	}
-	cout<<"Rule:\t("<<this->head<<") --> ";
+	cout<<"Rule:\t["<<this->head<<"] --> ";
 	for(int i = 0; i < this->RuleNTails(); i++)
 	{
 		for(int j = 0; j < this->tails[i].size(); j++)
-			cout<<"("<<tails[i][j]<<")";
+			cout<<"["<<tails[i][j]<<"]";
 		if(i == this->RuleNTails() - 1)
 			cout<<"\n";
 		else
 			cout<<" | ";
 	}
+	//cerr<<"RuleHasTerminalProduction() = "<<this->RuleHasTerminalProduction()<<endl;
+	//cerr<<"RuleFindEpsilonProduction() = "<<this->RuleFindEpsilonProduction()<<endl;
+
 }
 
 int Rule::RuleFindEpsilonProduction()
@@ -86,6 +89,32 @@ int Rule::RuleFindEpsilonProduction()
 		if(this->tails[i].size() == 1 && !(this->tails[i][0].compare(EPSILON)))
 			return i;
 	return -1;
+}
+
+bool Rule::RuleIsTerminalProduction(int i)
+{
+	vector<std::string> tail = this->RuleTail(i);
+	for(int j = 0; j < tail.size(); j++)
+		if(!isTerminal(tail[j]))
+			return false;
+	return true;
+}
+
+bool Rule::RuleHasTerminalProduction()
+{
+	for(int i = 0; i < this->RuleNTails(); i++)
+		if(this->RuleIsTerminalProduction(i))
+			return true;
+	return false;
+}
+
+bool Rule::RuleIsLeftRecursiveProduction(int i)
+{
+	if(this->tails[i].size() < 2)
+		return false;
+	if(this->head.compare(this->tails[i][0]))
+		return false;
+	return true;
 }
 
 bool Rule::equals(vector<std::string> a, vector<std::string> b)

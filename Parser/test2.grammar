@@ -1,0 +1,16 @@
+# Conventions:
+# each entity has to be separated by a space
+# the file should end in a blank line
+# any line beginning with "#" would be ignored
+# all heads are treated as non-terminals, so better is to begin them with a capital letter
+# all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
+#
+# Grammar:
+A --> A a | b
+Hoes --> T1 alkDslkdjHlskdj | lskdj T4 | T5 | Hole | Boobies | Hoes Foes
+H --> T1 | T3 T4 | i | %
+Foo --> Foo bar Baz lorem ipsum | SashaGrey | % | Natalie Portman
+E --> E + T | T
+T --> T * F | F
+F --> ( E ) | id
+

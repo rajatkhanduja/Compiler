@@ -29,6 +29,9 @@ int findTerminal(std::string);
 value is returned; no questions \
 asked!
 std::string getTerminal(int);
+// returns the number of entries \
+in the vector.
+int NTerminals();
 
 // the argument string is \
 added to the vector if it \
@@ -50,6 +53,9 @@ int findNonTerminal(std::string);
 value is returned; no questions \
 asked!
 std::string getNonTerminal(int);
+// returns the number of entries \
+in the vector.
+int NNonTerminals();
 
 
 // the argument string is \
