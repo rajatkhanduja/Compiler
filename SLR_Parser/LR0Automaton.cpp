@@ -10,6 +10,10 @@ using std::vector;
 
 static Rule * startRule;
 
+// Declare the augmentedStartSymbol to be complex so that it 
+// is highly unlikely that it is used in the grammar.
+const string LR0Automaton :: augmentedStartSymbol = "StArT5yMb0l";	
+
 // This function can be called after the grammar has been initialized
 void LR0Automaton::initialize ()
 {
@@ -95,10 +99,10 @@ ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
 					rule2ItemSet (rule, fromRules);
 					
 					ItemSet::iterator itr1, itr1_end;
-					itr1 = fromRules.begin ();
-					itr1_end = fromRules.end ();
 
-					while (itr1 != itr1_end)
+					for ( 	itr1 = fromRules.begin (),
+						itr1_end = fromRules.end ();
+						itr1 != itr1_end; itr1++)
 					{
 						if (result.find (*itr) == 
 							result.end ())
@@ -106,7 +110,6 @@ ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
 							result.insert (*itr);
 							newElemAdded = true;
 						}
-						itr++;
 					}
 				}
 			}
@@ -138,8 +141,8 @@ set<string> requiredSymbols (const ItemSet& itemSet)
 void LR0Automaton::constructCanonicalCollection ()
 {
 	// Start with inserting the set of item containing only S'->S
-	ItemSet startSet, *tmpSet = new ItemSet();
-	rule2ItemSet (*startRule, startSet);
+	ItemSet *tmpSet = new ItemSet();
+	rule2ItemSet (*startRule, *tmpSet);
 	bool newElemAdded = true;
 
 	set<ItemSet*>::iterator itr, itr_end;
@@ -148,7 +151,7 @@ void LR0Automaton::constructCanonicalCollection ()
 	*/
 
 	canonicalCollection.insert (
-		(ItemSetsClosure (startSet, slrGrammar, *tmpSet)));
+		(ItemSetsClosure (*tmpSet, slrGrammar, startSet)));
 
 	while (newElemAdded)
 	{
@@ -159,9 +162,10 @@ void LR0Automaton::constructCanonicalCollection ()
 		{
 			/* For each symbol, check GOTO */
 			set<string> symGoTo = requiredSymbols (**itr);
-			set<string>::iterator strSetItr = symGoTo.begin();
-			set<string>::iterator strSetItrEnd = symGoTo.end();
-			while (strSetItr != strSetItrEnd)
+			set<string>::iterator strSetItr, strSetItrEnd;
+			for ( 	strSetItr = symGoTo.begin (),
+				strSetItrEnd = symGoTo.end(); 
+				strSetItr != strSetItrEnd; strSetItr++)
 			{
 				ItemSet * gotoSet = goTo (*itr, *strSetItr);
 
@@ -174,7 +178,6 @@ void LR0Automaton::constructCanonicalCollection ()
 					canonicalCollection.insert (gotoSet);
 					newElemAdded = true;
 				}
-				itr++;
 			}
 		}
 	}
@@ -221,3 +224,7 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	return (ItemSetsClosure (tmpSet, slrGrammar, *result));
 }	
 
+ItemSet * LR0Automaton::startItemSet ()
+{
+	return &(this->startSet);
+}

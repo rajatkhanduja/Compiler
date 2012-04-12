@@ -29,19 +29,28 @@ typedef pair<ItemSet*, string> ItemTerminalPair;
 class LR0Automaton 
 {
 	public:
+		// Public static variables
+		static const string augmentedStartSymbol;
+
 		// Constructor
 		LR0Automaton (char * grammarFileName);
 		LR0Automaton (const Grammar& grammar);
 
+		/* Function that returns the value of GOTO for 
+		 * ItemSet*I and symbol (terminal or non-terminal) X
+		 */
+		ItemSet* goTo (ItemSet* I, const string& X);
+		
+		/* Function that returns the ItemSet with which the
+		 * parsing begins. 
+		 */
+		ItemSet* startItemSet ();
 	private: 
-		// Private static variables
-		static const string augmentedStartSymbol;
-
 		// Private (non-static) variables
 		Grammar slrGrammar;
 		set<ItemSet*> canonicalCollection;
 		map<ItemTerminalPair, ItemSet*> GOTO;
-		map<ItemTerminalPair, ActionArgPair> ACTION; 
+		ItemSet startSet;
 
 		// Private functions
 
@@ -51,13 +60,5 @@ class LR0Automaton
 		 * canonicalCollection.
 		 */
 		void constructCanonicalCollection ();
-		
-	
-		ItemSet* goTo (ItemSet* I, const string& X);
 };
-
-// Declare the augmentedStartSymbol to be complex so that it 
-// is highly unlikely that it is used in the grammar.
-const string LR0Automaton :: augmentedStartSymbol = "StArT5yMb0l";	
-
 #endif	// End of file
