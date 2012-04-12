@@ -20,7 +20,8 @@ void LR0Automaton::initialize ()
 {
 	// Add the rule S' -> S to create the augmented grammar
 	Rule startSymRule (augmentedStartSymbol);
-	startSymRule.RuleAddTail (vector<string> (1, augmentedStartSymbol));
+	startSymRule.RuleAddTail (vector<string> (1, 
+					slrGrammar.GrammarStartSymbol()));
 	slrGrammar.GrammarAddRule (startSymRule);
 	slrGrammar.GrammarSetStartSymbol (augmentedStartSymbol);
 
