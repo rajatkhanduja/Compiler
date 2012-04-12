@@ -68,7 +68,7 @@ class SymbolTable
 			     const unsigned int& col);
 
 	private:
-		list<SymbolTableElement> index[26];	// Indices according to first character of the lexeme.
+		list<SymbolTableElement> index[27];	// Indices according to first character of the lexeme. 27th position is for non-alphabetic lexemes.
 
 };
 

@@ -19,10 +19,10 @@ class SLRParser
 		typedef pair<Action, ActionVal> ActionArgPair;
 
 		// Constructor
-		SLRParser (char * grammarFile);
+		SLRParser (char * lexFile, char * grammarFile);
 
 		/* Call this function to parse. The output is printed directly.*/
-//		void parse (ifstream& );
+		void parse (ifstream& inputFile);
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 

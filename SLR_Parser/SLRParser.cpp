@@ -2,9 +2,17 @@
 /* This file defines the slrParser class. */
 #include <SLRParser.h>
 #include <Terminal_NonTerminal.hpp>
+#include <fstream>
 
-SLRParser::SLRParser (char * grammarFile) : lr0automaton (grammarFile)
+using std::ifstream;
+
+SLRParser::SLRParser (char * lexFile, char * grammarFile) 
+	: lr0automaton (grammarFile)
 {
+	// Read Lex rules.
+	ifstream lexRulesFile (lexFile);
+	lex.readRules (lexRulesFile);
+
 	startSet = lr0automaton.startItemSet ();
 	constructActionTable ();
 }
@@ -103,5 +111,20 @@ void SLRParser::constructActionTable ()
 							NULL, NULL);
 			}
 		}
+	}
+}
+
+void SLRParser::parse (ifstream& inputFile)
+{
+	lex.setInputFile (&inputFile);
+	string token;
+
+	try
+	{
+		token = getNextToken ();
+	}
+	catch (string lexException)
+	{
+		assert(lexException.compare (LexicalAnalyser::NoInputFileException))
 	}
 }

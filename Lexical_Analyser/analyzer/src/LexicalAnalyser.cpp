@@ -2,11 +2,19 @@
 /* This file defines the functions for Lexical Analyser class */
 
 #include <LexicalAnalyser.h>
+#include <cassert>
+
+const string LexicalAnalyser::NoInputFileException = string ("No Input File");
+const string LexicalAnalyser::NoMoreTokenException = string ("No More Token");
+
+LexicalAnalyser::LexicalAnalyser ()
+{
+	inputFile = NULL;
+}
 
 void LexicalAnalyser::addRule (const string regex, const string token)
 {
 	RegexParser * parser = new RegexParser (regex);
-	
 	lexicalRules.push_back (make_pair(parser, token));
 }
 
@@ -49,3 +57,91 @@ void LexicalAnalyser::addToSymbolTable (const string& lexeme, const string& toke
 	symTable.insert (lexeme, token, line, col);
 }
 
+void LexicalAnalyser::readRules (ifstream& rulesFile)
+{
+	string regex, token;
+	while (true)
+	{
+		rulesFile >> regex;
+		rulesFile >> token;
+
+		std::cerr << regex << " " << token << std::endl;
+
+		addRule (regex, token);
+    
+		if ( rulesFile.eof())
+			break;
+  	}
+}
+
+void LexicalAnalyser::setInputFile (ifstream * inputFile)
+{
+	this->inputFile = inputFile;
+	inputFileEOF = false;
+	curLine = col = 0;
+	line = NULL;
+}
+
+string LexicalAnalyser::getNextToken ()
+{
+	static bool lineEOF;
+	if (NULL == inputFile)
+	{
+		throw NoInputFileException;
+	}
+	
+	// Check if the 'line' variable holds any content.
+	if (!line || lineEOF)
+	{
+		if (inputFileEOF)
+		{	
+			throw NoMoreTokenException;
+		}
+		
+		string tmpLine;
+		do
+		{
+			getline (*inputFile, tmpLine);
+//			std::cerr << tmpLine.size ();
+		} while (tmpLine.size () <= 0 && !inputFile->eof());
+
+		if ( line )
+		{
+			delete line;
+		}
+		
+		line = new istringstream (tmpLine);
+		lineEOF = false;
+
+		curLine++;
+		
+		if (inputFile->eof())
+		{
+			inputFileEOF = true;
+		}
+	}
+	
+	// If it does, read from it.
+	string lexeme;
+	*line >> lexeme;
+	if (line->eof())
+		lineEOF = true;
+	if (lexeme.size () <= 0)
+	{
+		if (lineEOF)
+		{
+			return getNextToken();
+		}
+		else
+		{
+			assert (0);
+		}
+	}
+	string token = tokenize (lexeme);
+
+	col =  line->tellg();	// Line break because of compiler warning 
+	col -= lexeme.length() - 1;
+	addToSymbolTable (lexeme, token, curLine, col);
+
+	return token;
+}

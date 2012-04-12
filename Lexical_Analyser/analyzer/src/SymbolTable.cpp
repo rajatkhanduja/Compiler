@@ -36,7 +36,8 @@ list<SymbolTableElement::Position> SymbolTableElement::getPositions () const
 
 static inline unsigned int tableIndex (const string& lexeme)
 {
-	return (tolower(lexeme[0] - 'a'));
+	int index = tolower(lexeme[0] - 'a');
+	return (index <= 25) ? index : 26;
 }
 
 SymbolTableElement * SymbolTable::findLexeme (const string& lexeme)
@@ -46,7 +47,7 @@ SymbolTableElement * SymbolTable::findLexeme (const string& lexeme)
 
 	for ( iter = index[n].begin(), iter_end = index[n].end(); iter != iter_end; iter++)
 	{
-		if ( iter->lexeme == lexeme)
+		if (! (iter->lexeme.compare (lexeme)) )
 		{
 			return &(*iter);
 		}

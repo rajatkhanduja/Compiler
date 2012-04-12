@@ -37,6 +37,9 @@ int main (int argc, char *argv[])
 	ifstream inputFile (argv[2]);
 	string regex, token;
 
+	lexer.readRules (rulesFile);
+
+/*
 	while (true)
 	{
 		rulesFile >> regex;
@@ -49,7 +52,7 @@ int main (int argc, char *argv[])
 		if ( rulesFile.eof())
 			break;
   	}
-
+*/
 	string lexeme, line;
 	unsigned int row = 0, col;
 
@@ -63,14 +66,9 @@ int main (int argc, char *argv[])
 			token = lexer.tokenize (lexeme);
 			std::cout << token << " ";
 
-			if ( !token.compare ("ID"))
-			{
-				// Put IDs into symbol table
-				col = lexemeStream.tellg ();
-				col -= lexeme.length () - 1;
-				lexer.addToSymbolTable (lexeme, token, row,
-							col);
-			}
+			col = lexemeStream.tellg ();
+			col -= lexeme.length () - 1;
+			lexer.addToSymbolTable (lexeme, token, row, col);
 		}
 		std::cout << std::endl;
 
@@ -78,5 +76,18 @@ int main (int argc, char *argv[])
 			break;
 	}
 
+/*	lexer.setInputFile (&inputFile);
+	try
+	{
+		while (true)
+		{
+			std::cout << lexer.getNextToken () << " ";
+		}
+	}
+	catch (string exception)
+	{
+		std::cerr << "Caught : " << exception << std::endl;
+	}
+*/
 	return 0;
 }
