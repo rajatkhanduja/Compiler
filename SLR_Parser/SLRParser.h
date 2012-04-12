@@ -5,6 +5,9 @@
 
 #include <LexicalAnalyser.h>
 #include <LR0Automaton.h>
+#include <stack>
+
+using std::stack;
 
 class SLRParser 
 {
@@ -13,7 +16,7 @@ class SLRParser
 		enum Action { None, Shift, Reduce, Accept};
 		struct ActionVal 	// Unable to use Union
 		{
-			Rule reduceRule;
+			Item* reduceRule;
 			ItemSet* shiftTo;
 		};
 		typedef pair<Action, ActionVal> ActionArgPair;
@@ -28,8 +31,8 @@ class SLRParser
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
 		LR0Automaton lr0automaton;
 		ItemSet * startSet;
-		ItemSet * curSet;
 		LexicalAnalyser lex;
+		stack<ItemSet*> parseStack;
 		
 		// Private functions
 
@@ -43,7 +46,7 @@ class SLRParser
 		 * is not SLR(1). It throws an exception (still TODO).
 		 */
 		void addToActionTable (ItemSet* curItemSet, const string& Terminal,
-					Action action, Rule* reduceRule,
+					Action action, Item* reduceRule,
 					ItemSet* shiftTo);
 };
 

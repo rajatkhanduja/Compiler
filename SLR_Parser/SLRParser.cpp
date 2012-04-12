@@ -45,7 +45,7 @@ inline bool isAcceptReady (const Item& item)
 }
 
 void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal, 
-				Action action, Rule* reduceRule, ItemSet* shiftTo)
+				Action action, Item* reduceRule, ItemSet* shiftTo)
 {
 	ActionVal newAction;
 
@@ -55,7 +55,7 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	}
 	else if (action == Reduce)
 	{
-		newAction.reduceRule = *reduceRule;
+		newAction.reduceRule = reduceRule;
 	}
 	
 	// Insert into the ACTION table
@@ -114,17 +114,84 @@ void SLRParser::constructActionTable ()
 	}
 }
 
+template <class T> void emptyStack (stack<T>& s)
+{
+	while (!s.empty())
+	{
+		s.pop();
+	}
+}
+
+/* Function that returns head of the production in the Item. */
+string ItemHead (const Item* item)
+{
+	return item->first;
+}
+
+void printItem (Item* item)
+{
+	
+}
+
 void SLRParser::parse (ifstream& inputFile)
 {
 	lex.setInputFile (&inputFile);
-	string token;
+
+	// Ensure the stack is empty.
+	emptyStack (parseStack);
+
+	// Insert the startSet into the stack.
+	parseStack.push (startSet);
 
 	try
 	{
-		token = getNextToken ();
+		string token = lex.getNextToken ();
+		ItemTerminalPair actionKey;
+		ActionArgPair actionVal;
+		while (true)
+		{
+			actionKey = make_pair (parseStack.top(), token);
+			actionVal = ACTION[actionKey];
+
+			if ( Shift == actionVal.first )
+			{
+				// Shift
+				parseStack.push (actionVal.second.shiftTo);
+			}
+
+			else if ( Reduce == actionVal.first )
+			{
+				// Reduce
+				int i, n;
+				n = actionVal.second.reduceRule->second.first.size()
+				+ actionVal.second.reduceRule->second.second.size();
+				
+				for (i = 0; i < n; i++)
+				{
+					parseStack.pop();
+				}
+ 				
+				parseStack.push(lr0automaton.goTo (
+					parseStack.top(), ItemHead(
+						actionVal.second.reduceRule)));
+	//			printItem (actionVal.second.reduceRule);
+
+			}
+			else if ( Accept == actionVal.first )
+			{
+				// Accept
+				break;
+			}
+			else
+			{
+				// Error
+				assert (0);
+			}
+		}
 	}
 	catch (string lexException)
 	{
-		assert(lexException.compare (LexicalAnalyser::NoInputFileException))
+		assert(lexException.compare(LexicalAnalyser::NoInputFileException));
 	}
+
 }
