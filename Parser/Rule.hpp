@@ -65,6 +65,9 @@ class Rule
 		A terminal production is a production consisting \
 		entirely of terminals.
 		bool RuleHasTerminalProduction();
+		// checks whether the tail passed as index is a \
+		left recursive production or the rule or not.
+		bool RuleIsLeftRecursiveProduction(int);
 		// compares two vector<std::string>s \
 		and returns the truth value.
 		bool equals(vector<std::string>, vector<std::string>);

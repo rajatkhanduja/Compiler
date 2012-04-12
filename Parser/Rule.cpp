@@ -68,18 +68,18 @@ void Rule::RuleOutput()
 		cout<<"<empty or invalid rule>"<<endl;
 		return;
 	}
-	cout<<"Rule:\t("<<this->head<<") --> ";
+	cout<<"Rule:\t["<<this->head<<"] --> ";
 	for(int i = 0; i < this->RuleNTails(); i++)
 	{
 		for(int j = 0; j < this->tails[i].size(); j++)
-			cout<<"("<<tails[i][j]<<")";
+			cout<<"["<<tails[i][j]<<"]";
 		if(i == this->RuleNTails() - 1)
 			cout<<"\n";
 		else
 			cout<<" | ";
 	}
-	cerr<<"RuleHasTerminalProduction() = "<<this->RuleHasTerminalProduction()<<endl;
-	cerr<<"RuleFindEpsilonProduction() = "<<this->RuleFindEpsilonProduction()<<endl;
+	//cerr<<"RuleHasTerminalProduction() = "<<this->RuleHasTerminalProduction()<<endl;
+	//cerr<<"RuleFindEpsilonProduction() = "<<this->RuleFindEpsilonProduction()<<endl;
 
 }
 
@@ -106,6 +106,15 @@ bool Rule::RuleHasTerminalProduction()
 		if(this->RuleIsTerminalProduction(i))
 			return true;
 	return false;
+}
+
+bool Rule::RuleIsLeftRecursiveProduction(int i)
+{
+	if(this->tails[i].size() < 2)
+		return false;
+	if(this->head.compare(this->tails[i][0]))
+		return false;
+	return true;
 }
 
 bool Rule::equals(vector<std::string> a, vector<std::string> b)

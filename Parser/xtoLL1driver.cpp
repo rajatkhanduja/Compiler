@@ -20,15 +20,8 @@ int main(int argc, char* argv[])
 		cerr<<"Grammar has epsilon productions."<<endl;
 	
 	G = G_scanned;
+	EliminateLeftRecursion(G);
 	G.GrammarOutput();
-
-	EliminateDuplicateProductions(G);
-	G.GrammarOutput();
-
-	/*
-	while(G_scanned.GrammarHasEpsilonProductions())
-		EliminateEpsilonProductions(G_scanned);
-	*/
 
 	return 0;
 }

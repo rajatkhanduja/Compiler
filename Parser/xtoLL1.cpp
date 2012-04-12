@@ -44,7 +44,7 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 					tail.push_back(t);
 					if(isupper(t[0]))
 						addNonTerminal(t);
-					else if(islower(t[0]))
+					else if(t.compare(EPSILON) && t.compare(ENDMARKER))
 						addTerminal(t);
 				}
 			}
@@ -159,9 +159,9 @@ bool HasLeftRecursion(Rule& r)
 	the same Non-Terminal as the head of the rule.
 	for(int i = 0; i < r.RuleNTails(); i++)
 	{
-		//if(r.RuleIsLeftRecursiveProduction(i))
+		if(r.RuleIsLeftRecursiveProduction(i))
 			PLR.push_back(i);
-		//else
+		else
 			PNLR.push_back(i);
 	}
 	if(PLR.size() > 0 && PNLR.size() > 0)
@@ -176,8 +176,25 @@ vector<Rule> EliminateImmediateLeftRecursion(Rule& r)
 	replacementrules.push_back(Rule(r.RuleHead()));
 	replacementrules.push_back(
 		Rule(r.RuleHead().append(std::string("_PRIME"))));
-	
-
+	vector<std::string> tail;
+	for(int i = 0; i < PNLR.size(); i++)
+	{
+		tail = r.RuleTail(PNLR[i]);
+		if(!tail[0].compare(EPSILON))
+			tail.clear();
+		tail.push_back(replacementrules[1].RuleHead());
+		replacementrules[0].RuleAddTail(tail);
+	}
+	for(int i = 0; i < PLR.size(); i++)
+	{
+		tail = r.RuleTail(PLR[i]);
+		tail.erase(tail.begin() + 0);
+		tail.push_back(replacementrules[0].RuleHead());
+		replacementrules[1].RuleAddTail(tail);
+	}
+	tail.clear();
+	tail.push_back(EPSILON);
+	replacementrules[1].RuleAddTail(tail);
 	return replacementrules;
 }
 
