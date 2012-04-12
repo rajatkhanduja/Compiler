@@ -69,7 +69,7 @@ class Table
 		Table();
 		void TableInsert(Key key, Rule rule);
 		vector<Rule> TableFind(Key key);
-		void PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet); 
+		void PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet); 
 };
 
 #endif
