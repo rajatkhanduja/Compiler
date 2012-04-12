@@ -1,5 +1,4 @@
 #include <ParserFunctions.hpp>
-#include <Terminal_NonTerminal.hpp>
 
 /* The extern keyword means "declare without defining". In other words ,it is a way to explicitly declare a variable, 
    or to force a declaration without a definition. It is also possible to explicitly define a variable, i.e. to force 
@@ -40,6 +39,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 {
  	vector<string> retval;
 	bool continueOnEpsilon = false;
+	int index;
 
 	if ( Gsym == EPSILON )
 	{
@@ -65,16 +65,27 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 	else
 		{
 			// We need to search for all productions that start with the non-terminal GSym.
-			vector<Rule>::iterator itr;
+			//vector<Rule>::iterator itr;
+			vector< vector<std::string> >::iterator itvs;
 			vector<string>::iterator its1, its2;
 			vector<string> tail, firstVals;
-			vector<Rule> matchedRules = CFG.GrammarFindRule(Gsym);	// All Rules whose head starts with Gsym.
+			index = CFG.GrammarFindRule(Gsym);				
 			
-			for ( itr = matchedRules.begin(); itr < matchedRules.end(); itr++ )
+			/* A rule has a structure:
+			 *	head: <string>
+			 *	tail(s): <vector of strings>
+			 */
+
+			Rule matchedRule = CFG.GrammarRule(index);  // The Rule whose head starts with Gsym.
+			vector< vector<std::string> > matchedTails = matchedRule.RuleTails();		// matchedTails is a vector of vector of strings.			
+
+			for ( itvs = matchedTails.begin(); itvs < matchedTails.end(); itvs++ )
 				{
 					// Given a rule, We need to traverse all the symbols in it.
+					//*(itvs) is the tail of the matched rule.
 					
-					tail = (*itr).tail;	// #TODO This requires tail to be public member.
+					//tail = (*itr).tail;	// #TODO This requires tail to be public member.
+					tail = *(itvs);					
 
 					// ########################## TRAVERSING A MATCHED RULE #############################################
 
@@ -139,7 +150,7 @@ vector<string> FirstSet::First (string Gsym, Grammar CFG)
 										
 										firstVals = (this->firstSet)[*its1];
 										// firstvals is a vector of strings.
-										for ( its2 = firstVals.begin(); its < firstVals.end(); its2++ )
+										for ( its2 = firstVals.begin(); its2 < firstVals.end(); its2++ )
 											{
 												if ( *its2 == EPSILON ) 
 												{	// We have an epsilon production, Hence we need 
@@ -187,11 +198,11 @@ vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<stri
 {
 	vector<string>::iterator it, epsilonPosition;
 	vector<string> tmpFirstSet, retval;
-	map<string, vector<string>> firstSet = firstSet.GetFirstSet();
+	map<string, vector<string> > firstSetMap = firstSet.GetFirstSet();
 
 	for ( it = itStart; it < tail.end(); it++ )
 	{
-		tmpFirstSet = firstSet[*it];	// Find the firstSet of this non-terminal.
+		tmpFirstSet = firstSetMap[*it];	// Find the firstSet of this non-terminal.
 		retval.insert(retval.end(), tmpFirstSet.begin(), tmpFirstSet.end());
 			
 		if ( (epsilonPosition = find(retval.begin(), retval.end(), EPSILON)) != retval.end() )			
@@ -218,13 +229,13 @@ void FollowSet::FollowSetAddEntry(string key, vector<string> value)
 	}
 	else
 	{
-		std::cerr << "Key \"" << key << "\" already exists in firstSet with value " << (this->followSet)[key] << std::endl;
+		std::cerr << "Key \"" << key << "\" already exists in firstSet" << std::endl;
 	}
 
 }
 
 
-map<string, vector<string>> FollowSet::GetFollowSet()
+map<string, vector<string> > FollowSet::GetFollowSet()
 {
 	return (this->followSet);
 }
@@ -234,13 +245,15 @@ map<string, vector<string>> FollowSet::GetFollowSet()
 vector<string> FollowSet::Follow (FirstSet firstSet, string Gsym, Grammar CFG)
 {
 	vector<string> retval;
-	if ( Gsym == CFG.startSym )
+	if ( Gsym == CFG.GrammarStartSymbol() )
 	{
 		retval.push_back(ENDMARKER);		// We place the "$" symbol in follow of the start symbol.
 	}
 
-	vector<Rule> GRules = CFG.GrammarAllRules();	
-	vector<Rule>::iterator itr; vector<string>::iterator its1, its2;	// Declaration
+	vector<Rule> GRules = CFG.GrammarAllRules();
+	vector< vector<std::string> >::iterator itvs;
+	vector< vector<std::string> > tailsWithCommonHead;	
+	vector<Rule>::iterator itr; vector<string>::iterator its; 	// Declaration
 	vector<string> tail, firstOfNextSym;
 	string head;
 	vector<string> followVals; 
@@ -253,101 +266,114 @@ vector<string> FollowSet::Follow (FirstSet firstSet, string Gsym, Grammar CFG)
 
 	for ( itr = GRules.begin(); itr < GRules.end(); itr++ )
 	{
-
-		tail = (*itr).tail;	// #TODO This requires tail to be a public member.
-		head = (*itr).head;	// #TODO This requires head to be a public member.
-		
-		for ( its1 = tail.begin(); its1 < tail.end(); its1++ )
-		{
-			if ( (*its1) == Gsym )	// Symbol(Gsym) found in the tail of the Grammar Rule.
+		/* A rule has a structure:
+			 *	head: <string>
+			 *	tail(s): <vector of strings>
+		*/
+		tailsWithCommonHead = (*itr).RuleTails();
+		head = (*itr).RuleHead();	
+	
+		for ( itvs = tailsWithCommonHead.begin(); itvs < tailsWithCommonHead.end(); itvs++ )
+		{	
+			tail = *itvs;
+			
+			for ( its = tail.begin(); its < tail.end(); its++ )
 			{
-				//#################################### RECURSION DOMAIN ######################################################
-				
-				/* Consider the rule A -> [a] [C] [Gsym] [B] [g] [D]
-				 * For the application of Rule(2) or Rule(3), all the symbols before 'Gsym' would need to be
-				 * considered as one symbol and the same is true for all the symbols after 'Gsym'. So, let's re-write the rule as follows
-				 * A -> [alpha] [Gsym] [beta]
-				 * Now, examine the contents of FIRST([beta]). But before that, we need to consider an important issue ::
-				 * note that the 'AGGREGATE SYMBOL' [beta] composed of [B], [g] and [D] does not have an EXPLICIT entry for itself
-				 * in the 'firstSet' data structure, since the 'firstSet' data structure contains entries only for the grammar symbols
-				 * and not such 'AGGREGATE SYMBOLS'. Hence we need to be careful here.
-				 * */
-				
-				/* We need to create an artificial rule for this 'AGGREGATE SYMBOL' and calculate it's first set with the existing
-				 * information in the 'firstSet' data structure.
-				 * 
-				 * << ARTIFICIAL RULE >>
-				 * [beta] -> [B] [g] [D]
-				 *
-				 * We use firstOfAggSym() function for this purpose.
-				 * */
-				
-				needTorecurse = false;
-
-				if ( (its + 1) == tail.end() ) /* i.e 'Gsym' is the last symbol in the tail. */ 
+				if ( (*its) == Gsym )	// Symbol(Gsym) found in the tail of the Grammar Rule.
 				{
-					// Application of Rule (3). Since we have a rule of the form :: A -> [alpha] [Gsym]
-					// Hence everything in Follow(A) is in Follow(Gsym).
-					needTorecurse = true;
-					   
-				}
-				else
-				{	
-										
-					firstOfNextSym = FirstOfAggSym(firstSet, tail, its + 1);	// Find the firstSet of this non-terminal.
+					//#################################### RECURSION DOMAIN ######################################################
+					
+					/* Consider the rule A -> [a] [C] [Gsym] [B] [g] [D]
+					 * For the application of Rule(2) or Rule(3), all the symbols before 'Gsym' would need to be
+					 * considered as one symbol and the same is true for all the symbols after 'Gsym'. So, let's re-write the rule as follows
+					 * A -> [alpha] [Gsym] [beta]
+					 * Now, examine the contents of FIRST([beta]). But before that, we need to consider an important issue ::
+					 * note that the 'AGGREGATE SYMBOL' [beta] composed of [B], [g] and [D] does not have an EXPLICIT entry for itself
+					 * in the 'firstSet' data structure, since the 'firstSet' data structure contains entries only for the grammar symbols
+					 * and not such 'AGGREGATE SYMBOLS'. Hence we need to be careful here.
+					 * */
+					
+					/* We need to create an artificial rule for this 'AGGREGATE SYMBOL' and calculate it's first set with the existing
+					 * information in the 'firstSet' data structure.
+					 * 
+					 * << ARTIFICIAL RULE >>
+					 * [beta] -> [B] [g] [D]
+					 *
+					 * We use firstOfAggSym() function for this purpose.
+					 * */
+					
+					needTorecurse = false;
 
-					if ( find(firstOfNextSym.begin(), firstOfNextSym.end(), EPSILON) != firstOfNextSym.end() ) 
+					if ( (its + 1) == tail.end() ) /* i.e 'Gsym' is the last symbol in the tail. */ 
 					{
-						// Application of Rule(3). Since we have :: A -> [alpha] [Gsym] [beta] where FIRST([beta]) contains an epsilon.
-						// Hence everything in Follow(A) is in Follow(Gsym). 						
+						// Application of Rule (3). Since we have a rule of the form :: A -> [alpha] [Gsym]
+						// Hence everything in Follow(A) is in Follow(Gsym).
 						needTorecurse = true;
+						   
 					}
 					else
-					{
-						// Application of Rule(2). Everything in FIRST([beta]) is in FOLLOW([Gsym])
-						retval.insert(retval.end(), firstOfNextSym.begin(), firstOfNextSym.end());
-						// We will not break here since we may find the same symbol 'Gsym' many times in the tail.
-						// We'll just finish this iteration here and scan the remaining tail portion.
+					{	
+											
+						firstOfNextSym = FirstOfAggSym(firstSet, tail, its + 1);	// Find the firstSet of this non-terminal.
 
-					}
-					
-				}
-				// Recurse if needed
-				if ( needTorecurse )
-				{
-					if ( ( followVals = (this->followSet).find(head) ) == (this->followSet).end() )
+						if ( find(firstOfNextSym.begin(), firstOfNextSym.end(), EPSILON) != firstOfNextSym.end() ) 
 						{
-							// The below keeps a check for RIGHT RECURSIVE GRAMMARS .
-							// The recursion will never END in case of RIGHT RECURSIVE GRAMMARS. Hence the following 'if' condition
-							// makes sure that the recursion will terminate at some point.
-							if ( find(recursionStack.begin(), recursionStack.end(), head) == recursionStack.end() )
-							{	
-								//###### RECURSIVE CALL ##########
-								followVals = Follow(head, CFG);
-								//###### RECURSIVE CALL ##########
-							}
-							else
-							{	
-								// If it does not have an entry in the followSet and also exists in the recursion stack implies
-								// it is in the process of calculation and has occurred again which is a case of 
-								// RIGHT RECURSIVE GRAMMAR. Here the CALCULATION of the followSet of a grammar symbol in the 
-								// form of recursion has back-edged to ITSELF. Hence, we END the recursion here. 
+							// Application of Rule(3). Since we have :: A -> [alpha] [Gsym] [beta] where FIRST([beta]) contains an epsilon.
+							// Hence everything in Follow(A) is in Follow(Gsym). 						
+							needTorecurse = true;
+						}
+						else
+						{
+							// Application of Rule(2). Everything in FIRST([beta]) is in FOLLOW([Gsym])
+							retval.insert(retval.end(), firstOfNextSym.begin(), firstOfNextSym.end());
+							// We will not break here since we may find the same symbol 'Gsym' many times in the tail.
+							// We'll just finish this iteration here and scan the remaining tail portion.
 
-								// Report the occurence of a RIGHT RECURSIVE GRAMMAR
-								
-								std::cerr << "Encountered a RIGHT RECURSIVE grammar\n";
-								followVals.clear();	// Clear the followVals vector. 
-							}	
 						}
 						
-					// 'followSet' now contains the follow set for head. 
-					// We just need to append that to follow of Gsym.
-					retval.insert(retval.end(), followVals.begin(), followVals.end());
+					}
+					// Recurse if needed
+					if ( needTorecurse )
+					{
+						if ( (this->followSet).find(head) == (this->followSet).end() )
+							{
+								// The below keeps a check for RIGHT RECURSIVE GRAMMARS .
+								// The recursion will never END in case of RIGHT RECURSIVE GRAMMARS. Hence the following 'if' condition
+								// makes sure that the recursion will terminate at some point.
+								if ( find(recursionStack.begin(), recursionStack.end(), head) == recursionStack.end() )
+								{	
+									//###### RECURSIVE CALL ##########
+									followVals = Follow(firstSet, head, CFG);
+									//###### RECURSIVE CALL ##########
+								}
+								else
+								{	
+									// If it does not have an entry in the followSet and also exists in the recursion stack implies
+									// it is in the process of calculation and has occurred again which is a case of 
+									// RIGHT RECURSIVE GRAMMAR. Here the CALCULATION of the followSet of a grammar symbol in the 
+									// form of recursion has back-edged to ITSELF. Hence, we END the recursion here. 
+
+									// Report the occurence of a RIGHT RECURSIVE GRAMMAR
+									
+									std::cerr << "Encountered a RIGHT RECURSIVE grammar\n";
+									followVals.clear();	// Clear the followVals vector. 
+								}	
+							}
+							
+						// 'followSet' now contains the follow set for head. 
+						// We just need to append that to follow of Gsym.
+						else
+							{
+								followVals = ((this->followSet).find(head))->second;
+							}
+						retval.insert(retval.end(), followVals.begin(), followVals.end());
+					}
+					   	
+					//#################################### RECURSION DOMAIN ######################################################
 				}
-				   	
-				//#################################### RECURSION DOMAIN ######################################################
-			}
+			} 
 		}
+	
 	}
 	
 	FollowSetAddEntry(Gsym, retval);	// Filling the class data structure followSet through Recursive Calls.

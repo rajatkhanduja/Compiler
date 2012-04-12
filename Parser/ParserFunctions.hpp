@@ -5,6 +5,9 @@
 #include <Grammar.hpp>
 #include <commons.hpp>
 #include <map>
+#include <Terminal_NonTerminal.hpp>
+
+
 class FirstSet
 {
 	private:
