@@ -27,6 +27,12 @@ in rules of the grammar passed as reference \
 in the argument.
 // TODO
 void EliminateEpsilonProductions(Grammar&);
+// checks whether the rule passed as reference \
+in the argument has left recursion or not.
+bool HasLeftRecursion(Rule&);
+// eliminates immediate left recursion in \
+the rule passed as reference in the argument.
+vector<Rule> EliminateImmediateLeftRecursion(Rule&);
 // eliminates immediate left recursion in \
 the grammar passed as reference in the argument.
 void EliminateImmediateLeftRecursion(Grammar&);

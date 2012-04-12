@@ -142,9 +142,60 @@ void EliminateEpsilonProductions(Grammar& g)
 	}
 }
 
+#define PLR	ProductionsLeftRecursive
+#define PNLR	ProductionsNonLeftRecursive
+static vector<int> ProductionsLeftRecursive, ProductionsNonLeftRecursive;
+
+bool HasLeftRecursion(Rule& r)
+{
+	PLR.clear();
+	PNLR.clear();
+	// Atleast one production should begin with \
+	the same Non-Terminal as the head of the rule. \
+	(Additionally, that production should have at \
+	least one other Terminal/Non-Terminal but that \
+	is guaranteed since there are no cycles.)
+	// At least one production should NOT begin with \
+	the same Non-Terminal as the head of the rule.
+	for(int i = 0; i < r.RuleNTails(); i++)
+	{
+		//if(r.RuleIsLeftRecursiveProduction(i))
+			PLR.push_back(i);
+		//else
+			PNLR.push_back(i);
+	}
+	if(PLR.size() > 0 && PNLR.size() > 0)
+		return true;
+	else
+		return false;
+}
+
+vector<Rule> EliminateImmediateLeftRecursion(Rule& r)
+{
+	vector<Rule> replacementrules;
+	replacementrules.push_back(Rule(r.RuleHead()));
+	replacementrules.push_back(
+		Rule(r.RuleHead().append(std::string("_PRIME"))));
+	
+
+	return replacementrules;
+}
+
 void EliminateImmediateLeftRecursion(Grammar& g)
 {
-	return;
+	Rule r;
+	vector<Rule> temp;
+	for(int i = 0; i < g.GrammarNRules(); i++)
+	{
+		r = g.GrammarRule(i);
+		if(HasLeftRecursion(r))
+		{
+			temp = EliminateImmediateLeftRecursion(r);
+			g.GrammarRemoveRule(i);
+			g.GrammarAddRule(temp[0]);
+			g.GrammarAddRule(temp[1]);
+		}
+	}
 }
 
 void EliminateLeftRecursion(Grammar& g)
