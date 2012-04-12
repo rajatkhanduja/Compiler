@@ -81,7 +81,7 @@ Table<Key>::TableFind(Key key)
 //#TODO Although this is a template function, but it works only when template parameter 'Key' has the form TableKey <string, string> due to the way SetKey() is called
 template<class Key>
 void
-Table<Key>::PopulateTable(Grammar CFG, FirstSet firstSet, FollowSet followSet)
+Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet)
 {
 	vector<Rule> grammarRules = CFG.GrammarAllRules();
 	vector<Rule>::iterator itr;

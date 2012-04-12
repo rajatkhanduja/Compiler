@@ -35,7 +35,7 @@ map<string, vector<string> > FirstSet::GetFirstSet()
 }
 
 
-vector<string> FirstSet::First (string Gsym, Grammar CFG)
+vector<string> FirstSet::First (string Gsym, Grammar& CFG)
 {
  	vector<string> retval;
 	bool continueOnEpsilon = false;
@@ -242,7 +242,7 @@ map<string, vector<string> > FollowSet::GetFollowSet()
 
 
 /* NOTE :: Follow() function access the data structure 'firstSet' ONLY through the non-class function firstOfAggSym() */
-vector<string> FollowSet::Follow (FirstSet firstSet, string Gsym, Grammar CFG)
+vector<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 {
 	vector<string> retval;
 	if ( Gsym == CFG.GrammarStartSymbol() )

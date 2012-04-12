@@ -1,26 +1,69 @@
 #include <NonRecursivePredictiveParser.hpp>
 
-void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
+void printProduction(Rule rule)
+{
+	
+	string head = rule.RuleHead();
+	vector<string> tail = rule.RuleTail(0);	
+	vector<string>::iterator it;
+
+	std::cerr << head << " ==> ";
+	for ( it = tail.begin(); it < tail.end(); it++ )
+	{
+		std::cerr << *it << " ";
+	}
+	std::cerr << std::endl;
+}
+
+void NonRecursivePredictiveParser::PrepareInput(string line)
+{
+	// Tokenize the line [ SPACE SEPERATED LINES ]
+	string token;
+	istringstream iss(line);
+	
+	while (iss)
+	{
+		iss >> token;
+		(this->input).push_back(token);
+	}
+	
+	(this->input).push_back("$");		
+}
+
+
+void NonRecursivePredictiveParser::ClearInput()
+{
+	(this->input).clear();
+}
+
+
+void NonRecursivePredictiveParser::ParseInput(Grammar& CFG)
 {
 	int ip = 0;	/* input pointer */
 	TableKey <string, string> key;
 	vector<Rule> foundRule;
 	vector<Rule>::iterator itr;
-	vector<string> its;
+	vector<string>::iterator its;
 	vector<string> tail;
-
-	vector<string>::iterator X = (this->parserStack).end() - 1;	/* Top of the stack */	
+	vector<string>::iterator X;
+	string endMarker(ENDMARKER);
+	(this->parserStack).push_back(endMarker);
+	(this->parserStack).push_back(CFG.GrammarStartSymbol());
+	
+	
+	X = (this->parserStack).end() - 1;	/* Top of the stack */
 	while ( *X != ENDMARKER )
 	{
+
 		key.SetKey(*X, (this->input)[ip]);
 		foundRule = (this->parsingTable).TableFind(key);  
 
-		if ( *X == (this->input)[ip] )	/* (*X) is terminal and is equal to the CURRENT input symbol. */
+		if ( (*X).compare((this->input)[ip]) == 0 )	/* (*X) is terminal and is equal to the CURRENT input symbol. */
 		{
 			(this->parserStack).pop_back();
 			ip++;
 		}
-		else if ( CFG.isTerminal(*X) )
+		else if ( isTerminal(*X) )
 		{
 			std::cerr << "Error in parsing." << std::endl;
 		}
@@ -38,13 +81,19 @@ void NonRecursivePredictiveParser::ParseInput(Grammar CFG)
 				//#TODO Current implementation for just one rule. Hence nothing here.
 			}
 			itr = foundRule.begin();
-			tail = (*itr).tail;	//#TODO tail has to be a PUBLIC member function.
-			for ( its = tail.end() - 1; its != tail.begin() - 1; its-- )
+			
+			tail = (*itr).RuleTail(0);	//#TODO tail has to be a PUBLIC member function.
+
+			// Print the production chosen.
+			// Build the depth first tree.
+			printProduction(*itr);
+
+			for ( its = tail.end() - 1; its < tail.begin(); its-- )
 			{
 					(this->parserStack).push_back(*its);
 			}
 		}
 
-		X = *((this->parserStack).end() - 1);	/* Set 'X' to top of the stack. */	
+		X = (this->parserStack).end() - 1;	/* Set 'X' to top of the stack. */	
 	}
 }
