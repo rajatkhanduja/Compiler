@@ -87,7 +87,8 @@ ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
 		for (itr = result.begin(), itr_end = result.end();
 			itr != itr_end; itr++)
 		{
-			if ( isNonTerminal ((itr->second).second[0]) )
+			if ( itr->second.second.size() 
+			     &&	isNonTerminal ((itr->second).second[0]) )
 			{
 				ruleIndex = slrGrammar.GrammarFindRule(
 						(itr->second).second[0]);
@@ -104,10 +105,10 @@ ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
 						itr1_end = fromRules.end ();
 						itr1 != itr1_end; itr1++)
 					{
-						if (result.find (*itr) == 
+						if (result.find (*itr1) == 
 							result.end ())
 						{
-							result.insert (*itr);
+							result.insert (*itr1);
 							newElemAdded = true;
 						}
 					}
