@@ -4,6 +4,7 @@
 
 SLRParser::SLRParser (char * grammarFile) : lr0automaton (grammarFile)
 {
+	startSet = lr0automaton.startItemSet ();
 	constructActionTable ();
 }
 

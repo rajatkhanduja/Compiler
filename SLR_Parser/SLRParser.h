@@ -3,6 +3,7 @@
 #ifndef SLR_PARSER_INCLUDED
 #define SLR_PARSER_INCLUDED
 
+#include <LexicalAnalyser.h>
 #include <LR0Automaton.h>
 
 class SLRParser 
@@ -15,10 +16,14 @@ class SLRParser
 		// Constructor
 		SLRParser (char * grammarFile);
 
+		/* Call this function to parse. The output is printed directly.*/
+		void parse ();
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
 		LR0Automaton lr0automaton;
+		ItemSet * startSet;
+		LexicalAnalyser lex;
 		
 		// Private functions
 
