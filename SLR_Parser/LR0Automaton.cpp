@@ -42,6 +42,10 @@ LR0Automaton::LR0Automaton (const Grammar& grammar)
 	initialize ();
 }
 
+string LR0Automaton::postDotSymbol (const Item& item)
+{
+	return (item.second.second.size() > 0) ? item.second.second[0] : string();
+}
 /* Function to convert a rule (a particular tail) to an Item
  * This function returns an item such that the 'dot' is 
  * right in the beginning.
@@ -87,8 +91,7 @@ ItemSet* ItemSetsClosure (const ItemSet& items, Grammar &slrGrammar,
 		for (itr = result.begin(), itr_end = result.end();
 			itr != itr_end; itr++)
 		{
-			if ( itr->second.second.size() 
-			     &&	isNonTerminal ((itr->second).second[0]) )
+			if ( isNonTerminal ( LR0Automaton::postDotSymbol(*itr)))
 			{
 				ruleIndex = slrGrammar.GrammarFindRule(
 						(itr->second).second[0]);
@@ -173,7 +176,7 @@ void LR0Automaton::constructCanonicalCollection ()
 				/* If gotoSet is not empty and is not in
 				 * in canonicalCollection. */
 				if ( !gotoSet->empty() && 
-					(canonicalCollection.find (*itr) !=
+					(canonicalCollection.find (*itr) ==
 						canonicalCollection.end()) )
 				{
 					canonicalCollection.insert (gotoSet);
@@ -207,12 +210,13 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	}
 	
 	ItemSet tmpSet, *result = new ItemSet();
+	assert (result->empty());
 	Item tmpItem;
 
 	ItemSet::iterator itemItr;
 	for ( itemItr = I->begin(); itemItr != I->end(); itemItr++)
 	{
-		if ( ! X.compare (itemItr->second.second[0]))
+		if ( ! X.compare (postDotSymbol (*itemItr)))
 		{
 			// Store the changed item in tmpItem
 			tmpItem = shiftDot (*itemItr);

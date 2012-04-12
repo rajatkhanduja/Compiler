@@ -17,11 +17,6 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	constructActionTable ();
 }
 
-/* Function that returns the first symbol that occurs after dot. */
-inline string postDotSymbol (const Item& item)
-{
-	return (item.second.second.size() > 0) ? item.second.second[0] : string();
-}
 
 /* Function that checks if the item is ready to be reduced
  * i.e. it checks if the dot is the last thing in the rule or that 
@@ -90,7 +85,7 @@ void SLRParser::constructActionTable ()
 			itemSetItrEnd = (*itr)->end(); itemSetItr != itemSetItrEnd;
 			itemSetItr++)
 		{
-			string symbol = postDotSymbol (*itemSetItr);
+			string symbol = LR0Automaton::postDotSymbol (*itemSetItr);
 
 			if (isTerminal (symbol))
 			{

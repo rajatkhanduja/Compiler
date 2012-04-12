@@ -35,6 +35,10 @@ class LR0Automaton
 		// Public static variables
 		static const string augmentedStartSymbol;
 
+		//Static functions
+		/* Function that returns the first symbol that occurs after dot. */
+		static string postDotSymbol (const Item& item);
+
 		// Constructor
 		LR0Automaton (char * grammarFileName);
 		LR0Automaton (const Grammar& grammar);
