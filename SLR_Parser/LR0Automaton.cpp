@@ -35,7 +35,6 @@ void LR0Automaton::initialize ()
 LR0Automaton::LR0Automaton (char * grammarFileName)
 {
 	ScanGrammarFromFile (slrGrammar, grammarFileName);
-	slrGrammar.GrammarSetStartSymbol (getNonTerminal(0));
 	initialize ();
 }
 

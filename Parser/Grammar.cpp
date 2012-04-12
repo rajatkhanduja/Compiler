@@ -15,7 +15,7 @@ Grammar::Grammar(std::string s, vector<Rule> r)
 void Grammar::GrammarSetStartSymbol(string startSymbol)
 {
 	// TODO : Ensure that the string being set as startSym is a non-terminal already.
-	if (!startSymbol.compare (""))
+	if (!startSymbol.compare (string()))
 	{
 		this->startSym = getNonTerminal(0);
 	}
