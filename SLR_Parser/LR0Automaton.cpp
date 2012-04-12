@@ -172,6 +172,7 @@ void LR0Automaton::constructCanonicalCollection ()
 						canonicalCollection.end()) )
 				{
 					canonicalCollection.insert (gotoSet);
+					newElemAdded = true;
 				}
 				itr++;
 			}
