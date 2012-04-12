@@ -63,6 +63,8 @@ void LexicalAnalyser::readRules (ifstream& rulesFile)
 	while (true)
 	{
 		rulesFile >> regex;
+		if ( rulesFile.eof())
+			break;
 		rulesFile >> token;
 
 		std::cerr << regex << " " << token << std::endl;

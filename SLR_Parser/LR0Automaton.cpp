@@ -35,6 +35,7 @@ void LR0Automaton::initialize ()
 LR0Automaton::LR0Automaton (char * grammarFileName)
 {
 	ScanGrammarFromFile (slrGrammar, grammarFileName);
+	slrGrammar.GrammarSetStartSymbol (getNonTerminal(0));
 	initialize ();
 }
 
@@ -140,9 +141,29 @@ set<string> requiredSymbols (const ItemSet& itemSet)
 		if (itr->second.second.size() > 0)
 			symbols.insert (itr->second.second[0]);
 	}
-
+	
 	return symbols;
 }
+
+/* Function that takes as input a pointer and returns if another element
+ * in the set has the same value. Since the elements in the set are pointers 
+ * themselves, we need to compare with each
+ */
+template <class Iterator, class Type> bool inContainer (Iterator start, 
+							Iterator end, 
+							Type* ptr)
+{
+	for (; start != end; start++)
+	{
+		if ( *ptr == **start )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 void LR0Automaton::constructCanonicalCollection ()
 {
@@ -174,12 +195,13 @@ void LR0Automaton::constructCanonicalCollection ()
 				strSetItr != strSetItrEnd; strSetItr++)
 			{
 				ItemSet * gotoSet = goTo (*itr, *strSetItr);
+	//			printItemSet (*gotoSet);
 
 				/* If gotoSet is not empty and is not in
 				 * in canonicalCollection. */
-				if ( !gotoSet->empty() && 
-					(canonicalCollection.find (*itr) ==
-						canonicalCollection.end()) )
+				if ( !(gotoSet->empty()) &&
+					!inContainer(canonicalCollection.begin(),
+					canonicalCollection.end(), gotoSet))
 				{
 					canonicalCollection.insert (gotoSet);
 					newElemAdded = true;
@@ -204,6 +226,7 @@ static Item shiftDot (const Item& item)
 
 ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 {
+//	std::cerr << "Symbol " << X << std::endl;
 	/* First check GOTO */
 	map<ItemTerminalPair, ItemSet*>::iterator itr;
 	if ( (itr = GOTO.find (make_pair (I, X))) != GOTO.end ())
@@ -218,8 +241,11 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	ItemSet::iterator itemItr;
 	for ( itemItr = I->begin(); itemItr != I->end(); itemItr++)
 	{
+//		std::cerr << "Post dot symbol : " << postDotSymbol (*itemItr)
+//			  << "\n";
 		if ( ! X.compare (postDotSymbol (*itemItr)))
 		{
+//			std::cerr << "Inside if\n";
 			// Store the changed item in tmpItem
 			tmpItem = shiftDot (*itemItr);
 
@@ -239,7 +265,7 @@ ItemSet * LR0Automaton::startItemSet ()
 #define vectorIterate(v,itr) \
 for (itr = v.begin(); itr != v.end(); itr++) \
 {\
-	std::cout << "(" << *itr << ")" << " ";\
+	std::cout << " " << *itr << " " << " ";\
 }
 
 void printItem (const Item& item)
@@ -261,6 +287,7 @@ void printItemSet (const ItemSet& items)
 	for (itr = items.begin(), itr_end = items.end(); itr != itr_end; itr++)
 	{
 		printItem(*itr);
+		std::cout << std::endl;
 	}
 }
 
