@@ -29,10 +29,6 @@ typedef pair<ItemSet*, string> ItemTerminalPair;
 class LR0Automaton 
 {
 	public:
-		// Public Data structures
-		enum Action { None, Shift, Reduce, Accept};
-		typedef pair<Action, Item*> ActionArgPair;
-
 		// Constructor
 		LR0Automaton (char * grammarFileName);
 		LR0Automaton (const Grammar& grammar);
