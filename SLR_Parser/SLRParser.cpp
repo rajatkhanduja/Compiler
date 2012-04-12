@@ -15,13 +15,25 @@ inline string postDotSymbol (const Item& item)
 	return (item.second.second.size() > 0) ? item.second.second[0] : string();
 }
 
-/* Function that checks if the item is ready to be accepted 
+/* Function that checks if the item is ready to be reduced
  * i.e. it checks if the dot is the last thing in the rule or that 
  * the vector containing the post-dot symbols is empty.
  */
-inline bool isAcceptReady (const Item& item)
+inline bool isReduceReady (const Item& item)
 {
 	return (item.second.second.size() == 0);
+}
+
+/* Function that checks if the item is ready to be accepted.
+ * This test involves first testing if the item is ready to be reduced and 
+ * then if the producing symbol is that start symbol of the augmented grammar.
+ * This assumes that the only occurrence of this start symbol is sufficient to 
+ * indicate that it can be accepted. 
+ */
+inline bool isAcceptReady (const Item& item)
+{
+	return (isReduceReady(item) &&
+		(!item.first.compare(LR0Automaton::augmentedStartSymbol)));
 }
 
 void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal, 
@@ -40,9 +52,17 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	
 	// Insert into the ACTION table
 	// TODO : Throw exception when the insertion creates a conflict.
-	ACTION.insert ( make_pair( 
-		make_pair (curItemSet, terminal),
-		make_pair (action, newAction)));
+	ItemTerminalPair tmpPair = make_pair (curItemSet, terminal);
+
+	if ( ACTION.find (tmpPair) == ACTION.end())
+	{
+		ACTION.insert (make_pair(tmpPair, make_pair (action, newAction)));
+	}
+	else
+	{
+		// Throw an exception.
+		throw string ("Cannot create SLR table for grammar.");
+	}
 }
 
 void SLRParser::constructActionTable ()
@@ -72,7 +92,7 @@ void SLRParser::constructActionTable ()
 							symbol));
 			}
 
-			if ( !symbol.compare (string()))
+			if ( isReduceReady (*itemSetItr))
 			{
 				// TODO : Use FOLLOW and complete this part 
 			}

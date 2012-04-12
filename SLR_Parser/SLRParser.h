@@ -22,7 +22,7 @@ class SLRParser
 		SLRParser (char * grammarFile);
 
 		/* Call this function to parse. The output is printed directly.*/
-		void parse ();
+//		void parse (ifstream& );
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
