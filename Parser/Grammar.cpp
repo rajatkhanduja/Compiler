@@ -30,8 +30,8 @@ void Grammar::GrammarAddRule(Rule r)
 
 void Grammar::GrammarRemoveRule(int i)
 {
-	if(i < GrammarNRules())
-		this->rules.erase(this->rules.begin() + i);
+	assert(i < GrammarNRules());
+	this->rules.erase(this->rules.begin() + i);
 }
 
 void Grammar::GrammarRemoveRule(Rule r)

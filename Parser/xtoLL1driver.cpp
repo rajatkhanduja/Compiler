@@ -16,9 +16,6 @@ int main(int argc, char* argv[])
 	assert(!HasCycles(G_scanned));
 	assert(!HasNonTerminatingRules(G_scanned));
 
-	if(G_scanned.GrammarHasEpsilonProductions())
-		cerr<<"Grammar has epsilon productions."<<endl;
-	
 	G = G_scanned;
 	EliminateLeftRecursion(G);
 	G.GrammarOutput();

@@ -44,7 +44,8 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 					tail.push_back(t);
 					if(isupper(t[0]))
 						addNonTerminal(t);
-					else if(t.compare(EPSILON) && t.compare(ENDMARKER))
+					else if(t.compare(EPSILON) &&
+						t.compare(ENDMARKER))
 						addTerminal(t);
 				}
 			}
@@ -55,6 +56,7 @@ void ScanGrammarFromFile(Grammar& g, char* filename)
 		}
 	}while(f.good());
 	f.close();
+	g.GrammarSetStartSymbol();
 }
 
 static bool HasCycles(Grammar& g, Rule r, std::string rhead)
@@ -189,7 +191,7 @@ vector<Rule> EliminateImmediateLeftRecursion(Rule& r)
 	{
 		tail = r.RuleTail(PLR[i]);
 		tail.erase(tail.begin() + 0);
-		tail.push_back(replacementrules[0].RuleHead());
+		tail.push_back(replacementrules[1].RuleHead());
 		replacementrules[1].RuleAddTail(tail);
 	}
 	tail.clear();
@@ -201,18 +203,24 @@ vector<Rule> EliminateImmediateLeftRecursion(Rule& r)
 void EliminateImmediateLeftRecursion(Grammar& g)
 {
 	Rule r;
-	vector<Rule> temp;
-	for(int i = 0; i < g.GrammarNRules(); i++)
+	vector<Rule> temp, rulestoadd;
+	vector<int> rulestoremove;
+	int n = g.GrammarNRules(), rulestoremove_modifier = 0;
+	for(int i = 0; i < n; i++)
 	{
 		r = g.GrammarRule(i);
 		if(HasLeftRecursion(r))
 		{
 			temp = EliminateImmediateLeftRecursion(r);
-			g.GrammarRemoveRule(i);
-			g.GrammarAddRule(temp[0]);
-			g.GrammarAddRule(temp[1]);
+			rulestoremove.push_back(i);
+			rulestoadd.push_back(temp[0]);
+			rulestoadd.push_back(temp[1]);
 		}
 	}
+	for(int i = 0; i < rulestoadd.size(); i++)
+		g.GrammarAddRule(rulestoadd[i]);
+	for(int i = 0; i < rulestoremove.size(); i++, rulestoremove_modifier++)
+		g.GrammarRemoveRule(rulestoremove[i] - rulestoremove_modifier);
 }
 
 void EliminateLeftRecursion(Grammar& g)
