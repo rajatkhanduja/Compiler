@@ -10,6 +10,14 @@ void ScanGrammarFromFile(Grammar&, char*);
 // checks whether the grammar passed as \
 reference in the argument has cycles or not.
 bool HasCycles(Grammar&);
+// checks whether the rule passed as \
+reference has non-terminating production(s) \
+or not.
+// TODO: case where rule has a \
+non-(terminal production) and the \
+non-terminal in it has a non-terminating \
+production.
+bool HasNonTerminatingProductions(Rule&);
 // checks whether the grammar passed as \
 reference has non-terminating rule(s) \
 or not.
@@ -17,7 +25,11 @@ bool HasNonTerminatingRules(Grammar&);
 // recursively eliminates epsilon productions \
 in rules of the grammar passed as reference \
 in the argument.
+// TODO
 void EliminateEpsilonProductions(Grammar&);
+// eliminates immediate left recursion in \
+the grammar passed as reference in the argument.
+void EliminateImmediateLeftRecursion(Grammar&);
 // eliminates left recursion in the grammar \
 passed as reference in the argument.
 void EliminateLeftRecursion(Grammar&);

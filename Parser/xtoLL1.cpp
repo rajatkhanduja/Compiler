@@ -81,32 +81,42 @@ bool HasCycles(Grammar& g)	// wrapper for the above function
 	return false;
 }
 
-bool HasNonTerminatingRules(Grammar& g)
+bool HasNonTerminatingProductions(Rule& r)
 {
-	Rule r;
 	vector<std::string> tail;
 	int tail_nonterminals;
 	bool headmatches;
 	std::string head;
+	head = r.RuleHead();
+	for(int j = 0; j < r.RuleNTails(); j++)
+	{
+		tail = r.RuleTail(j);
+		tail_nonterminals = 0;
+		headmatches = false;
+		for(int k = 0; k < tail.size(); k++)
+		{
+			if(!head.compare(tail[k]))
+				headmatches = true;
+			if(isNonTerminal(tail[k]))
+				tail_nonterminals++;
+		}
+		if(tail_nonterminals == 1 &&
+			headmatches &&
+			!r.RuleHasTerminalProduction() &&
+			r.RuleFindEpsilonProduction() == -1)
+			return true;
+	}
+	return false;
+}
+
+bool HasNonTerminatingRules(Grammar& g)
+{
+	Rule r;
 	for(int i = 0; i < g.GrammarNRules(); i++)
 	{
 		r = g.GrammarRule(i);
-		head = r.RuleHead();
-		for(int j = 0; j < r.RuleNTails(); j++)
-		{
-			tail = r.RuleTail(j);
-			tail_nonterminals = 0;
-			headmatches = false;
-			for(int k = 0; k < tail.size(); k++)
-			{
-				if(!head.compare(tail[k]))
-					headmatches = true;
-				if(isNonTerminal(tail[k]))
-					tail_nonterminals++;
-			}
-			if(tail_nonterminals == 1 && headmatches)
-				return true;
-		}
+		if(HasNonTerminatingProductions(r))
+			return true;
 	}
 	return false;
 }
@@ -132,9 +142,14 @@ void EliminateEpsilonProductions(Grammar& g)
 	}
 }
 
-void EliminateLeftRecursion(Grammar& g)
+void EliminateImmediateLeftRecursion(Grammar& g)
 {
 	return;
+}
+
+void EliminateLeftRecursion(Grammar& g)
+{
+	EliminateImmediateLeftRecursion(g);
 }
 
 void LeftFactorize(Grammar& g)

@@ -7,7 +7,12 @@ static std::string get(vector<std::string>& X, int i)
 {
 	assert(i < X.size());
 	return X[i];
-}	
+}
+
+static int N(vector<std::string>& X)
+{
+	return X.size();
+}
 
 static int find(vector<std::string>& X, std::string x)
 {
@@ -95,9 +100,9 @@ std::string getTerminal(int i)
 	return get(T, i);
 }
 
-std::string getNonTerminal(int i)
+int NTerminals()
 {
-	return get(NT, i);
+	return N(T);
 }
 
 bool isTerminal(std::string t)
@@ -108,6 +113,16 @@ bool isTerminal(std::string t)
 bool isNonTerminal(std::string nt)
 {
 	return is(NT, nt);
+}
+
+std::string getNonTerminal(int i)
+{
+	return get(NT, i);
+}
+
+int NNonTerminals()
+{
+	return N(NT);
 }
 
 void outputTerminals()
