@@ -8,7 +8,7 @@ CC = g++
 DEFINES =
 CFLAGS = -Wall -I./ -I$(LL1)/ -I$(LEX)/include/
 LEX_OBJECTS = $(LEX)/obj/FSM.o  $(LEX)/obj/LexicalAnalyser.o $(LEX)/obj/RegexParser.o $(LEX)/obj/SymbolTable.o
-GRAMMAR_OBJECTS = $(OBJ_GRAMMAR)/Terminal_NonTerminal.opp $(OBJ_GRAMMAR)/Rule.opp $(OBJ_GRAMMAR)/Grammar.opp $(OBJ_GRAMMAR)/xtoLL1.opp
+GRAMMAR_OBJECTS = $(OBJ_GRAMMAR)/Terminal_NonTerminal.opp $(OBJ_GRAMMAR)/Rule.opp $(OBJ_GRAMMAR)/Grammar.opp $(OBJ_GRAMMAR)/xtoLL1.opp $(OBJ_GRAMMAR)/ParserFunctions.opp
 OBJECTS = $(OBJ)/LR0Automaton.o $(OBJ)/SLRParser.o $(OBJ)/main.o
 
 all: $(LEX_OBJECTS) $(GRAMMAR_OBJECTS) $(OBJECTS)

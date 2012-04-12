@@ -14,7 +14,7 @@ all: ${OBJECTS}
 ${OBJ}/%.opp : ${SRC}/%.cpp
 	${CC} -c -g ${DEFINES} ${CFLAGS} $< -o $@
 
-grammar: $(OBJ)/Rule.opp $(OBJ)/Terminal_NonTerminal.opp $(OBJ)/Grammar.opp $(OBJ)/xtoLL1.opp
+grammar: $(OBJ)/Rule.opp $(OBJ)/Terminal_NonTerminal.opp $(OBJ)/Grammar.opp $(OBJ)/xtoLL1.opp $(OBJ)/ParserFunctions.opp
 	
 
 clean:

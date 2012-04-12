@@ -3,6 +3,7 @@
 #include <SLRParser.h>
 #include <Terminal_NonTerminal.hpp>
 #include <fstream>
+#include <ParserFunctions.hpp>
 
 using std::ifstream;
 
@@ -54,7 +55,6 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	}
 	
 	// Insert into the ACTION table
-	// TODO : Throw exception when the insertion creates a conflict.
 	ItemTerminalPair tmpPair = make_pair (curItemSet, terminal);
 
 	if ( ACTION.find (tmpPair) == ACTION.end())
@@ -98,6 +98,8 @@ void SLRParser::constructActionTable ()
 			if ( isReduceReady (*itemSetItr))
 			{
 				// TODO : Use FOLLOW and complete this part 
+
+				
 			}
 
 			if ( isAcceptReady (*itemSetItr) )
