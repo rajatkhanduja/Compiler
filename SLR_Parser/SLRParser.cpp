@@ -80,7 +80,6 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 
 	if (action == Shift)
 	{
-		std::cerr << "Adding " << curItemSet << " -> " << shiftTo << "\n";
 		newAction.shiftTo = shiftTo;
 	}
 	else if (action == Reduce)
@@ -271,8 +270,6 @@ void SLRParser::generateItemSet2NumMapping()
 		itemSetStates[itr->first.first] = -1;
 		itemSetStates[itr->second] = -1;
 	}
-//	std::cerr << "Size of ACTION :" << ACTION.size() << "\n";
-//	std::cerr << "Size of itemSetStates :" << itemSetStates.size() << "\n";
 	// Need to iterate through the generated list to be able to assign numbers
 	map<ItemSet*, int>::iterator itr1;
 	int counter = 1;
@@ -294,22 +291,19 @@ string SLRParser::actionArgPair2String (const ActionArgPair& pair)
 	}
 	else if (Shift == pair.first)
 	{
-//		std::cerr << "itemSetStates [inBefore] :" << pair.second.shiftTo << "\n";
-		map<ItemSet*, int>::iterator itr = itemSetStates.find(pair.second.shiftTo);
+		map<ItemSet*, int>::iterator itr = 
+				itemSetStates.find(pair.second.shiftTo);
 		if (itr == itemSetStates.end())
 			output << "s" << pair.second.shiftTo;
 		else
 			output << "s" << itr->second;
 ;
 	}
-	std::cerr << "itemSetStates [inAfter] :" <<itemSetStates.size() << "\n";
 	return output.str();
 }
 
 string SLRParser::actionTable2String ()
 {
-//	map <ItemSet*, int> itemSetStates;
-
 	// First create a map of itemSets to be able to enumerate them.
 	generateItemSet2NumMapping();
 

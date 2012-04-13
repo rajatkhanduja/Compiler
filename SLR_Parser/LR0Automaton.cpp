@@ -233,7 +233,6 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	ItemTerminalPair setTerminalPair = make_pair (I, X);
 	if ( (itr = GOTO.find (setTerminalPair)) != GOTO.end ())
 	{
-		std::cerr << "Found for (" << I << "," << X << "), returning : " << itr->second << "\n";
 		return itr->second;	
 	}
 	
@@ -261,7 +260,6 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 
 	// Add the result to GOTO.
 	GOTO[setTerminalPair] = result;
-	std::cerr << "Res : " << result << "\n";
 	return result;
 }	
 
