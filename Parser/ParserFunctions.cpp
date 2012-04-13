@@ -10,10 +10,6 @@
    This declaration will only be visible inside the function instead of throughout the function's module. 
 */
 
-
-FirstSet::FirstSet()
-{}
-
 FirstSet::FirstSet ()
 {
 	//Empty
@@ -229,10 +225,6 @@ vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<stri
 	}
 	return retval;
 }
-
-
-FollowSet::FollowSet()
-{}
 
 
 void FollowSet::FollowSetAddEntry(string key, vector<string> value)

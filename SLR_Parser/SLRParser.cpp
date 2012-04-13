@@ -77,8 +77,10 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 {
 	ActionVal newAction;
 
+
 	if (action == Shift)
 	{
+		std::cerr << "Adding " << curItemSet << " -> " << shiftTo << "\n";
 		newAction.shiftTo = shiftTo;
 	}
 	else if (action == Reduce)
@@ -121,7 +123,8 @@ void SLRParser::constructActionTable ()
 
 			if (isTerminal (symbol))
 			{
-				std::cerr << "Adding " << symbol << " to table\n";
+				std::cerr << "Adding "  << (*itr) << " " 
+							<< symbol << " to table\n";
 				addToActionTable (curItemSet, symbol, 
 						Shift, NULL, 
 						lr0automaton.goTo ((*itr),
@@ -137,11 +140,9 @@ void SLRParser::constructActionTable ()
 							lr0automaton.slrGrammar);
 
 				vector<string>::iterator strItr;
-				std::cerr << "Follow : (" << tmpSym << "):\n" ;
 				for (strItr = follow.begin(); 
 					strItr != follow.end(); strItr++)
 				{
-					std::cerr << *strItr << std::endl;
 					if ( isTerminal (*strItr))
 					{
 						tmpSym = *strItr;
@@ -266,16 +267,18 @@ void SLRParser::generateItemSet2NumMapping()
 	map<ItemTerminalPair, ActionArgPair>::iterator itr;
 	for (itr = ACTION.begin(); itr != ACTION.end(); itr++)
 	{
-		if (! itemSetStates.count(itr->first.first))
+		if (! itemSetStates.count(itr->first.first) )
 		{
-			itemSetStates[itr->first.first] = 0;
+			itemSetStates[itr->first.first] = -1;
+			std::cerr << itr->first.first << " : " << itemSetStates[itr->first.first] << "\n";
 		}
 	}
-	
+//	std::cerr << "Size of ACTION :" << ACTION.size() << "\n";
+//	std::cerr << "Size of itemSetStates :" << itemSetStates.size() << "\n";
 	// Need to iterate through the generated list to be able to assign numbers
 	map<ItemSet*, int>::iterator itr1;
-	int counter;
-	for (itr1 = itemSetStates.begin(), counter = 1; itr1 != itemSetStates.end();
+	int counter = 1;
+	for (itr1 = itemSetStates.begin(); itr1 != itemSetStates.end();
 		itr1++, counter++)
 	{
 		itr1->second = counter;
@@ -284,7 +287,28 @@ void SLRParser::generateItemSet2NumMapping()
 	return;
 }
 
-string SLRParser::actionTableToString ()
+string SLRParser::actionArgPair2String (const ActionArgPair& pair)
+{
+	stringstream output;
+	if (Reduce == pair.first)
+	{
+		output << "r";
+	}
+	else if (Shift == pair.first)
+	{
+//		std::cerr << "itemSetStates [inBefore] :" << pair.second.shiftTo << "\n";
+		map<ItemSet*, int>::iterator itr = itemSetStates.find(pair.second.shiftTo);
+		if (itr == itemSetStates.end())
+			output << "s" << pair.second.shiftTo;
+		else
+			output << "s" << itr->second;
+;
+	}
+	std::cerr << "itemSetStates [inAfter] :" <<itemSetStates.size() << "\n";
+	return output.str();
+}
+
+string SLRParser::actionTable2String ()
 {
 //	map <ItemSet*, int> itemSetStates;
 
@@ -306,32 +330,32 @@ string SLRParser::actionTableToString ()
 	map<ItemTerminalPair, ActionArgPair>::const_iterator actionItrEnd = 
 								ACTION.end();
 	map<ItemSet*, int>::iterator itr1;
-	for (itr1 = itemSetStates.begin (); itr1 != itemSetStates.end(); itr1++)
+	map<ItemSet*, int>::iterator itrStart = itemSetStates.begin(), 
+					itrEnd   = itemSetStates.end(); 
+	int tmpCounter = 1;
+	for (itr1 = itrStart; itr1 != itrEnd; itr1++)
 	{
-		output << itr1->second;
-		for ( itr = ACTION.begin(); itr != ACTION.end(); itr++)
+		output << itr1->first << "->" << itr1->second;
+		for ( i = 0; i < n; i++)
 		{
-			if (itr->first.first == itr1->first)
+			iActionTableItr =  ACTION.find (make_pair (itr1->first,
+							getTerminal(i)));
+			if (iActionTableItr != actionItrEnd)
 			{
-				for ( i = 0; i < n; i++)
-				{
-					iActionTableItr =  ACTION.find (
-							make_pair (itr1->first,
-								getTerminal(i)));
-					if (iActionTableItr != actionItrEnd)
-					{
-						output  << "\t"; 
-					}
-					else
-					{
-						output << "\t" << "-";
-					}
-								
-				}
-			
+				output  << "\t"
+					<< actionArgPair2String(
+					iActionTableItr->second); 
+//				std::cerr << "itemSetStates [inAfter] :" <<itemSetStates.size() << "\n";
 			}
+			else
+			{
+				output << "\t" << "-";
+			}
+						
 		}
+		output << "\n";
 	}
 
+//	std::cerr << output.str();
 	return output.str();
 }

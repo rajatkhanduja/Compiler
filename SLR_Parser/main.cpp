@@ -6,6 +6,9 @@
 #define NARGS 4
 
 using std::ifstream;
+using std::ofstream;
+
+string debugFile = "debug";
 
 void usage (char *name)
 {
@@ -28,7 +31,12 @@ int main (int argc, char * argv[])
 	{
 		SLRParser slrParser (argv[1], argv[2]);
 		std::cout << slrParser.canonicalCollection2String ();
+		
+		// Open a file for dumping debugging statements.
+		ofstream out(debugFile.c_str());
+		out << slrParser.actionTable2String();
 
+		// Parse
 		ifstream inputFile (argv[3]);
 		slrParser.parse (inputFile);
 	}

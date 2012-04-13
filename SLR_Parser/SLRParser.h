@@ -34,7 +34,7 @@ class SLRParser
 		/* Function to return the actionTable as a string. 
 		 * Useful to print the actionTable.
 		 */
-		string actionTableToString();
+		string actionTable2String();
 
 		/* Function to print the canonicalCollection of LR0Automaton */
 		string canonicalCollection2String ();
@@ -65,7 +65,13 @@ class SLRParser
 					ItemSet* shiftTo);
 
 		/* Function to generate a mapping from the ItemSets to numbers */
-		generateItemSet2NumMapping();
+		void generateItemSet2NumMapping();
+
+		/* Function to convert ActionArgPair to string. Requires
+		 * access to the itemSetStates function, and hence needs to be 
+		 * a part of the class.
+		 */
+		string actionArgPair2String(const ActionArgPair& pair);
 };
 
 #endif	// End of file

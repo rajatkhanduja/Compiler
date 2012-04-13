@@ -230,8 +230,10 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 //	std::cerr << "Symbol " << X << std::endl;
 	/* First check GOTO */
 	map<ItemTerminalPair, ItemSet*>::iterator itr;
-	if ( (itr = GOTO.find (make_pair (I, X))) != GOTO.end ())
+	ItemTerminalPair setTerminalPair = make_pair (I, X);
+	if ( (itr = GOTO.find (setTerminalPair)) != GOTO.end ())
 	{
+		std::cerr << "Found for (" << I << "," << X << "), returning : " << itr->second << "\n";
 		return itr->second;	
 	}
 	
@@ -254,8 +256,13 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 			tmpSet.insert (tmpItem);
 		}
 	}
+	
+	ItemSetsClosure (tmpSet, slrGrammar, *result);
 
-	return (ItemSetsClosure (tmpSet, slrGrammar, *result));
+	// Add the result to GOTO.
+	GOTO[setTerminalPair] = result;
+	std::cerr << "Res : " << result << "\n";
+	return result;
 }	
 
 ItemSet * LR0Automaton::startItemSet ()
