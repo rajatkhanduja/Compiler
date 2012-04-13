@@ -264,14 +264,12 @@ string SLRParser::canonicalCollection2String ()
 
 void SLRParser::generateItemSet2NumMapping()
 {
-	map<ItemTerminalPair, ActionArgPair>::iterator itr;
-	for (itr = ACTION.begin(); itr != ACTION.end(); itr++)
+	map<ItemTerminalPair, ItemSet*>::iterator itr;
+	for (itr = lr0automaton.GOTO.begin(); 
+		itr != lr0automaton.GOTO.end(); itr++)
 	{
-		if (! itemSetStates.count(itr->first.first) )
-		{
-			itemSetStates[itr->first.first] = -1;
-			std::cerr << itr->first.first << " : " << itemSetStates[itr->first.first] << "\n";
-		}
+		itemSetStates[itr->first.first] = -1;
+		itemSetStates[itr->second] = -1;
 	}
 //	std::cerr << "Size of ACTION :" << ACTION.size() << "\n";
 //	std::cerr << "Size of itemSetStates :" << itemSetStates.size() << "\n";
@@ -332,10 +330,9 @@ string SLRParser::actionTable2String ()
 	map<ItemSet*, int>::iterator itr1;
 	map<ItemSet*, int>::iterator itrStart = itemSetStates.begin(), 
 					itrEnd   = itemSetStates.end(); 
-	int tmpCounter = 1;
 	for (itr1 = itrStart; itr1 != itrEnd; itr1++)
 	{
-		output << itr1->first << "->" << itr1->second;
+		output << itr1->second;
 		for ( i = 0; i < n; i++)
 		{
 			iActionTableItr =  ACTION.find (make_pair (itr1->first,
