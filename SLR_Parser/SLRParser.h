@@ -17,7 +17,7 @@ class SLRParser
 		enum Action { None, Shift, Reduce, Accept};
 		struct ActionVal 	// Unable to use Union
 		{
-			Item* reduceRule;
+			const Item* reduceRule;
 			ItemSet* shiftTo;
 		};
 		typedef pair<Action, ActionVal> ActionArgPair;
@@ -52,7 +52,7 @@ class SLRParser
 		 * is not SLR(1). It throws an exception (still TODO).
 		 */
 		void addToActionTable (ItemSet* curItemSet, const string& Terminal,
-					Action action, Item* reduceRule,
+					Action action, const Item* reduceRule,
 					ItemSet* shiftTo);
 };
 

@@ -6,6 +6,9 @@
 # all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
 #
 # Grammar:
-E --> E + T | T
-T --> T * F | F
+#E --> E + T | T
+#T --> T * F | F
+#F --> ( E ) | id
+E --> T + F
 F --> ( E ) | id
+T --> F

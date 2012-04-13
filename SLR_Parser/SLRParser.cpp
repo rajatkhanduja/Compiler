@@ -19,8 +19,6 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	int numNonTerminals = NNonTerminals();
 	int i;
 	string Gsym;
-	FirstSet firstSet;
-	FollowSet followSet; 
 
 	//############################# FIRST ##################################
 	for ( i = 0; i < numTerminals; i++ )
@@ -32,6 +30,7 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	for ( i = 0; i < numNonTerminals; i++ )
 	{
 		Gsym = getNonTerminal(i);
+		std::cerr << "sym : " << Gsym << std::endl;
 		firstSet.First(Gsym, lr0automaton.slrGrammar);
 	}
 	//#############################  FIRST ##################################
@@ -69,7 +68,8 @@ inline bool isAcceptReady (const Item& item)
 }
 
 void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal, 
-				Action action, Item* reduceRule, ItemSet* shiftTo)
+				Action action, const Item* reduceRule, 
+				ItemSet* shiftTo)
 {
 	ActionVal newAction;
 
@@ -92,7 +92,7 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	else
 	{
 		// Throw an exception.
-		throw string ("Cannot create SLR table for grammar.");
+		throw string ("Cannot create SLR table for grammar. Conflict when inserting ").append (terminal);
 	}
 }
 
@@ -125,8 +125,27 @@ void SLRParser::constructActionTable ()
 
 			if ( isReduceReady (*itemSetItr))
 			{
-				// TODO : Use FOLLOW and complete this part 
-				vector<string> follow;
+				// Use FOLLOW and complete this part 
+				string tmpSym = itemSetItr->first;
+				vector<string> follow = followSet.Follow (
+							firstSet, tmpSym,
+							lr0automaton.slrGrammar);
+
+				vector<string>::iterator strItr;
+				std::cerr << "Follow : (" << tmpSym << "):\n" ;
+				for (strItr = follow.begin(); 
+					strItr != follow.end(); strItr++)
+				{
+					std::cerr << *strItr << std::endl;
+					if ( isTerminal (*strItr))
+					{
+						addToActionTable (curItemSet,
+								tmpSym, 
+								Reduce, 
+								&(*itemSetItr),
+								NULL);
+					}
+				}
 			}
 
 			if ( isAcceptReady (*itemSetItr) )

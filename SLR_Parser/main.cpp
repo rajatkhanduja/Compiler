@@ -22,8 +22,15 @@ int main (int argc, char * argv[])
 		usage (argv[0]);
 		exit (1);
 	}
+	try
+	{
+		SLRParser slrParser (argv[1], argv[2]);
+		slrParser.printCanonicalCollection ();
+	}
+	catch (string exception)
+	{
+		std::cerr << exception << std::endl;
+	}
 
-	SLRParser slrParser (argv[1], argv[2]);
-	slrParser.printCanonicalCollection ();
 	return 0;
 }
