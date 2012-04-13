@@ -1,5 +1,9 @@
 #include <NonRecursivePredictiveParser.hpp>
 
+
+NonRecursivePredictiveParser::NonRecursivePredictiveParser()
+{}
+
 void printProduction(Rule rule)
 {
 	

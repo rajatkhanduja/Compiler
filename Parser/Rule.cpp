@@ -14,6 +14,12 @@ Rule::Rule(const string h)
 	head = h;
 }
 
+void Rule::RuleReinitialize(std::string h)
+{
+	this->head = h;
+	this->tails.clear();
+}
+
 std::string Rule::RuleHead()
 {
 	return this->head;

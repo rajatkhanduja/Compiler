@@ -11,6 +11,8 @@
 */
 
 
+FirstSet::FirstSet()
+{}
 
 FirstSet::FirstSet ()
 {
@@ -227,6 +229,10 @@ vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<stri
 	}
 	return retval;
 }
+
+
+FollowSet::FollowSet()
+{}
 
 
 void FollowSet::FollowSetAddEntry(string key, vector<string> value)

@@ -28,13 +28,11 @@ class Rule
 		rule to the argument passed. tails is not \
 		initialized.
 		Rule(const std::string);
+		// reinitializes the rule with the string \
+		given as argument and erases the tail.
+		void RuleReinitialize(std::string);
 		// returns the head of the rule.
 		std::string RuleHead();
-		
-		//#TODO
-		void RuleCleanAll(const std::string head);
-		//#TODO
-
 		// returns the tail of the rule at the \
 		index position of the argument passed.
 		vector<std::string> RuleTail(int);

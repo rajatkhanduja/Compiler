@@ -3,6 +3,11 @@
 using namespace std;
 
 template<class Row, class Column>
+TableKey<Row, Column>::TableKey()
+{}
+
+
+template<class Row, class Column>
 TableKey<Row, Column>::TableKey(Row rowIndex, Column columnIndex)
 {
 	this->rowIndex = rowIndex;
@@ -40,6 +45,10 @@ TableKey<Row, Column>::operator<(const TableKey<Row, Column>& key ) const
 {
 	return ( this->columnIndex > key.GetColumn() );
 }
+
+template<class Key>
+Table<Key>::Table()
+{}
 
 template<class Key>
 void 
@@ -98,7 +107,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 		tailsWithCommonHead = (*itr).RuleTails();
 
 		head = (*itr).RuleHead();
-		rule.RuleCleanAll(head);
+		rule.RuleReinitialize(head);
 
 		for ( itvs = tailsWithCommonHead.begin(); itvs < tailsWithCommonHead.end(); itvs++ )
 		{
