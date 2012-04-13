@@ -6,7 +6,9 @@
 #include <xtoLL1.hpp>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
+using std::stringstream;
 using std::vector;
 
 static Rule * startRule;
@@ -264,42 +266,46 @@ ItemSet * LR0Automaton::startItemSet ()
 #define vectorIterate(v,itr) \
 for (itr = v.begin(); itr != v.end(); itr++) \
 {\
-	std::cout << " " << *itr << " " << " ";\
+	output << " " << *itr << " ";\
 }
 
-void printItem (const Item& item)
+string item2String (const Item& item)
 {
-	std::cout << item.first << " --> ";
+	stringstream output;
+	output << item.first << " --> ";
 	vector<string>::const_iterator itr;
 
 	vectorIterate (item.second.first, itr);
-	std::cout << ".";
+	output << ".";
 	vectorIterate (item.second.second, itr);
 	
-	return;
+	return output.str();
 }
 
-void printItemSet (const ItemSet& items)
+string itemSet2String (const ItemSet& items)
 {
 	ItemSet::const_iterator itr, itr_end;
+	stringstream output;
 
 	for (itr = items.begin(), itr_end = items.end(); itr != itr_end; itr++)
 	{
-		printItem(*itr);
-		std::cout << std::endl;
+		output << item2String(*itr) << "\n";
 	}
+	return output.str();
 }
 
-void LR0Automaton::printCanonicalCollection (void)
+string LR0Automaton::canonicalCollection2String (void)
 {
 	set<ItemSet*>::iterator itr, itr_end;
+	stringstream s;
 	int i;
 	for (i = 0, itr = canonicalCollection.begin(),
 		itr_end = canonicalCollection.end(); itr != itr_end; itr++, i++)
 	{
-		std::cout << "ItemSet " << i << ":" << std::endl;
-		printItemSet (**itr);
-
-		std::cout << "\n";
+		s << "ItemSet " << i << ":" << std::endl;
+		s << itemSet2String (**itr);
+		s << "\n";
 	}
+	
+	return s.str();
 }

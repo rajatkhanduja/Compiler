@@ -5,6 +5,8 @@
 
 #define NARGS 4
 
+using std::ifstream;
+
 void usage (char *name)
 {
 	std::cerr << "Usage :-\n";
@@ -25,7 +27,10 @@ int main (int argc, char * argv[])
 	try
 	{
 		SLRParser slrParser (argv[1], argv[2]);
-		slrParser.printCanonicalCollection ();
+		std::cout << slrParser.canonicalCollection2String ();
+
+		ifstream inputFile (argv[3]);
+		slrParser.parse (inputFile);
 	}
 	catch (string exception)
 	{

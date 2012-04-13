@@ -144,6 +144,7 @@ string LexicalAnalyser::getNextToken ()
 	col =  line->tellg();	// Line break because of compiler warning 
 	col -= lexeme.length() - 1;
 	addToSymbolTable (lexeme, token, curLine, col);
-
+	
+	std::cerr << "[LexicalAnalyser] Found token : " << token << "\n";
 	return token;
 }

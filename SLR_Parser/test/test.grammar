@@ -9,6 +9,6 @@
 #E --> E + T | T
 #T --> T * F | F
 #F --> ( E ) | id
-E --> T + F
+E --> T F
 F --> ( E ) | id
 T --> F

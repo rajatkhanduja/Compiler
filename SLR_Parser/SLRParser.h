@@ -22,17 +22,26 @@ class SLRParser
 		};
 		typedef pair<Action, ActionVal> ActionArgPair;
 
+		//Public static variables
+		static const string UnexpectedTokenException;
+
 		// Constructor
 		SLRParser (char * lexFile, char * grammarFile);
 
 		/* Call this function to parse. The output is printed directly.*/
 		void parse (ifstream& inputFile);
 		
+		/* Function to return the actionTable as a string. 
+		 * Useful to print the actionTable.
+		 */
+		string actionTableToString();
+
 		/* Function to print the canonicalCollection of LR0Automaton */
-		void printCanonicalCollection ();
+		string canonicalCollection2String ();
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
+		map <ItemSet*, int> itemSetStates;	// Number for each itemset
 		LR0Automaton lr0automaton;
 		ItemSet * startSet;
 		LexicalAnalyser lex;
@@ -54,6 +63,9 @@ class SLRParser
 		void addToActionTable (ItemSet* curItemSet, const string& Terminal,
 					Action action, const Item* reduceRule,
 					ItemSet* shiftTo);
+
+		/* Function to generate a mapping from the ItemSets to numbers */
+		generateItemSet2NumMapping();
 };
 
 #endif	// End of file

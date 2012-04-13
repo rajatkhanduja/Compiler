@@ -26,8 +26,9 @@ typedef pair<string, ItemBody> Item;
 typedef set<Item> ItemSet; 
 typedef pair<ItemSet*, string> ItemTerminalPair;
 
-void printItem (const Item& item);
-void printItemSet (const ItemSet& items);
+/* Following functions return item and itemset as a string */
+string item2String (const Item& item);
+string itemSet2String (const ItemSet& items);
 
 class SLRParser;
 
@@ -51,7 +52,8 @@ class LR0Automaton
 		 */
 		ItemSet* startItemSet ();
 
-		void printCanonicalCollection (void);
+		// Function that returns canonicalCollection as a string
+		string canonicalCollection2String (void);
 	private: 
 		// Private (non-static) variables
 		Grammar slrGrammar;

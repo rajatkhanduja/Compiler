@@ -3,8 +3,12 @@
 #include <SLRParser.h>
 #include <Terminal_NonTerminal.hpp>
 #include <fstream>
+#include <sstream>
 
 using std::ifstream;
+using std::stringstream;
+
+const string SLRParser::UnexpectedTokenException = string ("Unexpected token received.");
 
 SLRParser::SLRParser (char * lexFile, char * grammarFile) 
 	: lr0automaton (grammarFile)
@@ -117,6 +121,7 @@ void SLRParser::constructActionTable ()
 
 			if (isTerminal (symbol))
 			{
+				std::cerr << "Adding " << symbol << " to table\n";
 				addToActionTable (curItemSet, symbol, 
 						Shift, NULL, 
 						lr0automaton.goTo ((*itr),
@@ -139,6 +144,10 @@ void SLRParser::constructActionTable ()
 					std::cerr << *strItr << std::endl;
 					if ( isTerminal (*strItr))
 					{
+						tmpSym = *strItr;
+						std::cerr << "Adding " 
+								<< tmpSym
+								<< " to table\n";
 						addToActionTable (curItemSet,
 								tmpSym, 
 								Reduce, 
@@ -171,11 +180,6 @@ string ItemHead (const Item* item)
 	return item->first;
 }
 
-void printItem (Item* item)
-{
-	
-}
-
 void SLRParser::parse (ifstream& inputFile)
 {
 	lex.setInputFile (&inputFile);
@@ -194,7 +198,18 @@ void SLRParser::parse (ifstream& inputFile)
 		while (true)
 		{
 			actionKey = make_pair (parseStack.top(), token);
-			actionVal = ACTION[actionKey];
+			std::cerr << "Parse token " << token << "\n";
+			if ( ACTION.count (actionKey) )
+			{
+				actionVal = ACTION[actionKey];
+			}
+			else
+			{
+				// Required symbol is empty in the table.
+				std::cerr << "Unexpected token : " << token << "\n";
+				throw UnexpectedTokenException;
+			}
+				
 
 			if ( Shift == actionVal.first )
 			{
@@ -230,6 +245,8 @@ void SLRParser::parse (ifstream& inputFile)
 				// Error
 				assert (0);
 			}
+
+			token = lex.getNextToken();
 		}
 	}
 	catch (string lexException)
@@ -239,7 +256,82 @@ void SLRParser::parse (ifstream& inputFile)
 
 }
 
-void SLRParser::printCanonicalCollection ()
+string SLRParser::canonicalCollection2String ()
 {
-	lr0automaton.printCanonicalCollection ();
+	return lr0automaton.canonicalCollection2String ();
+}
+
+void SLRParser::generateItemSet2NumMapping()
+{
+	map<ItemTerminalPair, ActionArgPair>::iterator itr;
+	for (itr = ACTION.begin(); itr != ACTION.end(); itr++)
+	{
+		if (! itemSetStates.count(itr->first.first))
+		{
+			itemSetStates[itr->first.first] = 0;
+		}
+	}
+	
+	// Need to iterate through the generated list to be able to assign numbers
+	map<ItemSet*, int>::iterator itr1;
+	int counter;
+	for (itr1 = itemSetStates.begin(), counter = 1; itr1 != itemSetStates.end();
+		itr1++, counter++)
+	{
+		itr1->second = counter;
+	}
+
+	return;
+}
+
+string SLRParser::actionTableToString ()
+{
+//	map <ItemSet*, int> itemSetStates;
+
+	// First create a map of itemSets to be able to enumerate them.
+	generateItemSet2NumMapping();
+
+	// print all Terminals. (top of the table)
+	stringstream output;
+	int i;
+	const int n = NTerminals();
+	for ( i = 0; i < n; i++)
+	{
+		output << "\t" << getTerminal(i);
+	}
+	output << "\n";
+
+	// Start printing the values for each of the ItemSet
+	map<ItemTerminalPair, ActionArgPair>::iterator itr, iActionTableItr;
+	map<ItemTerminalPair, ActionArgPair>::const_iterator actionItrEnd = 
+								ACTION.end();
+	map<ItemSet*, int>::iterator itr1;
+	for (itr1 = itemSetStates.begin (); itr1 != itemSetStates.end(); itr1++)
+	{
+		output << itr1->second;
+		for ( itr = ACTION.begin(); itr != ACTION.end(); itr++)
+		{
+			if (itr->first.first == itr1->first)
+			{
+				for ( i = 0; i < n; i++)
+				{
+					iActionTableItr =  ACTION.find (
+							make_pair (itr1->first,
+								getTerminal(i)));
+					if (iActionTableItr != actionItrEnd)
+					{
+						output  << "\t"; 
+					}
+					else
+					{
+						output << "\t" << "-";
+					}
+								
+				}
+			
+			}
+		}
+	}
+
+	return output.str();
 }
