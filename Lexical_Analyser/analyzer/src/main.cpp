@@ -82,7 +82,7 @@ int main (int argc, char *argv[])
 		while (true)
 		{
 			std::cout << lexer.getNextToken () << " ";
-			std::cout << "HERE ~~~~~~~~~~~~~  ";
+//			std::cout << "HERE ~~~~~~~~~~~~~  ";
 		}
 	}
 	catch (string exception)
