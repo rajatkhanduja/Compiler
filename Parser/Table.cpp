@@ -109,6 +109,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 	vector < vector<std::string> > tailsWithCommonHead;
 	vector < vector<std::string> >::iterator itvs;
 	Rule rule;
+	vector<string>::iterator cit;
 	
 	for ( itr = grammarRules.begin(); itr < grammarRules.end(); itr++ )
 	{
@@ -122,7 +123,8 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 			tail = *itvs;
 			rule.RuleAddTail(tail);
 			// Now the whole tail has to be considered as a SINGLE AGGREGATE symbol.
-			setFirst = FirstOfAggSym(firstSet, tail, tail.begin());
+			cit = tail.begin();
+			setFirst = FirstOfAggSym(firstSet, tail, cit);
 			for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
 			{
 				if ( *its1 == EPSILON )		

@@ -22,7 +22,7 @@ class FirstSet
 };
 
 
-list<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart);
+list<string> FirstOfAggSym(FirstSet& firstSet, vector<string>& tail, vector<string>::iterator& itStart);
 
 class FollowSet
 {

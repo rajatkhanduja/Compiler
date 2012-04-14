@@ -79,6 +79,8 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 
 	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
+	
+
 	addTerminal (string("$"));
 
 	// Print the FOLLOWS.
