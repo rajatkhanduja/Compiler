@@ -36,18 +36,49 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	for ( i = 0; i < numNonTerminals; i++ )
 	{
 		Gsym = getNonTerminal(i);
-		std::cerr << "sym : " << Gsym << std::endl;
 		firstSet.First(Gsym, lr0automaton.slrGrammar);
 	}
+
+
+	firstSet.RemoveDuplicatesFromFirst();
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
+	std::cerr << "******************** Calculating FOLLOW **********************************\n";
+	
 	for ( i = 0; i < numNonTerminals; i++ )
 	{
 		Gsym = getNonTerminal(i);
 		followSet.Follow(firstSet, Gsym, lr0automaton.slrGrammar);
+
+		// To handle right recursion
+		followSet.ProcessDependencyList();
 	}
+
+	followSet.RemoveDuplicatesFromFollow();
+
+	map<string, list<string> >::iterator itmap;
+	list<string>::iterator itls;
+	map<string, list<string> > fs = followSet.GetFollowSet();
+	for ( itmap = fs.begin(); itmap != fs.end(); itmap++ )
+	{
+		std::cerr << "FOLLOW(" << itmap->first << ") ";
+		for ( itls = (itmap->second).begin(); itls != (itmap->second).end(); itls++ )
+		{
+			std::cerr << *itls << " :: ";
+		}
+		std::cerr << "\n";
+	
+	}
+
+	
+	
+	std::cerr << "*********************** End of calculation for FOLLOW ********************\n";
+
+
 	//############################# FOLLOW #############################################
+	
+
 	addTerminal (string("$"));
 	generateItemSet2NumMapping();
 	constructActionTable ();
