@@ -6,8 +6,14 @@
 # all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
 #
 # Grammar:
+Func_Decl --> Type id ( ) { Stmts }
+#Func_Decl --> { Stmts }
 Stmts --> Stmts Stmt ; | Stmt ;
-Stmt --> E Op F | E
+Type --> int | void | char | float
+Stmt --> E Op F | E | if F then Stmt | Decl
+Decl --> Type id 
+#IfStmt --> if E then Stmt IfStmt_
+#IfStmt_ --> else Stmt | %
 F --> E Op F | E | ( F )
 E --> id | const_int 
-Op --> + | - | * | =
+Op --> + | - | * | = | >= | == | > | <

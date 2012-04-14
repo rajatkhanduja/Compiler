@@ -1,5 +1,14 @@
-a + test1111111111112 ; 
-b * a ;
-c - a ;
-d = x + y ;
-x = y = z + t - er * ( 123 * 2 + a ) ;
+int main ( )
+{
+  int a ; 
+  if a == 2 
+  then
+    if 4 > 2
+    then
+      a = 5 ;
+  a + test1111111111112 ; 
+  b * a ;
+  c - a ;
+  d = x + y ;
+  x = y = z + t - er * ( 123 * 2 + a ) ;
+}
