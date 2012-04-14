@@ -6,10 +6,10 @@
 # all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
 #
 # Grammar:
-#S --> L = R | R
-#L --> * R | id
-#R --> L
-S --> S ; A | A ;
-A --> B C B
-B --> id
-C --> + | - | *
+# S --> S ; A | A ;
+# A --> B C B
+# B --> id
+# C --> + | - | *
+S --> if E then S | if E then S else S | A 
+A --> a
+E --> b

@@ -127,19 +127,31 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	
 	// Insert into the ACTION table
 	ItemTerminalPair tmpPair = make_pair (curItemSet, terminal);
+	map<ItemTerminalPair, ActionArgPair>::iterator itr;
 
-	if ( ACTION.find (tmpPair) == ACTION.end())
+	if ( (itr = ACTION.find (tmpPair)) == ACTION.end() || 
+		(itr->second.first == action && 
+		itr->second.second.shiftTo == shiftTo &&
+		itr->second.second.reduceRule == reduceRule))
 	{
 		ACTION.insert (make_pair(tmpPair, make_pair (action, newAction)));
 	}
 	else
 	{
 		stringstream conflictPoint;
-//		conflictPoint << "(" << itemSetStates[] << "," << terminal << ")\n";
-
-
+		if ( (itr->second.first == Reduce ) ^ (action == Reduce) )
+		{
+			conflictPoint << "Shift-reduce conflict at ";
+		}
+		else
+		{
+			conflictPoint << "Reduce-reduce conflict at ";
+		}
+		conflictPoint << "(" << itemSetStates[curItemSet] << "," << terminal << ")\n";
+		conflictPoint << "Item set :- \n" << itemSet2String (*curItemSet) << "\n"; 
+		
 		// Throw an exception.
-		throw string ("Cannot create SLR table for grammar. Conflict when inserting ");
+		throw string ("Cannot create SLR table for grammar.\n ").append (conflictPoint.str());
 	}
 }
 
