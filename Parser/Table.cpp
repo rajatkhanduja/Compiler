@@ -2,6 +2,13 @@
 
 using namespace std;
 
+
+template<class Row, class Column>
+TableKey<Row, Column>::TableKey()
+{
+	// Empty
+}
+
 template<class Row, class Column>
 TableKey<Row, Column>::TableKey(Row rowIndex, Column columnIndex)
 {
@@ -40,6 +47,14 @@ TableKey<Row, Column>::operator<(const TableKey<Row, Column>& key ) const
 {
 	return ( this->columnIndex > key.GetColumn() );
 }
+
+
+template<class TableKey>
+Table<Key>::Table()
+{
+	// Empty
+}
+
 
 template<class Key>
 void 
@@ -86,7 +101,10 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 	vector<Rule> grammarRules = CFG.GrammarAllRules();
 	vector<Rule>::iterator itr;
 	vector<string>::iterator its1, its2;
-	vector<string> tail, setFirst, setFollow;
+	vector<string> tail;
+
+	list<string> setFirst, setFollow;
+	
 	string head;
 	Key key;
 	vector < vector<std::string> > tailsWithCommonHead;
@@ -98,7 +116,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 		tailsWithCommonHead = (*itr).RuleTails();
 
 		head = (*itr).RuleHead();
-		rule.RuleCleanAll(head);
+		rule.RuleReinitialize(head);
 
 		for ( itvs = tailsWithCommonHead.begin(); itvs < tailsWithCommonHead.end(); itvs++ )
 		{

@@ -22,7 +22,7 @@ FollowSet::FollowSet ()
 	//Empty
 }
 
-void FirstSet::FirstSetAddEntry(string key, vector<string> value)
+void FirstSet::FirstSetAddEntry(string key, list<string> value)
 {
 
 	if ( (this->firstSet).find(key) == (this->firstSet).end() )
@@ -38,15 +38,24 @@ void FirstSet::FirstSetAddEntry(string key, vector<string> value)
 }
 
 
-map<string, vector<string> > FirstSet::GetFirstSet()
+map<string, list<string> > FirstSet::GetFirstSet()
 {
 	return (this->firstSet);
 }
 
-
-vector<string> FirstSet::First (string Gsym, Grammar& CFG)
+void FirstSet::RemoveDuplicatesFromFirst()
 {
- 	vector<string> retval;
+	map<string, list<string> >::iterator itm;
+	for ( it = (this->firstSet).begin(); it != (this->firstSet).end(); it++ )
+	{
+		(*it).sort();
+		(*it).unique();
+	}
+}
+
+list<string> FirstSet::First (string Gsym, Grammar& CFG)
+{
+ 	list<string> retval;
 	bool continueOnEpsilon = false;
 	int index;
 
@@ -76,8 +85,12 @@ vector<string> FirstSet::First (string Gsym, Grammar& CFG)
 			// We need to search for all productions that start with the non-terminal GSym.
 			//vector<Rule>::iterator itr;
 			vector< vector<std::string> >::iterator itvs;
-			vector<string>::iterator its1, its2;
-			vector<string> tail, firstVals;
+			vector<string>::iterator its1;
+			vector<string> tail; 
+
+			list<string>::iterator its2;
+			list<string> firstVals;
+			
 			index = CFG.GrammarFindRule(Gsym);				
 			
 			/* A rule has a structure:
@@ -94,7 +107,7 @@ vector<string> FirstSet::First (string Gsym, Grammar& CFG)
 					//*(itvs) is the tail of the matched rule.
 					
 					//tail = (*itr).tail;	// #TODO This requires tail to be public member.
-					tail = *(itvs);					
+					tail = *itvs;					
 
 					// ########################## TRAVERSING A MATCHED RULE #############################################
 
@@ -203,11 +216,12 @@ vector<string> FirstSet::First (string Gsym, Grammar& CFG)
 
 
 /* FirstOfAggSym() is a non-class method. */
-vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart)
+list<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart)
 {
 	vector<string>::iterator it, epsilonPosition;
-	vector<string> tmpFirstSet, retval;
-	map<string, vector<string> > firstSetMap = firstSet.GetFirstSet();
+	list<string> tmpFirstSet;
+	list<string> retval;
+	map<string, list<string> > firstSetMap = firstSet.GetFirstSet();
 
 	for ( it = itStart; it < tail.end(); it++ )
 	{
@@ -228,8 +242,7 @@ vector<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<stri
 	return retval;
 }
 
-
-void FollowSet::FollowSetAddEntry(string key, vector<string> value)
+void FollowSet::FollowSetAddEntry(string key, list<string> value)
 {
 
 	if ( (this->followSet).find(key) == (this->followSet).end() )
@@ -244,16 +257,125 @@ void FollowSet::FollowSetAddEntry(string key, vector<string> value)
 }
 
 
-map<string, vector<string> > FollowSet::GetFollowSet()
+map<string, list<string> > FollowSet::GetFollowSet()
 {
 	return (this->followSet);
 }
 
+void FollowSet::RemoveDuplicatesFromFollow()
+{
+	map<string, list<string> >::iterator itm;
+	for ( it = (this->followSet).begin(); it != (this->followSet).end(); it++ )
+	{
+		(*it).sort();
+		(*it).unique();
+	}
+}
+
+//###############################################  FOR HANDLING RIGHT RECURSION #####################################################
+
+// This is constructed for a given 'recursion path'.
+// NOTE :: If the FollowSet of a symbol is already calculated, we will not call 'UpdateDependencyList' for it.
+/* [3] cases can arise for a node in the recursive Follow tree
+   1) 'recursion path' before the node ( CANNOT OCCUR since that path would break from the recursion as soon as it finds the FIRST 'recursion path'.
+   2) 'recursion path' below the node, does not lead to any dependencies in the node, since dependencies do not INHERIT from child nodes to 
+       parent node in the recursive FOLLOW tree.
+   3) 'recursion path' passing through the node is the only case which leads to dependencies in the node itself.
+*/	
+
+void FollowSet::UpdateDependencyList(vector<string> &recursionStack, string Gsym)
+{
+	vector<string>::iterator it;
+	map< string, list<string> >::iterator itm;
+	list<string> tmpList;
+
+	for ( it = recursionStack.end() - 1; it >= recursionStack.begin(); it++ )
+	{
+		if ( (*it).compare(Gsym) == 0 )
+	{
+			break;
+		}
+		else
+		{
+			// The 'NTDependencyList' will be constructed for each node only when it is  encountered first in the 'recursion tree'.
+			if ( ( itm = (this->NTDependencyList).find(*it) ) == (this->NTDependencyList).end() )
+			{	
+				tmpList.push_back(Gsym);
+				(this->NTDependencyList).insert( pair<string, list<string> >(*it, tmpList) );	// NTDependencyList is a map
+				tmpList.clear();
+			}
+			else
+			{
+				((*itm).second).push_back(*it);		
+			}
+
+			
+			if ( (this->dirtyFlags).find(*it) == (this.dirtyFlags).end() )					// dirtyFlags is a map
+			{
+				(this->dirtyFlags).insert( pair<string, bool>(*it, true) );
+			}
+		}
+	
+	}
+}
+
+void FollowSet::UndirtySymbol(string Gsym)
+{
+	list<string>::iterator itls;
+	for ( itls = (NTDependencyList[Gsym]).begin(); itls != (NTDependencyList[Gsym]).end(); itls++ )
+	{
+		if ( dirtyFlags[*itls] )
+		{
+			UndirtySymbol(*itls);
+		}
+		else
+		{
+			// Add the contents of FOLLOW(*itvs) to FOLLOW(Gsym)
+
+			/*  Modifying the 'followSet' bypassing the FollowSetAddEntry() function  */
+			(followSet[Gsym]).insert( (followSet[Gsym]).end(), (followSet[*itls]).begin(), (followSet[*itls]).end() );
+			/**************************************************************************/
+
+			(followSet[Gsym]).sort();
+			(followSet[Gsym]).unique();
+
+		}
+	}
+
+	dirtyFlags[Gsym] = false;	// IMPORTANT
+
+}
+
+
+void FollowSet::ProcessDependencyList()
+{
+	// We'll process the dependency list of all the Non-terminals now.
+	
+	map<string, list<string> >::iterator itm;
+	for ( itm = NTDependencyList.begin(); itm != NTDependencyList.end(); itm++ )
+	{
+		UndirtySymbol((*itm).first);
+	}
+	
+	// Clear all the 'NTDependencyList' data with the destruction of the 'recursion (FOLLOW) tree'
+	(this->NTDependencyList).clear();
+
+	// Clear all the 'dirtyFlags' data with the destruction of the 'recursion (FOLLOW) tree'
+	(this->dirtyFlags).clear();
+}
+
+//###############################################  FOR HANDLING RIGHT RECURSION #####################################################
 
 /* NOTE :: Follow() function access the data structure 'firstSet' ONLY through the non-class function firstOfAggSym() */
-vector<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
+
+/* The 'ProcessDependencyList()' needs to be called everytime a function call is made to 'Follow' in the client program. And not anywhere else
+   since the root node in the 'recursion FOLLOW tree' is the primary source of dependency in the tree and before any updation is done; all the
+   nodes dependent on it must be updated so that further percolation of the updation process is done correctly.
+*/
+
+list<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 {
-	vector<string> retval;
+	list<string> retval;
 	if ( Gsym == CFG.GrammarStartSymbol() )
 	{
 		retval.push_back(ENDMARKER);		// We place the "$" symbol in follow of the start symbol.
@@ -262,10 +384,14 @@ vector<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 	vector<Rule> GRules = CFG.GrammarAllRules();
 	vector< vector<std::string> >::iterator itvs;
 	vector< vector<std::string> > tailsWithCommonHead;	
-	vector<Rule>::iterator itr; vector<string>::iterator its; 	// Declaration
-	vector<string> tail, firstOfNextSym;
+	vector<Rule>::iterator itr; 
+	vector<string>::iterator its; 	// Declaration
+	vector<string> tail;
 	string head;
-	vector<string> followVals; 
+	
+	list<string> firstOfNextSym;
+	list<string> followVals; 
+	
 	static vector<string> recursionStack;	// To track what's on the recursion stack.
 
 	// Push to the static variable 'recursionStack' .
@@ -363,8 +489,39 @@ vector<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 									// form of recursion has back-edged to ITSELF. Hence, we END the recursion here. 
 
 									// Report the occurence of a RIGHT RECURSIVE GRAMMAR
-									
-									std::cerr << "Encountered a RIGHT RECURSIVE grammar\n";
+									/*
+										We have encountered a RECURSION PATH in the recursive method for the 
+									        calculation of the FOLLOW. Now we take account of all such recursive 
+										paths the emerge during calculation of the FOLLOW of a non-terminal which
+										progresses in a tree-like fashion. All the nodes that lie on a 'recursion 
+										path' need to be UPDATED later when the node in whose recursion they are										      involved has completely dealt with for it's FOLLOW calculation. So all the
+										nodes involved in the 'recurision path' are set with their dirty bit = 1
+										and their dependency list pushed with the concerned recursive symbol.
+										These dependency lists are processed at the very end i.e after we wind
+										up with the orginal function call to 'Follow()' again recursively, SINCE
+										BY THEN ALL THE SYMBOLS IN THE DEPENDENCY LIST OF ANY SYMBOL INVOLVED
+										IN THIS FUNCTION CALL WOULD HAVE BEEN COMPLETELY CALCULATED.
+										depending whether the dependency list itself contains dirty symbols.
+									*/
+
+									/* Break recursion here since this path would provide no useful contribution
+									   anymore. But we need to update the dependency list for the nodes on the
+									   'recursion path' which would be processed at the very end.
+									*/
+									// Push the non-terminal responsible for the recursion in the dependency list of
+									// all in the 'affectedNonTerminals'
+									/*
+										It's like a 'BURST' of updation that travels starting from the nodes with 
+										no dirty bit set that UPDATES all the nodes dependent on it.
+										Once such node i.e the root node always exists which can initiate the very
+										first burst. A node with the dirty bit unset can SAFELY emit it's burst
+										of updation to other nodes.
+									*/
+										
+									// update the dependency list and break off.
+									UpdateDependencyList(recursionStack, Gsym);
+	
+									std::cerr << ":: Found a RIGHT RECURSIVE path :: Don't worry it'll work\n";
 									followVals.clear();	// Clear the followVals vector. 
 								}	
 							}

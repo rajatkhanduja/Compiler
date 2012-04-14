@@ -1,5 +1,10 @@
 #include <TopDownDriver.hpp>
 
+TopDownDriver::TopDownDriver()
+{
+	// Empty
+}
+
 void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 {
 	ifstream in;
@@ -23,6 +28,9 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 		Gsym = getNonTerminal(i);
 		firstSet.First(Gsym, CFG);
 	}
+
+
+	firstSet.RemoveDuplicatesFromFollow();
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -30,7 +38,10 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	{
 		Gsym = getNonTerminal(i);
 		followSet.Follow(firstSet, Gsym, CFG);
+		followSet.ProcessDependencyList();
 	}
+
+	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
 	
 	NonRecursivePredictiveParser parser;
@@ -51,10 +62,23 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 int main(int argc, char** argv)
 {
-	string filename("");
-	Grammar CFG;
+	assert(argc > 2);
+
+	Grammar G_scanned, G;
+	ScanGrammarFromFile(G_scanned, argv[1]);
+	G_scanned.GrammarOutput();
+	outputTerminals();
+	outputNonTerminals();
+
+	assert(!HasCycles(G_scanned));
+	assert(!HasNonTerminatingRules(G_scanned));
+
+	G = G_scanned;
+	EliminateLeftRecursion(G);
+	G.GrammarOutput();
+
 	TopDownDriver topDownDriver;
-	topDownDriver.Drive(CFG, (char *)filename.c_str());		
+	topDownDriver.Drive(G, argv[2]); 
 
 	return 0;
 }

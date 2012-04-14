@@ -30,11 +30,9 @@ class Rule
 		Rule(const std::string);
 		// returns the head of the rule.
 		std::string RuleHead();
-		
-		//#TODO
-		void RuleCleanAll(const std::string head);
-		//#TODO
-
+		// reinitializes the rule with the string \
+		given as argument and erases the tail.
+		void RuleReinitialize(std::string);
 		// returns the tail of the rule at the \
 		index position of the argument passed.
 		vector<std::string> RuleTail(int);
