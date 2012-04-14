@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	
 	Grammar G_scanned, G;
 	ScanGrammarFromFile(G_scanned, argv[1]);
-	G_scanned.GrammarOutput();
+	//G_scanned.GrammarOutput();
 	outputTerminals();
 	outputNonTerminals();
 
@@ -18,6 +18,11 @@ int main(int argc, char* argv[])
 
 	G = G_scanned;
 	EliminateLeftRecursion(G);
+	G.GrammarOutput();
+
+	cerr<<"Left recursion eliminated."<<endl;
+
+	LeftFactorize(G);
 	G.GrammarOutput();
 
 	return 0;

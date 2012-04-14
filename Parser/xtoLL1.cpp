@@ -3,6 +3,7 @@
 #include <sstream>
 #include <xtoLL1.hpp>
 #include <Terminal_NonTerminal.hpp>
+#include <map>
 using namespace std;
 
 void ScanGrammarFromFile(Grammar& g, char* filename)
@@ -229,9 +230,89 @@ void EliminateLeftRecursion(Grammar& g)
 	EliminateImmediateLeftRecursion(g);
 }
 
+static vector<string> Subarray(const vector<string>& t, int start, int n)
+{
+	if(n > t.size())
+		return t;
+	vector<string> subarray;
+	for(int i = start; i < n && i < t.size(); i++)
+		subarray.push_back(t[i]);
+	return subarray;
+}
+
+static pair<vector<string>, vector<int> > FindLongestCommonPrefix(Rule& r,
+						int index, vector<string> s)
+{
+	if(!s.size())
+		s = Subarray(r.RuleTail(index), 0, 1);
+	vector<int> t;
+	vector<string> prefix;
+	for(int i = 0; i < r.RuleNTails(); i++)
+	{
+		if(r.equals(Subarray(r.RuleTail(i), 0, s.size()), s))
+			t.push_back(i);
+	}
+	if(t.size() > 1)
+	{
+		prefix = Subarray(r.RuleTail(index), 0, s.size() + 1);
+		if(prefix.size() != s.size() + 1)
+			return make_pair(s, t);
+		 return FindLongestCommonPrefix(r, index, prefix);
+	}
+	else
+	{
+		if(index < r.RuleNTails() - 1)
+			return FindLongestCommonPrefix(r, index + 1,
+							vector<string>());
+		else
+			return make_pair(vector<string>(), vector<int>());
+	}
+}
+
 void LeftFactorize(Grammar& g)
 {
-	return;
+	//g.GrammarOutput();
+	static int renamer = 0;
+	Rule r;
+	int n1 = g.GrammarNRules(), n2;
+	bool rulesmodified = false;
+	pair<vector<string>, vector<int> > lcp_pos;
+	vector<int> common_tails;
+	for(int i = 0; i < n1; i++)
+	{
+		r = g.GrammarRule(i);
+		lcp_pos = FindLongestCommonPrefix(r, 0, vector<string>());
+		if(lcp_pos.first.size())
+		{
+			rulesmodified = true;
+			string renamedhead = r.RuleHead();
+			renamedhead += "_PRIME_";
+			renamedhead += INTTOSTR(renamer);
+			renamer++;
+			Rule temp(renamedhead);
+			vector<string> temptail = lcp_pos.first;
+			temptail.push_back(temp.RuleHead());
+			r.RuleAddTail(temptail);
+			n2 = r.RuleNTails();
+			for(int j = 0; j < n2; j++)
+			{
+				if(find(lcp_pos.second.begin(),
+						lcp_pos.second.end(), j)
+					!= lcp_pos.second.end())
+				{
+					temp.RuleAddTail(
+						Subarray(r.RuleTail(j),
+							lcp_pos.first.size(),
+							r.RuleTail(j).size()));
+				}
+			}
+			for(int j = 0; j < lcp_pos.second.size(); j++)
+				r.RuleRemoveTail(lcp_pos.second[j]);
+			g.GrammarAddRule(temp);
+		}
+	}
+	if(rulesmodified)
+		LeftFactorize(g);
 }
 
 void EliminateDuplicateProductions(Grammar& g)

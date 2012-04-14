@@ -39,6 +39,9 @@ void EliminateImmediateLeftRecursion(Grammar&);
 // eliminates left recursion in the grammar \
 passed as reference in the argument.
 void EliminateLeftRecursion(Grammar&);
+// left factorizes the rule in the \
+grammar passed as reference in the argument.
+//vector<Rule> LeftFactorize(Rule&);
 // left factorizes all the rules in the \
 grammar passed as reference in the argument.
 void LeftFactorize(Grammar&);
