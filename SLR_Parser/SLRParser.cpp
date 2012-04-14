@@ -4,9 +4,11 @@
 #include <Terminal_NonTerminal.hpp>
 #include <fstream>
 #include <sstream>
+#include <list>
 
 using std::ifstream;
 using std::stringstream;
+using std::list;
 
 const string SLRParser::UnexpectedTokenException = string ("Unexpected token received.");
 
@@ -137,16 +139,19 @@ void SLRParser::constructActionTable ()
 			{
 				// Use FOLLOW and complete this part 
 				string tmpSym = itemSetItr->first;
-				vector<string> follow = followSet.Follow (
+				std::cerr << "Calculating follow :::: \n";
+				list<string> follow = followSet.Follow (
 							firstSet, tmpSym,
 							lr0automaton.slrGrammar);
+				follow.sort ();
+				follow.unique();
 
-				vector<string>::iterator strItr;
+				list<string>::iterator strItr;
 				std::cerr << "Follow(" << tmpSym <<"):";
 				for (strItr = follow.begin(); 
 					strItr != follow.end(); strItr++)
 				{
-					std::cerr << *strItr << " ";
+					std::cerr << *strItr << "\n";
 					if ( isTerminal (*strItr))
 					{
 						tmpSym = *strItr;

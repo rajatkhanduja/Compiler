@@ -1,9 +1,5 @@
 #include <NonRecursivePredictiveParser.hpp>
 
-
-NonRecursivePredictiveParser::NonRecursivePredictiveParser()
-{}
-
 void printProduction(Rule rule)
 {
 	
@@ -18,6 +14,12 @@ void printProduction(Rule rule)
 	}
 	std::cerr << std::endl;
 }
+
+NonRecursivePredictiveParser::NonRecursivePredictiveParser()
+{
+	// Empty
+}
+
 
 void NonRecursivePredictiveParser::PrepareInput(string line)
 {
@@ -92,7 +94,7 @@ void NonRecursivePredictiveParser::ParseInput(Grammar& CFG)
 			// Build the depth first tree.
 			printProduction(*itr);
 
-			for ( its = tail.end() - 1; its < tail.begin(); its-- )
+			for ( its = tail.end() - 1; its >= tail.begin(); its-- )
 			{
 					(this->parserStack).push_back(*its);
 			}

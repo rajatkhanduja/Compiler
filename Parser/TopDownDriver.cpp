@@ -1,8 +1,9 @@
 #include <TopDownDriver.hpp>
 
 TopDownDriver::TopDownDriver()
-{}
-
+{
+	// Empty
+}
 
 void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 {
@@ -27,6 +28,9 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 		Gsym = getNonTerminal(i);
 		firstSet.First(Gsym, CFG);
 	}
+
+
+	firstSet.RemoveDuplicatesFromFirst();
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -34,7 +38,12 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	{
 		Gsym = getNonTerminal(i);
 		followSet.Follow(firstSet, Gsym, CFG);
+
+		// To handle right recursion
+		followSet.ProcessDependencyList();
 	}
+
+	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
 	
 	NonRecursivePredictiveParser parser;
@@ -55,7 +64,6 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 int main(int argc, char* argv[])
 {
-	
 	assert(argc > 2);
 	
 	Grammar G_scanned, G;
