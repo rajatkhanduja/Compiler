@@ -11,6 +11,4 @@ using namespace std;
 #define EPSILON		"%"
 #define ENDMARKER	"$"
 
-#define INTTOSTR(x)	(#x)
-
 #endif
