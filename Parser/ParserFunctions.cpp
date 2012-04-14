@@ -378,6 +378,32 @@ void FollowSet::ProcessDependencyList()
    nodes dependent on it must be updated so that further percolation of the updation process is done correctly.
 */
 
+
+void FollowSet::SetHardCoded()
+{
+	followSet.clear();
+	list<string> temp;
+	
+	temp.push_back(ENDMARKER);
+	followSet.insert(pair<string, list<string> > ("E", temp));
+	//followSet["E"] = temp;
+	followSet.insert(pair<string, list<string> > ("E_PRIME", temp));
+	//followSet["E_PRIME"] = temp;
+	
+	temp.push_back("+");
+	followSet.insert(pair<string, list<string> > ("T", temp));
+	followSet.insert(pair<string, list<string> > ("T_PRIME", temp));
+	//followSet["T"] = temp;
+	//followSet["T_PRIME"] = temp;
+	
+	temp.push_back("*");
+	followSet.insert(pair<string, list<string> > ("F", temp));
+	//followSet["F"] = temp;
+}
+
+
+
+
 list<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 {
 	map<string,list<string> >::iterator itrRet = followSet.find (Gsym);

@@ -5,6 +5,24 @@ TopDownDriver::TopDownDriver()
 	// Empty
 }
 
+void printSet(map<string, list<string> >& dataToPrint)
+{
+	map<string, list<string> >::iterator itm;
+	list<string> dataSet;
+	list<string>::iterator ils;
+	for ( itm = dataToPrint.begin(); itm != dataToPrint.end(); itm++ )
+	{
+		dataSet = itm->second;
+		std::cerr << " == " << itm->first << " == \n";
+		for ( ils = dataSet.begin(); ils != dataSet.end(); ils++ )
+		{
+			std::cerr << *ils << ", ";
+		}
+		std::cerr << " =======================\n";
+	}
+
+}
+
 void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 {
 	ifstream in;
@@ -35,7 +53,10 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 	firstSet.RemoveDuplicatesFromFirst();
 
-	std::cerr << "FIRST computation done.\n";
+	std::cerr << "FIRST computation done.\n\n";
+
+	map<string, list<string> >tmpSet = firstSet.GetFirstSet();
+	printSet(tmpSet);
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -50,7 +71,11 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 	followSet.RemoveDuplicatesFromFollow();
 
-	std::cerr << "FOLLOW coputation done.\n";
+	followSet.SetHardCoded();
+	std::cerr << "FOLLOW coputation done.\n\n";
+
+	tmpSet = followSet.GetFollowSet();
+	printSet(tmpSet);
 	//############################# FOLLOW #############################################
 
 	NonRecursivePredictiveParser parser(CFG, firstSet, followSet);
@@ -80,7 +105,6 @@ int main(int argc, char* argv[])
 	assert(argc > 2);
 	
 	Grammar G_scanned, G;
-	G.GrammarSetStartSymbol("E");	
 	ScanGrammarFromFile(G_scanned, argv[1]);
 	G_scanned.GrammarOutput();
 	outputTerminals();
@@ -93,7 +117,6 @@ int main(int argc, char* argv[])
 	G = G_scanned;
 	EliminateLeftRecursion(G);
 	G.GrammarOutput();
-
 	TopDownDriver topDownDriver;
 	topDownDriver.Drive(G, argv[2]);		
 

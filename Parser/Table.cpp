@@ -104,6 +104,9 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 	list<string>::iterator its1, its2;
 	list<string> setFirst, setFollow;
 	
+	// HARD CODE
+	followSet.SetHardCoded();	
+	
 	string head;
 	Key key;
 	vector < vector<std::string> > tailsWithCommonHead;
@@ -130,7 +133,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 				if ( *its1 == EPSILON )		
 				{
 					//######## Application of Rule(2) ###########.
-					setFollow = (followSet.GetFollowSet())[head];
+					//setFollow = (followSet.GetFollowSet())[head];
 					for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
 					{
 						if ( *its2 == ENDMARKER )
