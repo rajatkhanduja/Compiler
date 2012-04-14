@@ -46,10 +46,10 @@ map<string, list<string> > FirstSet::GetFirstSet()
 void FirstSet::RemoveDuplicatesFromFirst()
 {
 	map<string, list<string> >::iterator itm;
-	for ( it = (this->firstSet).begin(); it != (this->firstSet).end(); it++ )
+	for ( itm = (this->firstSet).begin(); itm != (this->firstSet).end(); itm++ )
 	{
-		(*it).sort();
-		(*it).unique();
+		(itm->second).sort();
+		(itm->second).unique();
 	}
 }
 
@@ -172,7 +172,7 @@ list<string> FirstSet::First (string Gsym, Grammar& CFG)
 										
 										firstVals = (this->firstSet)[*its1];
 										// firstvals is a vector of strings.
-										for ( its2 = firstVals.begin(); its2 < firstVals.end(); its2++ )
+										for ( its2 = firstVals.begin(); its2 != firstVals.end(); its2++ )
 											{
 												if ( *its2 == EPSILON ) 
 												{	// We have an epsilon production, Hence we need 
@@ -218,7 +218,9 @@ list<string> FirstSet::First (string Gsym, Grammar& CFG)
 /* FirstOfAggSym() is a non-class method. */
 list<string> FirstOfAggSym(FirstSet firstSet, vector<string> tail, vector<string>::iterator itStart)
 {
-	vector<string>::iterator it, epsilonPosition;
+	vector<string>::iterator it;
+
+	list<string>::iterator epsilonPosition;
 	list<string> tmpFirstSet;
 	list<string> retval;
 	map<string, list<string> > firstSetMap = firstSet.GetFirstSet();
@@ -265,10 +267,10 @@ map<string, list<string> > FollowSet::GetFollowSet()
 void FollowSet::RemoveDuplicatesFromFollow()
 {
 	map<string, list<string> >::iterator itm;
-	for ( it = (this->followSet).begin(); it != (this->followSet).end(); it++ )
+	for ( itm = (this->followSet).begin(); itm != (this->followSet).end(); itm++ )
 	{
-		(*it).sort();
-		(*it).unique();
+		(itm->second).sort();
+		(itm->second).unique();
 	}
 }
 
@@ -310,7 +312,7 @@ void FollowSet::UpdateDependencyList(vector<string> &recursionStack, string Gsym
 			}
 
 			
-			if ( (this->dirtyFlags).find(*it) == (this.dirtyFlags).end() )					// dirtyFlags is a map
+			if ( (this->dirtyFlags).find(*it) == (this->dirtyFlags).end() )					// dirtyFlags is a map
 			{
 				(this->dirtyFlags).insert( pair<string, bool>(*it, true) );
 			}

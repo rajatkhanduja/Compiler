@@ -49,7 +49,7 @@ TableKey<Row, Column>::operator<(const TableKey<Row, Column>& key ) const
 }
 
 
-template<class TableKey>
+template<class Key>
 Table<Key>::Table()
 {
 	// Empty
@@ -100,9 +100,9 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 {
 	vector<Rule> grammarRules = CFG.GrammarAllRules();
 	vector<Rule>::iterator itr;
-	vector<string>::iterator its1, its2;
 	vector<string> tail;
 
+	list<string>::iterator its1, its2;
 	list<string> setFirst, setFollow;
 	
 	string head;

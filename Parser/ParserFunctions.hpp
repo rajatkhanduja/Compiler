@@ -5,6 +5,7 @@
 #include <Grammar.hpp>
 #include <commons.hpp>
 #include <map>
+#include <list>
 #include <Terminal_NonTerminal.hpp>
 
 class FirstSet

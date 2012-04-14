@@ -30,7 +30,7 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	}
 
 
-	firstSet.RemoveDuplicatesFromFollow();
+	firstSet.RemoveDuplicatesFromFirst();
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
