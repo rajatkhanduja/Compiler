@@ -36,9 +36,11 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	for ( i = 0; i < numNonTerminals; i++ )
 	{
 		Gsym = getNonTerminal(i);
-		std::cerr << "sym : " << Gsym << std::endl;
 		firstSet.First(Gsym, lr0automaton.slrGrammar);
 	}
+
+
+	firstSet.RemoveDuplicatesFromFirst();
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -46,7 +48,12 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	{
 		Gsym = getNonTerminal(i);
 		followSet.Follow(firstSet, Gsym, lr0automaton.slrGrammar);
+
+		// To handle right recursion
+		followSet.ProcessDependencyList();
 	}
+
+	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
 	addTerminal (string("$"));
 	generateItemSet2NumMapping();
@@ -127,8 +134,8 @@ void SLRParser::constructActionTable ()
 
 			if (isTerminal (symbol))
 			{
-				std::cerr << "Adding "  << (*itr) << " " 
-							<< symbol << " to table\n";
+				std::cerr << "Adding ("  << itemSetStates[curItemSet] << " ," 
+							<< symbol << ") to table\n";
 				addToActionTable (curItemSet, symbol, 
 						Shift, NULL, 
 						lr0automaton.goTo ((*itr),
@@ -139,18 +146,19 @@ void SLRParser::constructActionTable ()
 			{
 				// Use FOLLOW and complete this part 
 				string tmpSym = itemSetItr->first;
-				std::cerr << "Calculating follow :::: \n";
 				list<string> follow = followSet.Follow (
 							firstSet, tmpSym,
 							lr0automaton.slrGrammar);
 				follow.sort ();
 				follow.unique();
 
+			
+				std::cerr << "FOllOw(" << tmpSym <<"):";
 				list<string>::iterator strItr;
-				std::cerr << "Follow(" << tmpSym <<"):";
 				for (strItr = follow.begin(); 
 					strItr != follow.end(); strItr++)
 				{
+					std::cerr << "Follow(" << itemSetItr->first <<"):";
 					std::cerr << *strItr << "\n";
 					if ( isTerminal (*strItr))
 					{
@@ -192,6 +200,28 @@ string ItemHead (const Item* item)
 	return item->first;
 }
 
+string SLRParser::getNextToken_()
+{
+	try 
+	{
+		return lex.getNextToken ();
+	}
+	catch (string exception)
+	{
+		if (!exception.compare (
+			LexicalAnalyser::NoMoreTokenException))
+		{
+			std::cerr << "Error caught\n"; 
+			return string("$");
+		}	
+		else
+		{
+			std::cerr << "SEVERE Error caught\n"; 
+			throw;
+		}
+			
+	}
+}
 void SLRParser::parse (ifstream& inputFile)
 {
 	lex.setInputFile (&inputFile);
@@ -205,27 +235,9 @@ void SLRParser::parse (ifstream& inputFile)
 	string token;
 	ItemTerminalPair actionKey;
 	ActionArgPair actionVal;
+	token = getNextToken_();
 	while (true)
 	{
-		try 
-		{
-			token = lex.getNextToken ();
-		}
-		catch (string exception)
-		{
-			if (!exception.compare (
-				LexicalAnalyser::NoMoreTokenException))
-			{
-				std::cerr << "Error caught\n"; 
-				token = string("$");
-			}	
-			else
-			{
-				std::cerr << "SEVERE Error caught\n"; 
-				throw;
-			}
-				
-		}
 		actionKey = make_pair (parseStack.top(), token);
 		std::cerr << "Parse token " << token << "\n";
 		std::cerr << "Stack top "  << itemSetStates[parseStack.top()]
@@ -246,6 +258,7 @@ void SLRParser::parse (ifstream& inputFile)
 		{
 			// Shift
 			parseStack.push (actionVal.second.shiftTo);
+			token = getNextToken_();
 		}
 
 		else if ( Reduce == actionVal.first )
@@ -388,7 +401,7 @@ string SLRParser::gotoTable2String (void)
 	output << "\n";
 	for ( i = 0; i < lr0automaton.states.size(); i++)
 	{
-		output << i + 1;
+		output << lr0automaton.states[i] << "-" << i + 1;
 		int j;
 		for ( j = 0; j < NNonTerminals(); j++)
 		{

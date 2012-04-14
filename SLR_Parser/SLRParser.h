@@ -75,6 +75,9 @@ class SLRParser
 		 * a part of the class.
 		 */
 		string actionArgPair2String(const ActionArgPair& pair);
+
+		string getNextToken_();
 };
+
 
 #endif	// End of file

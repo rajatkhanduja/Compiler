@@ -7,10 +7,9 @@
 #
 # Grammar:
 E --> E + T | T
-T --> T * F | F
+T --> T ~ F | F
 F --> ( E ) | id
 #E --> T F
 #F --> ( E ) | id
-#T --> F
-#F --> B + id
-#B --> id
+#B --> id + F
+#F --> id
