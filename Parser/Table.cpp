@@ -55,7 +55,6 @@ Table<Key>::Table()
 	// Empty
 }
 
-
 template<class Key>
 void 
 Table<Key>::TableInsert(Key key, Rule rule)

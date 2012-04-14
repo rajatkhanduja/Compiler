@@ -38,6 +38,8 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	{
 		Gsym = getNonTerminal(i);
 		followSet.Follow(firstSet, Gsym, CFG);
+
+		// To handle right recursion
 		followSet.ProcessDependencyList();
 	}
 
@@ -60,10 +62,10 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
 	assert(argc > 2);
-
+	
 	Grammar G_scanned, G;
 	ScanGrammarFromFile(G_scanned, argv[1]);
 	G_scanned.GrammarOutput();
@@ -78,7 +80,7 @@ int main(int argc, char** argv)
 	G.GrammarOutput();
 
 	TopDownDriver topDownDriver;
-	topDownDriver.Drive(G, argv[2]); 
+	topDownDriver.Drive(G, argv[2]);		
 
 	return 0;
 }

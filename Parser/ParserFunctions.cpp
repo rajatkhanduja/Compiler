@@ -10,8 +10,6 @@
    This declaration will only be visible inside the function instead of throughout the function's module. 
 */
 
-
-
 FirstSet::FirstSet ()
 {
 	//Empty
