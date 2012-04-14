@@ -77,6 +77,8 @@ class SLRParser
 		string actionArgPair2String(const ActionArgPair& pair);
 
 		string getNextToken_();
+
+		string followSet2String();
 };
 
 

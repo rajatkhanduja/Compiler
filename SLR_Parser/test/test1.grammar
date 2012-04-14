@@ -6,7 +6,6 @@
 # all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
 #
 # Grammar:
-S --> L eq R | R
-L --> mul R | id
+S --> L = R | R
+L --> * R | id
 R --> L
-

@@ -12,6 +12,30 @@ using std::list;
 
 const string SLRParser::UnexpectedTokenException = string ("Unexpected token received.");
 
+string SLRParser::followSet2String ()
+{
+	stringstream output;
+	string nonTerm;
+	int i;
+	for ( i = 0; i < NNonTerminals (); i++)
+	{
+		nonTerm = getNonTerminal(i);
+		output  << "Follow (" << nonTerm
+			<< ") :";
+		list<string> follow = followSet.Follow (firstSet, nonTerm,
+					lr0automaton.slrGrammar);
+		list<string>::iterator itr;
+
+		for ( itr = follow.begin(); itr != follow.end(); itr++)
+		{
+			output << " " << *itr;
+		}
+		output << "\n";
+	}
+	
+	return output.str();
+}
+
 SLRParser::SLRParser (char * lexFile, char * grammarFile) 
 	: lr0automaton (grammarFile)
 {
@@ -56,6 +80,12 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
 	addTerminal (string("$"));
+
+	// Print the FOLLOWS.
+	std::cerr << " ================ FOLLOWS =============\n";
+	std::cerr << followSet2String();
+	std::cerr << " ================ FOLLOWS =============\n";
+
 	generateItemSet2NumMapping();
 	constructActionTable ();
 }
@@ -99,7 +129,8 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	if ( ACTION.find (tmpPair) == ACTION.end())
 	{
 		ACTION.insert (make_pair(tmpPair, make_pair (action, newAction)));
-		std::cerr << actionArgPair2String ( make_pair (action, newAction));
+		std::cerr << actionArgPair2String ( make_pair (action, newAction))
+			  << "\n";
 		if (Accept == action)
 		{	
 			std::cerr << "Added accept state\n";
@@ -153,17 +184,15 @@ void SLRParser::constructActionTable ()
 				follow.unique();
 
 			
-				std::cerr << "FOllOw(" << tmpSym <<"):";
 				list<string>::iterator strItr;
 				for (strItr = follow.begin(); 
 					strItr != follow.end(); strItr++)
 				{
-					std::cerr << "Follow(" << itemSetItr->first <<"):";
-					std::cerr << *strItr << "\n";
+	//				std::cerr << *strItr << "\n";
 					if ( isTerminal (*strItr))
 					{
 						tmpSym = *strItr;
-						std::cerr << "Adding " 
+						std::cerr << "Adding " << itemSetStates[curItemSet] << " ," 
 								<< tmpSym
 								<< " to table\n";
 						addToActionTable (curItemSet,
@@ -268,8 +297,8 @@ void SLRParser::parse (ifstream& inputFile)
 			n = actionVal.second.reduceRule->second.first.size()
 			+ actionVal.second.reduceRule->second.second.size();
 
-			std::cerr<<item2String(*actionVal.second.reduceRule);
-			std::cerr<<"\n";
+			std::cerr << item2String(*actionVal.second.reduceRule)
+				  << "\n";
 			
 			for (i = 0; i < n; i++)
 			{
@@ -307,7 +336,7 @@ void SLRParser::generateItemSet2NumMapping()
 	for (i = 0; i < lr0automaton.states.size(); i++)
 	{
 		itemSetStates[lr0automaton.states[i]] = i + 1;
-		std::cerr << "[genI2NM] Added " << lr0automaton.states[i] <<"\n";
+////		std::cerr << "[genI2NM] Added " << lr0automaton.states[i] <<"\n";
 	}
 
 	return;
@@ -332,7 +361,6 @@ string SLRParser::actionArgPair2String (const ActionArgPair& pair)
 	}
 	else if (Accept == pair.first)
 	{
-		std::cerr << "{}{}{{}{} ACCEPT STATE\n";
 		output << "a";
 	}
 	return output.str();
@@ -368,9 +396,6 @@ string SLRParser::actionTable2String ()
 				output  << "\t"
 					<< actionArgPair2String(
 					iActionTableItr->second); 
-				std::cerr << "states:" 
-					  << itemSetStates.size()
-					  << "\n";
 			}
 			else
 			{
