@@ -58,7 +58,10 @@ Item rule2Item (Rule& rule, unsigned int ruleIndex)
 {
 	return (make_pair (rule.RuleHead(), 
 			make_pair (vector <string> (),
-				rule.RuleTail(ruleIndex))));
+				(rule.RuleTail(ruleIndex).size()==1
+				&& !rule.RuleTail(ruleIndex)[0].compare("%")
+				? vector<string> ()
+				: rule.RuleTail(ruleIndex)))));
 }
 /* Function to convert a rule to an ItemSet using rule2Item
  * This function needs to be passed an ItemSet for results

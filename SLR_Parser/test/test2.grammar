@@ -1,0 +1,14 @@
+# Conventions:
+# each entity has to be separated by a space
+# the file should end in a blank line
+# any line beginning with "#" would be ignored
+# all heads are treated as non-terminals, so better is to begin them with a capital letter
+# all tokens in tails beginning with a small letter are treated as terminals, the rest treated as non-terminals
+#
+# Grammar:
+#
+# Leads to a reduce-reduce conflict.
+# Same as S --> A a A b | B b B a ; A --> % ; B --> %
+S --> A id A + | B + B id
+A --> %
+B --> %
