@@ -150,7 +150,7 @@ set<string> requiredSymbols (const ItemSet& itemSet)
  * in the set has the same value. Since the elements in the set are pointers 
  * themselves, we need to compare with each
  */
-template <class Iterator, class Type> bool inContainer (Iterator start, 
+template <class Iterator, class Type> Iterator inContainer (Iterator start, 
 							Iterator end, 
 							Type* ptr)
 {
@@ -158,11 +158,11 @@ template <class Iterator, class Type> bool inContainer (Iterator start,
 	{
 		if ( *ptr == **start )
 		{
-			return true;
+			break;
 		}
 	}
 
-	return false;
+	return start;
 }
 
 
@@ -180,6 +180,7 @@ void LR0Automaton::constructCanonicalCollection ()
 
 	canonicalCollection.insert (
 		(ItemSetsClosure (*tmpSet, slrGrammar, startSet)));
+	states.push_back (&startSet);
 
 	while (newElemAdded)
 	{
@@ -201,10 +202,14 @@ void LR0Automaton::constructCanonicalCollection ()
 				/* If gotoSet is not empty and is not in
 				 * in canonicalCollection. */
 				if ( !(gotoSet->empty()) &&
-					!inContainer(canonicalCollection.begin(),
-					canonicalCollection.end(), gotoSet))
+					(canonicalCollection.end() ==
+						inContainer(
+						canonicalCollection.begin(),
+						canonicalCollection.end(), 
+						gotoSet)))
 				{
 					canonicalCollection.insert (gotoSet);
+					states.push_back (gotoSet);
 					newElemAdded = true;
 				}
 			}
@@ -259,7 +264,18 @@ ItemSet* LR0Automaton::goTo (ItemSet* I, const string& X)
 	ItemSetsClosure (tmpSet, slrGrammar, *result);
 
 	// Add the result to GOTO.
-	GOTO[setTerminalPair] = result;
+	set<ItemSet*>::iterator tmp = inContainer(canonicalCollection.begin(),
+					canonicalCollection.end(), result);
+	if (tmp == canonicalCollection.end())
+	{
+		// Use the new set.
+		GOTO[setTerminalPair] = result;
+	}
+	else
+	{
+		// Refer to the previous set
+		GOTO[setTerminalPair] = *tmp;
+	}
 	return result;
 }	
 

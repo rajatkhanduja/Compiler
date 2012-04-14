@@ -46,6 +46,7 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 		followSet.Follow(firstSet, Gsym, lr0automaton.slrGrammar);
 	}
 	//############################# FOLLOW #############################################
+	generateItemSet2NumMapping();
 	constructActionTable ();
 }
 
@@ -68,7 +69,7 @@ inline bool isReduceReady (const Item& item)
 inline bool isAcceptReady (const Item& item)
 {
 	return (isReduceReady(item) &&
-		(!item.first.compare(LR0Automaton::augmentedStartSymbol)));
+		!(item.first.compare(LR0Automaton::augmentedStartSymbol)));
 }
 
 void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal, 
@@ -77,15 +78,8 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 {
 	ActionVal newAction;
 
-
-	if (action == Shift)
-	{
-		newAction.shiftTo = shiftTo;
-	}
-	else if (action == Reduce)
-	{
-		newAction.reduceRule = reduceRule;
-	}
+	newAction.shiftTo    = shiftTo;
+	newAction.reduceRule = reduceRule;
 	
 	// Insert into the ACTION table
 	ItemTerminalPair tmpPair = make_pair (curItemSet, terminal);
@@ -93,6 +87,11 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	if ( ACTION.find (tmpPair) == ACTION.end())
 	{
 		ACTION.insert (make_pair(tmpPair, make_pair (action, newAction)));
+		std::cerr << actionArgPair2String ( make_pair (action, newAction));
+		if (Accept == action)
+		{	
+			std::cerr << "Added accept state\n";
+		}
 	}
 	else
 	{
@@ -118,6 +117,7 @@ void SLRParser::constructActionTable ()
 			itemSetItrEnd = (*itr)->end(); itemSetItr != itemSetItrEnd;
 			itemSetItr++)
 		{
+			std::cerr << item2String(*itemSetItr) << "\n";
 			string symbol = LR0Automaton::postDotSymbol (*itemSetItr);
 
 			if (isTerminal (symbol))
@@ -159,6 +159,7 @@ void SLRParser::constructActionTable ()
 
 			if ( isAcceptReady (*itemSetItr) )
 			{
+				std::cerr << "Adding accept state\n";
 				addToActionTable (curItemSet, symbol, Accept, 
 							NULL, NULL);
 			}
@@ -190,70 +191,61 @@ void SLRParser::parse (ifstream& inputFile)
 	// Insert the startSet into the stack.
 	parseStack.push (startSet);
 
-	try
+	string token = lex.getNextToken ();
+	ItemTerminalPair actionKey;
+	ActionArgPair actionVal;
+	while (true)
 	{
-		string token = lex.getNextToken ();
-		ItemTerminalPair actionKey;
-		ActionArgPair actionVal;
-		while (true)
+		actionKey = make_pair (parseStack.top(), token);
+		std::cerr << "Parse token " << token << "\n";
+		if ( ACTION.count (actionKey) )
 		{
-			actionKey = make_pair (parseStack.top(), token);
-			std::cerr << "Parse token " << token << "\n";
-			if ( ACTION.count (actionKey) )
-			{
-				actionVal = ACTION[actionKey];
-			}
-			else
-			{
-				// Required symbol is empty in the table.
-				std::cerr << "Unexpected token : " << token << "\n";
-				throw UnexpectedTokenException;
-			}
-				
-
-			if ( Shift == actionVal.first )
-			{
-				// Shift
-				parseStack.push (actionVal.second.shiftTo);
-			}
-
-			else if ( Reduce == actionVal.first )
-			{
-				// Reduce
-				int i, n;
-				n = actionVal.second.reduceRule->second.first.size()
-				+ actionVal.second.reduceRule->second.second.size();
-				
-				for (i = 0; i < n; i++)
-				{
-					parseStack.pop();
-				}
- 				
-				parseStack.push(lr0automaton.goTo (
-					parseStack.top(), ItemHead(
-						actionVal.second.reduceRule)));
-	//			printItem (actionVal.second.reduceRule);
-
-			}
-			else if ( Accept == actionVal.first )
-			{
-				// Accept
-				break;
-			}
-			else
-			{
-				// Error
-				assert (0);
-			}
-
-			token = lex.getNextToken();
+			actionVal = ACTION[actionKey];
 		}
-	}
-	catch (string lexException)
-	{
-		assert(lexException.compare(LexicalAnalyser::NoInputFileException));
-	}
+		else
+		{
+			// Required symbol is empty in the table.
+			std::cerr << "Unexpected token : " << token << "\n";
+			throw UnexpectedTokenException;
+		}
+			
 
+		if ( Shift == actionVal.first )
+		{
+			// Shift
+			parseStack.push (actionVal.second.shiftTo);
+		}
+
+		else if ( Reduce == actionVal.first )
+		{
+			// Reduce
+			int i, n;
+			n = actionVal.second.reduceRule->second.first.size()
+			+ actionVal.second.reduceRule->second.second.size();
+			
+			for (i = 0; i < n; i++)
+			{
+				parseStack.pop();
+				std::cerr << "Popped\n";
+			}
+			
+			parseStack.push(lr0automaton.goTo (
+				parseStack.top(), ItemHead(
+					actionVal.second.reduceRule)));
+		}
+		else if ( Accept == actionVal.first )
+		{
+			// Accept
+			break;
+		}
+		else
+		{
+			// Error
+			assert (0);
+		}
+
+		token = lex.getNextToken();
+	}
 }
 
 string SLRParser::canonicalCollection2String ()
@@ -263,20 +255,11 @@ string SLRParser::canonicalCollection2String ()
 
 void SLRParser::generateItemSet2NumMapping()
 {
-	map<ItemTerminalPair, ItemSet*>::iterator itr;
-	for (itr = lr0automaton.GOTO.begin(); 
-		itr != lr0automaton.GOTO.end(); itr++)
+	int i;
+	for (i = 0; i < lr0automaton.states.size(); i++)
 	{
-		itemSetStates[itr->first.first] = -1;
-		itemSetStates[itr->second] = -1;
-	}
-	// Need to iterate through the generated list to be able to assign numbers
-	map<ItemSet*, int>::iterator itr1;
-	int counter = 1;
-	for (itr1 = itemSetStates.begin(); itr1 != itemSetStates.end();
-		itr1++, counter++)
-	{
-		itr1->second = counter;
+		itemSetStates[lr0automaton.states[i]] = i + 1;
+		std::cerr << "[genI2NM] Added " << lr0automaton.states[i] <<"\n";
 	}
 
 	return;
@@ -287,7 +270,7 @@ string SLRParser::actionArgPair2String (const ActionArgPair& pair)
 	stringstream output;
 	if (Reduce == pair.first)
 	{
-		output << "r";
+		output << "r " << item2String (*(pair.second.reduceRule));
 	}
 	else if (Shift == pair.first)
 	{
@@ -299,14 +282,16 @@ string SLRParser::actionArgPair2String (const ActionArgPair& pair)
 			output << "s" << itr->second;
 ;
 	}
+	else if (Accept == pair.first)
+	{
+		std::cerr << "{}{}{{}{} ACCEPT STATE\n";
+		output << "a";
+	}
 	return output.str();
 }
 
 string SLRParser::actionTable2String ()
 {
-	// First create a map of itemSets to be able to enumerate them.
-	generateItemSet2NumMapping();
-
 	// print all Terminals. (top of the table)
 	stringstream output;
 	int i;
@@ -321,22 +306,23 @@ string SLRParser::actionTable2String ()
 	map<ItemTerminalPair, ActionArgPair>::iterator itr, iActionTableItr;
 	map<ItemTerminalPair, ActionArgPair>::const_iterator actionItrEnd = 
 								ACTION.end();
-	map<ItemSet*, int>::iterator itr1;
-	map<ItemSet*, int>::iterator itrStart = itemSetStates.begin(), 
-					itrEnd   = itemSetStates.end(); 
-	for (itr1 = itrStart; itr1 != itrEnd; itr1++)
+	int j;
+	for (j = 0; j < lr0automaton.states.size(); j++)
 	{
-		output << itr1->second;
+		output << j + 1;
 		for ( i = 0; i < n; i++)
 		{
-			iActionTableItr =  ACTION.find (make_pair (itr1->first,
-							getTerminal(i)));
+			iActionTableItr =  ACTION.find (make_pair (
+						lr0automaton.states[j],
+						getTerminal(i)));
 			if (iActionTableItr != actionItrEnd)
 			{
 				output  << "\t"
 					<< actionArgPair2String(
 					iActionTableItr->second); 
-//				std::cerr << "itemSetStates [inAfter] :" <<itemSetStates.size() << "\n";
+				std::cerr << "states:" 
+					  << itemSetStates.size()
+					  << "\n";
 			}
 			else
 			{
@@ -348,5 +334,42 @@ string SLRParser::actionTable2String ()
 	}
 
 //	std::cerr << output.str();
+	return output.str();
+}
+
+string SLRParser::gotoTable2String (void)
+{
+	int i;
+	stringstream output;
+
+	for ( i = 0; i < NNonTerminals(); i++)
+	{
+		output << "\t" << getNonTerminal (i);
+	}
+	output << "\n";
+	for ( i = 0; i < lr0automaton.states.size(); i++)
+	{
+		output << i + 1;
+		int j;
+		for ( j = 0; j < NNonTerminals(); j++)
+		{
+			map<ItemSet*, int>::iterator itr =
+				itemSetStates.find(lr0automaton.GOTO[
+					make_pair (
+						lr0automaton.states[i],
+						getNonTerminal(j))]);
+			output << "\t";
+			if ( itr != itemSetStates.end())
+			{
+				output << (itr->second) + 1;
+			}
+			else
+			{
+				output << "-";
+			}
+		}
+		output << "\n";
+	}
+
 	return output.str();
 }

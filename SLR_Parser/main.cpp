@@ -35,6 +35,8 @@ int main (int argc, char * argv[])
 		// Open a file for dumping debugging statements.
 		ofstream out(debugFile.c_str());
 		out << slrParser.actionTable2String();
+		out << "\n=============\n";
+		out << slrParser.gotoTable2String();
 
 		// Parse
 		ifstream inputFile (argv[3]);

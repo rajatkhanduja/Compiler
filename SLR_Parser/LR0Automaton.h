@@ -59,6 +59,7 @@ class LR0Automaton
 		Grammar slrGrammar;
 		set<ItemSet*> canonicalCollection;
 		map<ItemTerminalPair, ItemSet*> GOTO;
+		vector<ItemSet*> states;
 		ItemSet startSet;
 
 		// Private functions

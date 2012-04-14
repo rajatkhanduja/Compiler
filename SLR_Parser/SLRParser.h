@@ -36,6 +36,9 @@ class SLRParser
 		 */
 		string actionTable2String();
 
+		/* Function to return the GOTO table as a string. */
+		string gotoTable2String();
+
 		/* Function to print the canonicalCollection of LR0Automaton */
 		string canonicalCollection2String ();
 	private:
