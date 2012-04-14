@@ -320,13 +320,19 @@ string LR0Automaton::canonicalCollection2String (void)
 	set<ItemSet*>::iterator itr, itr_end;
 	stringstream s;
 	int i;
-	for (i = 0, itr = canonicalCollection.begin(),
+/*	for (i = 0, itr = canonicalCollection.begin(),
 		itr_end = canonicalCollection.end(); itr != itr_end; itr++, i++)
 	{
 		s << "ItemSet " << i << ":" << std::endl;
 		s << itemSet2String (**itr);
 		s << "\n";
 	}
-	
+*/
+	for (i = 0; i < states.size(); i++)
+	{
+		s << "I_" << (i + 1) << ": "<< std::endl;
+		s << itemSet2String (*states[i]);
+		s << "\n";
+	}
 	return s.str();
 }

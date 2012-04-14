@@ -30,10 +30,11 @@ int main (int argc, char * argv[])
 	try
 	{
 		SLRParser slrParser (argv[1], argv[2]);
-		std::cout << slrParser.canonicalCollection2String ();
 		
 		// Open a file for dumping debugging statements.
 		ofstream out(debugFile.c_str());
+		out << slrParser.canonicalCollection2String ();
+		out << "\n=============\n";
 		out << slrParser.actionTable2String();
 		out << "\n=============\n";
 		out << slrParser.gotoTable2String();

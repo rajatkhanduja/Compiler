@@ -222,6 +222,9 @@ void SLRParser::parse (ifstream& inputFile)
 			int i, n;
 			n = actionVal.second.reduceRule->second.first.size()
 			+ actionVal.second.reduceRule->second.second.size();
+
+			std::cerr<<item2String(*actionVal.second.reduceRule);
+			std::cerr<<"\n";
 			
 			for (i = 0; i < n; i++)
 			{
@@ -346,6 +349,10 @@ string SLRParser::gotoTable2String (void)
 	{
 		output << "\t" << getNonTerminal (i);
 	}
+	for ( i = 0; i < NTerminals(); i++)
+	{
+		output << "\t" << getTerminal (i);
+	}
 	output << "\n";
 	for ( i = 0; i < lr0automaton.states.size(); i++)
 	{
@@ -361,7 +368,24 @@ string SLRParser::gotoTable2String (void)
 			output << "\t";
 			if ( itr != itemSetStates.end())
 			{
-				output << (itr->second) + 1;
+				output << (itr->second);
+			}
+			else
+			{
+				output << "-";
+			}
+		}
+		for ( j = 0; j < NTerminals(); j++)
+		{
+			map<ItemSet*, int>::iterator itr =
+				itemSetStates.find(lr0automaton.GOTO[
+					make_pair (
+						lr0automaton.states[i],
+						getTerminal(j))]);
+			output << "\t";
+			if ( itr != itemSetStates.end())
+			{
+				output << (itr->second);
 			}
 			else
 			{
