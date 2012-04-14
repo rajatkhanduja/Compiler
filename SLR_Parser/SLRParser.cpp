@@ -80,14 +80,14 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 	followSet.RemoveDuplicatesFromFollow();
 	//############################# FOLLOW #############################################
 	
-
+	// Add ENDMARKER
 	addTerminal (string("$"));
 
 	// Print the FOLLOWS.
-	std::cerr << " ================ FOLLOWS =============\n";
+	std::cerr << "================ FOLLOWS =============\n";
 	std::cerr << followSet2String();
-	std::cerr << " ================ FOLLOWS =============\n";
-
+	std::cerr << "======================================\n";
+	
 	generateItemSet2NumMapping();
 	constructActionTable ();
 }
@@ -131,17 +131,15 @@ void SLRParser::addToActionTable (ItemSet* curItemSet, const string& terminal,
 	if ( ACTION.find (tmpPair) == ACTION.end())
 	{
 		ACTION.insert (make_pair(tmpPair, make_pair (action, newAction)));
-		std::cerr << actionArgPair2String ( make_pair (action, newAction))
-			  << "\n";
-		if (Accept == action)
-		{	
-			std::cerr << "Added accept state\n";
-		}
 	}
 	else
 	{
+		stringstream conflictPoint;
+//		conflictPoint << "(" << itemSetStates[] << "," << terminal << ")\n";
+
+
 		// Throw an exception.
-		throw string ("Cannot create SLR table for grammar. Conflict when inserting ").append (terminal);
+		throw string ("Cannot create SLR table for grammar. Conflict when inserting ");
 	}
 }
 
@@ -162,13 +160,13 @@ void SLRParser::constructActionTable ()
 			itemSetItrEnd = (*itr)->end(); itemSetItr != itemSetItrEnd;
 			itemSetItr++)
 		{
-			std::cerr << item2String(*itemSetItr) << "\n";
+//			std::cerr << item2String(*itemSetItr) << "\n";
 			string symbol = LR0Automaton::postDotSymbol (*itemSetItr);
 
 			if (isTerminal (symbol))
 			{
-				std::cerr << "Adding ("  << itemSetStates[curItemSet] << " ," 
-							<< symbol << ") to table\n";
+/*				std::cerr << "Adding ("  << itemSetStates[curItemSet] << " ," 
+							<< symbol << ") to table\n";*/
 				addToActionTable (curItemSet, symbol, 
 						Shift, NULL, 
 						lr0automaton.goTo ((*itr),
@@ -194,9 +192,9 @@ void SLRParser::constructActionTable ()
 					if ( isTerminal (*strItr))
 					{
 						tmpSym = *strItr;
-						std::cerr << "Adding " << itemSetStates[curItemSet] << " ," 
+	/*					std::cerr << "Adding " << itemSetStates[curItemSet] << " ," 
 								<< tmpSym
-								<< " to table\n";
+								<< " to table\n";*/
 						addToActionTable (curItemSet,
 								tmpSym, 
 								Reduce, 
@@ -204,12 +202,12 @@ void SLRParser::constructActionTable ()
 								NULL);
 					}
 				}
-				std::cerr << std::endl;
+	//			std::cerr << std::endl;
 			}
 
 			if ( isAcceptReady (*itemSetItr) )
 			{
-				std::cerr << "Adding accept state\n";
+//				std::cerr << "Adding accept state\n";
 				addToActionTable (curItemSet, string ("$"), Accept, 
 							NULL, NULL);
 			}

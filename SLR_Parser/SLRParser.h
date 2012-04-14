@@ -41,6 +41,9 @@ class SLRParser
 
 		/* Function to print the canonicalCollection of LR0Automaton */
 		string canonicalCollection2String ();
+
+		/* Returns the entire set of Follows as a string */
+		string followSet2String();
 	private:
 		// Private variables
 		map<ItemTerminalPair, ActionArgPair> ACTION; 
@@ -78,7 +81,6 @@ class SLRParser
 
 		string getNextToken_();
 
-		string followSet2String();
 };
 
 
