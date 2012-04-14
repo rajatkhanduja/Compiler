@@ -163,6 +163,64 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 }
 
 
+template<class Key>
+void
+Table<Key>::PrintTable()
+{
+	typename multimap<Key, Rule>::iterator itmm, tmpit;	
+	int nTerm = NTerminals();
+	int nNTerm= NNonTerminals();
+	int i,j;
+	Key key;
+	string nonTerminal;
+
+	std::cerr << "\t\t";
+	// Print the line of Terminals. 
+	for ( i = 0; i < nTerm; i++ )
+	{
+		std::cerr << getTerminal(i) << "\t\t";
+	}
+
+	std::cerr << "\n";
+
+	for ( i = 0; i < nNTerm; i++ )
+	{
+		nonTerminal = getNonTerminal(i);
+		std::cerr << nonTerminal << "  ";	
+		for ( j = 0; j < nTerm; j++ )
+		{
+			key.SetKey(nonTerminal, getTerminal(j));
+			if ( (tmpit = table.find(key)) != table.end() )
+			{
+				PrintRule(tmpit->second);
+				std::cerr << "  ";
+			}
+			else
+			{
+				std::cerr << "  ";
+			}
+		}
+		std::cerr << "\n";
+
+	}
+
+}
+
+
+// Non class function.
+void PrintRule(Rule rule)
+{
+	std::cerr << rule.RuleHead();
+	std::cerr << "->";
+	vector<string>::iterator itvs;
+	vector<string> tail = *((rule.RuleTails()).begin());
+	for ( itvs = tail.begin(); itvs != tail.end(); itvs++ )
+	{
+		std::cerr << *itvs << " ";
+	}
+}
+
+
 //###### EXPLICIT INSTANTIATIONS ##########
 template class TableKey < string, string >;
 template class Table < TableKey<string, string> >;

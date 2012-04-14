@@ -9,6 +9,9 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 {
 	ifstream in;
 	in.open(tokenizedFile);
+	
+	std::cerr << "File to parse " << tokenizedFile << "\n";
+
 	int numTerminals = NTerminals();
 	int numNonTerminals = NNonTerminals();
 	int i;
@@ -31,6 +34,8 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 
 	firstSet.RemoveDuplicatesFromFirst();
+
+	std::cerr << "FIRST computation done.\n";
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -44,19 +49,27 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	}
 
 	followSet.RemoveDuplicatesFromFollow();
+
+	std::cerr << "FOLLOW coputation done.\n";
 	//############################# FOLLOW #############################################
-	
-	NonRecursivePredictiveParser parser;
+
+	NonRecursivePredictiveParser parser(CFG, firstSet, followSet);
+	parser.PrintTable();
+
 	std::string line;	
+
+	std::cerr << "Parsing started\n";
 
 	while (in.good())
 	{
 		getline(in, line);
+		std::cerr << "At line :: " << line << "\n";
 		parser.PrepareInput(line);
-		parser.ParseInput(CFG);
+		//parser.ParseInput(CFG);
 		parser.ClearInput();	
 	}
-	
+
+	std::cerr << "Parsing Complete\n";	
 	in.close();	
 
 }
@@ -67,11 +80,13 @@ int main(int argc, char* argv[])
 	assert(argc > 2);
 	
 	Grammar G_scanned, G;
+	G.GrammarSetStartSymbol("E");	
 	ScanGrammarFromFile(G_scanned, argv[1]);
 	G_scanned.GrammarOutput();
 	outputTerminals();
 	outputNonTerminals();
 
+	
 	assert(!HasCycles(G_scanned));
 	assert(!HasNonTerminatingRules(G_scanned));
 
