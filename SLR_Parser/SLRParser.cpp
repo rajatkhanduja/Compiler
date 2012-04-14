@@ -57,7 +57,8 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
  */
 inline bool isReduceReady (const Item& item)
 {
-	return (item.second.second.size() == 0);
+	return (item.second.second.size() == 0 &&
+		item.first.compare (LR0Automaton::augmentedStartSymbol));
 }
 
 /* Function that checks if the item is ready to be accepted.
@@ -68,7 +69,7 @@ inline bool isReduceReady (const Item& item)
  */
 inline bool isAcceptReady (const Item& item)
 {
-	return (isReduceReady(item) &&
+	return (item.second.second.size() == 0 &&
 		!(item.first.compare(LR0Automaton::augmentedStartSymbol)));
 }
 
@@ -139,9 +140,11 @@ void SLRParser::constructActionTable ()
 							lr0automaton.slrGrammar);
 
 				vector<string>::iterator strItr;
+				std::cerr << "Follow(" << tmpSym <<"):";
 				for (strItr = follow.begin(); 
 					strItr != follow.end(); strItr++)
 				{
+					std::cerr << *strItr << " ";
 					if ( isTerminal (*strItr))
 					{
 						tmpSym = *strItr;
@@ -155,6 +158,7 @@ void SLRParser::constructActionTable ()
 								NULL);
 					}
 				}
+				std::cerr << std::endl;
 			}
 
 			if ( isAcceptReady (*itemSetItr) )
