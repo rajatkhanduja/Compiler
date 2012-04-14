@@ -82,6 +82,7 @@ void LexicalAnalyser::setInputFile (ifstream * inputFile)
 
 string LexicalAnalyser::getNextToken ()
 {
+	std::cerr << "Entering getNextToken\n";
 	static bool lineEOF;
 	if (NULL == inputFile)
 	{
@@ -93,6 +94,7 @@ string LexicalAnalyser::getNextToken ()
 	{
 		if (inputFileEOF)
 		{	
+			std::cerr << "No Token found\n";
 			throw NoMoreTokenException;
 		}
 		
@@ -128,6 +130,7 @@ string LexicalAnalyser::getNextToken ()
 	{
 		if (lineEOF)
 		{
+			std::cerr << "[LEX] recursive call\n";
 			return getNextToken();
 		}
 		else
@@ -142,5 +145,6 @@ string LexicalAnalyser::getNextToken ()
 	addToSymbolTable (lexeme, token, curLine, col);
 	
 	std::cerr << "[LexicalAnalyser] Found token : " << token << "\n";
+	
 	return token;
 }

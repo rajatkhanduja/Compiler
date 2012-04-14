@@ -46,6 +46,7 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 		followSet.Follow(firstSet, Gsym, lr0automaton.slrGrammar);
 	}
 	//############################# FOLLOW #############################################
+	addTerminal (string("$"));
 	generateItemSet2NumMapping();
 	constructActionTable ();
 }
@@ -164,7 +165,7 @@ void SLRParser::constructActionTable ()
 			if ( isAcceptReady (*itemSetItr) )
 			{
 				std::cerr << "Adding accept state\n";
-				addToActionTable (curItemSet, symbol, Accept, 
+				addToActionTable (curItemSet, string ("$"), Accept, 
 							NULL, NULL);
 			}
 		}
@@ -195,13 +196,34 @@ void SLRParser::parse (ifstream& inputFile)
 	// Insert the startSet into the stack.
 	parseStack.push (startSet);
 
-	string token = lex.getNextToken ();
+	string token;
 	ItemTerminalPair actionKey;
 	ActionArgPair actionVal;
 	while (true)
 	{
+		try 
+		{
+			token = lex.getNextToken ();
+		}
+		catch (string exception)
+		{
+			if (!exception.compare (
+				LexicalAnalyser::NoMoreTokenException))
+			{
+				std::cerr << "Error caught\n"; 
+				token = string("$");
+			}	
+			else
+			{
+				std::cerr << "SEVERE Error caught\n"; 
+				throw;
+			}
+				
+		}
 		actionKey = make_pair (parseStack.top(), token);
 		std::cerr << "Parse token " << token << "\n";
+		std::cerr << "Stack top "  << itemSetStates[parseStack.top()]
+			  << "\n";
 		if ( ACTION.count (actionKey) )
 		{
 			actionVal = ACTION[actionKey];
@@ -250,9 +272,9 @@ void SLRParser::parse (ifstream& inputFile)
 			// Error
 			assert (0);
 		}
-
-		token = lex.getNextToken();
 	}
+
+	std::cerr << "Parsed\n";
 }
 
 string SLRParser::canonicalCollection2String ()

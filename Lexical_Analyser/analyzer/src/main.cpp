@@ -55,7 +55,7 @@ int main (int argc, char *argv[])
 */
 	string lexeme, line;
 	unsigned int row = 0, col;
-
+/*
 	while (true)
 	{
 		getline (inputFile, line);
@@ -75,19 +75,20 @@ int main (int argc, char *argv[])
 		if ( inputFile.eof())
 			break;
 	}
-
-/*	lexer.setInputFile (&inputFile);
+*/
+	lexer.setInputFile (&inputFile);
 	try
 	{
 		while (true)
 		{
 			std::cout << lexer.getNextToken () << " ";
+			std::cout << "HERE ~~~~~~~~~~~~~  ";
 		}
 	}
 	catch (string exception)
 	{
 		std::cerr << "Caught : " << exception << std::endl;
 	}
-*/
+
 	return 0;
 }

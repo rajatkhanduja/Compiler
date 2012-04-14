@@ -42,10 +42,12 @@ int main (int argc, char * argv[])
 		// Parse
 		ifstream inputFile (argv[3]);
 		slrParser.parse (inputFile);
+		std::cerr << "Done\n";
 	}
 	catch (string exception)
 	{
 		std::cerr << exception << std::endl;
+		std::cerr << "Exception\n";
 	}
 
 	return 0;
