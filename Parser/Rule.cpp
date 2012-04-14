@@ -14,7 +14,7 @@ Rule::Rule(const string h)
 	head = h;
 }
 
-Rule::RuleReinitialize(std::string h)
+void Rule::RuleReinitialize(std::string h)
 {
 	this->head = h;
 	this->tails.clear();
