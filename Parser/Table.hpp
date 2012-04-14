@@ -58,6 +58,8 @@ class TableKey
 };
 
 
+void PrintRule();
+
 /* Table is implemented as a multimap (Associative Container) */
 template<class Key>
 class Table
@@ -69,7 +71,8 @@ class Table
 		Table();
 		void TableInsert(Key key, Rule rule);
 		vector<Rule> TableFind(Key key);
-		void PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet); 
+		void PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet);
+		void PrintTable();
 };
 
 #endif

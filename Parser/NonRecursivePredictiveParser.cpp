@@ -15,10 +15,18 @@ void printProduction(Rule rule)
 	std::cerr << std::endl;
 }
 
-NonRecursivePredictiveParser::NonRecursivePredictiveParser()
+NonRecursivePredictiveParser::NonRecursivePredictiveParser(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet)
 {
 	// Empty
+	// Prepare the parsingTable
+	(this->parsingTable).PopulateTable(CFG, firstSet, followSet);
 }
+
+void NonRecursivePredictiveParser::PrintTable()
+{
+	(this->parsingTable).PrintTable();
+}
+
 
 
 void NonRecursivePredictiveParser::PrepareInput(string line)
@@ -58,7 +66,7 @@ void NonRecursivePredictiveParser::ParseInput(Grammar& CFG)
 	
 	
 	X = (this->parserStack).end() - 1;	/* Top of the stack */
-	while ( *X != ENDMARKER )
+	while ( (*X).compare(ENDMARKER) != 0 )
 	{
 
 		key.SetKey(*X, (this->input)[ip]);

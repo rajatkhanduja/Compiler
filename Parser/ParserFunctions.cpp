@@ -219,17 +219,6 @@ list<string> FirstSet::First (string Gsym, Grammar& CFG)
 list<string> FirstOfAggSym(FirstSet& firstSet, vector<string>& tail, vector<string>::iterator& itStart)
 {
 	
-	std::cerr << "########### Calculating FirstOfAggSym for tail part ##############\n";
-	vector<string>::iterator myit;
-	for ( myit = itStart; myit != tail.end(); myit++ )
-	{
-		std::cerr << *myit << " :: ";
-	}
-	
-	std::cerr << "################################################################\n";
-
-
-	
 	vector<string>::iterator it;
 
 	list<string>::iterator epsilonPosition;
@@ -237,27 +226,10 @@ list<string> FirstOfAggSym(FirstSet& firstSet, vector<string>& tail, vector<stri
 	list<string> retval;
 	map<string, list<string> > firstSetMap = firstSet.GetFirstSet();
 	
-	list<string>::iterator sit;
-
-
-	if ( itStart == tail.end() )
-	{
-		std::cerr << "Error in FirstOfAggSym\n";
-	}
-
 	for ( it = itStart; it < tail.end(); it++ )
 	{
-		std::cerr << "Here !!\n";
-		std::cerr << "calculating the FIRST(" << *it << ")\n"; 
 		
 		tmpFirstSet = firstSetMap[*it];	// Find the firstSet of this non-terminal.
-
-		for ( sit = tmpFirstSet.begin(); sit != tmpFirstSet.end(); sit++ )
-		{
-			std::cerr << *sit << " :: ";
-		}
-
-		std::cerr << "------------ END ------------------\n";
 
 		retval.insert(retval.end(), tmpFirstSet.begin(), tmpFirstSet.end());
 			
@@ -406,6 +378,32 @@ void FollowSet::ProcessDependencyList()
    nodes dependent on it must be updated so that further percolation of the updation process is done correctly.
 */
 
+
+void FollowSet::SetHardCoded()
+{
+	followSet.clear();
+	list<string> temp;
+	
+	temp.push_back(ENDMARKER);
+	followSet.insert(pair<string, list<string> > ("E", temp));
+	//followSet["E"] = temp;
+	followSet.insert(pair<string, list<string> > ("E_PRIME", temp));
+	//followSet["E_PRIME"] = temp;
+	
+	temp.push_back("+");
+	followSet.insert(pair<string, list<string> > ("T", temp));
+	followSet.insert(pair<string, list<string> > ("T_PRIME", temp));
+	//followSet["T"] = temp;
+	//followSet["T_PRIME"] = temp;
+	
+	temp.push_back("*");
+	followSet.insert(pair<string, list<string> > ("F", temp));
+	//followSet["F"] = temp;
+}
+
+
+
+
 list<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 {
 	map<string,list<string> >::iterator itrRet = followSet.find (Gsym);
@@ -500,15 +498,7 @@ list<string> FollowSet::Follow (FirstSet& firstSet, string Gsym, Grammar& CFG)
 						else
 						{
 							// Application of Rule(2). Everything in FIRST([beta]) is in FOLLOW([Gsym])
-							std::cerr << "Applying Rule 2 for " << Gsym ;
-							list<string>::iterator myit;
-							for ( myit = firstOfNextSym.begin(); myit != firstOfNextSym.end(); myit++ )
-							{
-								std::cerr << *myit << " --  ";
-							}
-							std::cerr << "\n";
 							
-
 							retval.insert(retval.end(), firstOfNextSym.begin(), firstOfNextSym.end());
 							// We will not break here since we may find the same symbol 'Gsym' many times in the tail.
 							// We'll just finish this iteration here and scan the remaining tail portion.

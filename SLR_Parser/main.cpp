@@ -39,15 +39,17 @@ int main (int argc, char * argv[])
 		out << "\n=============\n";
 		out << slrParser.gotoTable2String();
 
+
 		// Parse
 		ifstream inputFile (argv[3]);
+		std::cerr << "=============Beginning Parsing==========\n";
 		slrParser.parse (inputFile);
-		std::cerr << "Done\n";
+		std::cerr << "=============Done Parsing===========\n";
 	}
 	catch (string exception)
 	{
+		std::cerr << "=========Exception Caught=========\n";
 		std::cerr << exception << std::endl;
-		std::cerr << "Exception\n";
 	}
 
 	return 0;

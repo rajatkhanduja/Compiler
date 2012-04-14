@@ -5,10 +5,31 @@ TopDownDriver::TopDownDriver()
 	// Empty
 }
 
+void printSet(map<string, list<string> >& dataToPrint)
+{
+	map<string, list<string> >::iterator itm;
+	list<string> dataSet;
+	list<string>::iterator ils;
+	for ( itm = dataToPrint.begin(); itm != dataToPrint.end(); itm++ )
+	{
+		dataSet = itm->second;
+		std::cerr << " == " << itm->first << " == \n";
+		for ( ils = dataSet.begin(); ils != dataSet.end(); ils++ )
+		{
+			std::cerr << *ils << ", ";
+		}
+		std::cerr << " =======================\n";
+	}
+
+}
+
 void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 {
 	ifstream in;
 	in.open(tokenizedFile);
+	
+	std::cerr << "File to parse " << tokenizedFile << "\n";
+
 	int numTerminals = NTerminals();
 	int numNonTerminals = NNonTerminals();
 	int i;
@@ -31,6 +52,11 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 
 	firstSet.RemoveDuplicatesFromFirst();
+
+	std::cerr << "FIRST computation done.\n\n";
+
+	map<string, list<string> >tmpSet = firstSet.GetFirstSet();
+	printSet(tmpSet);
 	//#############################  FIRST ##################################
 
 	//############################# FOLLOW #############################################	
@@ -44,19 +70,31 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	}
 
 	followSet.RemoveDuplicatesFromFollow();
+
+	followSet.SetHardCoded();
+	std::cerr << "FOLLOW coputation done.\n\n";
+
+	tmpSet = followSet.GetFollowSet();
+	printSet(tmpSet);
 	//############################# FOLLOW #############################################
-	
-	NonRecursivePredictiveParser parser;
+
+	NonRecursivePredictiveParser parser(CFG, firstSet, followSet);
+	parser.PrintTable();
+
 	std::string line;	
+
+	std::cerr << "Parsing started\n";
 
 	while (in.good())
 	{
 		getline(in, line);
+		std::cerr << "At line :: " << line << "\n";
 		parser.PrepareInput(line);
-		parser.ParseInput(CFG);
+		//parser.ParseInput(CFG);
 		parser.ClearInput();	
 	}
-	
+
+	std::cerr << "Parsing Complete\n";	
 	in.close();	
 
 }
@@ -72,13 +110,13 @@ int main(int argc, char* argv[])
 	outputTerminals();
 	outputNonTerminals();
 
+	
 	assert(!HasCycles(G_scanned));
 	assert(!HasNonTerminatingRules(G_scanned));
 
 	G = G_scanned;
 	EliminateLeftRecursion(G);
 	G.GrammarOutput();
-
 	TopDownDriver topDownDriver;
 	topDownDriver.Drive(G, argv[2]);		
 

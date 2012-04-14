@@ -104,6 +104,9 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 	list<string>::iterator its1, its2;
 	list<string> setFirst, setFollow;
 	
+	// HARD CODE
+	followSet.SetHardCoded();	
+	
 	string head;
 	Key key;
 	vector < vector<std::string> > tailsWithCommonHead;
@@ -130,7 +133,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 				if ( *its1 == EPSILON )		
 				{
 					//######## Application of Rule(2) ###########.
-					setFollow = (followSet.GetFollowSet())[head];
+					//setFollow = (followSet.GetFollowSet())[head];
 					for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
 					{
 						if ( *its2 == ENDMARKER )
@@ -160,6 +163,64 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 		} 
 	}
 	// We need to consider each rule in the form :: A -> [alpha], where [alpha] is an AGGREGATE symbol.
+}
+
+
+template<class Key>
+void
+Table<Key>::PrintTable()
+{
+	typename multimap<Key, Rule>::iterator itmm, tmpit;	
+	int nTerm = NTerminals();
+	int nNTerm= NNonTerminals();
+	int i,j;
+	Key key;
+	string nonTerminal;
+
+	std::cerr << "\t\t";
+	// Print the line of Terminals. 
+	for ( i = 0; i < nTerm; i++ )
+	{
+		std::cerr << getTerminal(i) << "\t\t";
+	}
+
+	std::cerr << "\n";
+
+	for ( i = 0; i < nNTerm; i++ )
+	{
+		nonTerminal = getNonTerminal(i);
+		std::cerr << nonTerminal << "  ";	
+		for ( j = 0; j < nTerm; j++ )
+		{
+			key.SetKey(nonTerminal, getTerminal(j));
+			if ( (tmpit = table.find(key)) != table.end() )
+			{
+				PrintRule(tmpit->second);
+				std::cerr << "  ";
+			}
+			else
+			{
+				std::cerr << "  ";
+			}
+		}
+		std::cerr << "\n";
+
+	}
+
+}
+
+
+// Non class function.
+void PrintRule(Rule rule)
+{
+	std::cerr << rule.RuleHead();
+	std::cerr << "->";
+	vector<string>::iterator itvs;
+	vector<string> tail = *((rule.RuleTails()).begin());
+	for ( itvs = tail.begin(); itvs != tail.end(); itvs++ )
+	{
+		std::cerr << *itvs << " ";
+	}
 }
 
 

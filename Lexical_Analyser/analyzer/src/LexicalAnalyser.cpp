@@ -82,7 +82,6 @@ void LexicalAnalyser::setInputFile (ifstream * inputFile)
 
 string LexicalAnalyser::getNextToken ()
 {
-	std::cerr << "Entering getNextToken\n";
 	static bool lineEOF;
 	if (NULL == inputFile)
 	{
@@ -130,7 +129,7 @@ string LexicalAnalyser::getNextToken ()
 	{
 		if (lineEOF)
 		{
-			std::cerr << "[LEX] recursive call\n";
+//			std::cerr << "[LEX] recursive call\n";
 			return getNextToken();
 		}
 		else

@@ -5,6 +5,7 @@
 #include <Table.hpp>
 #include <Grammar.hpp>
 #include <sstream>
+#include <ParserFunctions.hpp>
 
 /* At each step of a top-down parse, the key-problem is that of determining the production to be applied for a non-terminal, say A. Once an A-production is
  * chosen, the rest of the parsing process consists of " MATCHING " THE TERMINAL SYMBOLS IN THE PRODUCTION BODY WITH THE INPUT STRING.
@@ -26,9 +27,10 @@ class NonRecursivePredictiveParser
 		Table <TableKey<string, string> > parsingTable;
 		vector<string> parserStack;
 	public:
-		NonRecursivePredictiveParser();
+		NonRecursivePredictiveParser(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet);
 		void ParseInput(Grammar& CFG);
 		void PrepareInput(string);
 		void ClearInput();
+		void PrintTable();
 };
 #endif
