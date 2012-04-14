@@ -54,7 +54,8 @@ SLRParser::SLRParser (char * lexFile, char * grammarFile)
 
 /* Function that checks if the item is ready to be reduced
  * i.e. it checks if the dot is the last thing in the rule or that 
- * the vector containing the post-dot symbols is empty.
+ * the vector containing the post-dot symbols is empty. Also, the head should not
+ * be the start symbol of the augmented grammar.
  */
 inline bool isReduceReady (const Item& item)
 {

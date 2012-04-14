@@ -12,4 +12,5 @@
 #E --> T F
 #F --> ( E ) | id
 #T --> F
-F --> id id
+F --> B + id
+B --> id
