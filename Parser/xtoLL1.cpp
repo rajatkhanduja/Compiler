@@ -212,6 +212,7 @@ void EliminateImmediateLeftRecursion(Grammar& g)
 		if(HasLeftRecursion(r))
 		{
 			temp = EliminateImmediateLeftRecursion(r);
+			addNonTerminal(temp[1].RuleHead());
 			rulestoremove.push_back(i);
 			rulestoadd.push_back(temp[0]);
 			rulestoadd.push_back(temp[1]);

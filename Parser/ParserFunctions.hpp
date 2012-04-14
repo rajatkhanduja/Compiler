@@ -27,7 +27,7 @@ list<string> FirstOfAggSym(FirstSet& firstSet, vector<string>& tail, vector<stri
 class FollowSet
 {
 	private:
-		map< string, list<string> > followSet;
+		//map< string, list<string> > followSet;
 		map< string, bool> dirtyFlags;
 		// list and vector provide almost the same functionality despite their merits and de-merits. Lists are implemented as doubly-linked
 		// lists whereas vectors are implemented as dynamic arrays. 
@@ -46,6 +46,8 @@ class FollowSet
 		map<string, list<string> > NTDependencyList;
 					
 	public:
+		
+		map< string, list<string> > followSet;
 		FollowSet();
 		list<string> Follow(FirstSet& firstSet, const string Gsym /* Any Grammar Symbol */, Grammar& grammar);
 		void FollowSetAddEntry(string key, list<string> value);
@@ -54,7 +56,7 @@ class FollowSet
 		void UpdateDependencyList(vector<string>& recursionStack, string Gsym);	
 		void UndirtySymbol(string Gsym);
 		void ProcessDependencyList();
-
+		void  SetHardCoded();
 		void RemoveDuplicatesFromFollow();
 };
 
