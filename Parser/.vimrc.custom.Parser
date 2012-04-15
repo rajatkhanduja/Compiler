@@ -13,16 +13,5 @@ tabnew Grammar.cpp
 vs Grammar.hpp
 tabnew xtoLL1.cpp
 vs xtoLL1.hpp
-tabnew ParserFunctions.cpp
-vs ParserFunctions.hpp
-tabnew Table.cpp
-vs Table.hpp
-tabnew NonRecursivePredictiveParser.cpp
-vs NonRecursivePredictiveParser.hpp
-tabnew TopDownDriver.cpp
-vs TopDownDriver.hpp
 tabnew xtoLL1driver.cpp
 tabnew Makefile
-tabnew test.grammar
-tabnew test2.grammar
-tabnew test3.grammar
