@@ -13,12 +13,12 @@ void printSet(map<string, list<string> >& dataToPrint)
 	for ( itm = dataToPrint.begin(); itm != dataToPrint.end(); itm++ )
 	{
 		dataSet = itm->second;
-		std::cerr << " == " << itm->first << " == \n";
+		std::cerr << itm->first << " : ";
 		for ( ils = dataSet.begin(); ils != dataSet.end(); ils++ )
 		{
-			std::cerr << *ils << ", ";
+			std::cerr << *ils << " ";
 		}
-		std::cerr << " =======================\n";
+		std::cerr << "\n";
 	}
 
 }
@@ -53,7 +53,7 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 
 	firstSet.RemoveDuplicatesFromFirst();
 
-	std::cerr << "FIRST computation done.\n\n";
+	std::cerr << "FIRST computation done.\n";
 
 	map<string, list<string> >tmpSet = firstSet.GetFirstSet();
 	printSet(tmpSet);
@@ -72,14 +72,14 @@ void TopDownDriver::Drive(Grammar& CFG, char* tokenizedFile)
 	followSet.RemoveDuplicatesFromFollow();
 
 	followSet.SetHardCoded();
-	std::cerr << "FOLLOW coputation done.\n\n";
+	std::cerr << "FOLLOW computation done.\n";
 
 	tmpSet = followSet.GetFollowSet();
 	printSet(tmpSet);
 	//############################# FOLLOW #############################################
 
 	NonRecursivePredictiveParser parser(CFG, firstSet, followSet);
-	parser.PrintTable();
+	//parser.PrintTable();
 
 	std::string line;	
 
@@ -110,13 +110,14 @@ int main(int argc, char* argv[])
 	outputTerminals();
 	outputNonTerminals();
 
-	
 	assert(!HasCycles(G_scanned));
 	assert(!HasNonTerminatingRules(G_scanned));
 
 	G = G_scanned;
 	EliminateLeftRecursion(G);
+	LeftFactorize(G);
 	G.GrammarOutput();
+
 	TopDownDriver topDownDriver;
 	topDownDriver.Drive(G, argv[2]);		
 

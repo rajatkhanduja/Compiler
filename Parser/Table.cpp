@@ -61,32 +61,71 @@ Table<Key>::TableInsert(Key key, Rule rule)
 {
 	pair <Key, Rule> insertPair;
 	insertPair = make_pair(key, rule);
-	(this->table).insert(insertPair);
+	cerr<<"insertPair"<<insertPair.first.GetKey().first<<" : "<<insertPair.first.GetKey().second<<" --> ";
+	insertPair.second.RuleOutput();
+	(this->table)[key] = rule;
+
+	//(this->table).insert(insertPair);
+	cerr<<"TableInsert(): "<<key.GetKey().first<<" : "<<key.GetKey().second<<" --> ";
+	
+	if (Find(key).second )
+	{
+		Find(key).first.RuleOutput();
+	}
+	else
+	{
+		std::cerr << "Ky not founbd";
+	}
+}
+
+template<class Key>
+pair<Rule,bool>
+Table<Key>::Find(Key key)
+{
+	
+	typename map<Key, Rule>::iterator it;
+	if ( (it = table.find(key)) == table.end() )
+	{
+		std::cerr << "Key not found\n";
+		return pair<Rule,bool>(Rule(),false);
+	}
+	else return pair<Rule,bool>((*it).second,true);
+
 
 }
+
+
+
 
 template<class Key>
 vector<Rule> 
 Table<Key>::TableFind(Key key)
 {
-	vector<Rule> retval;
-	/* multimap class has an inbuilt 'class' iterator ;
+	/*vector<Rule> retval;
+	* multimap class has an inbuilt 'class' iterator ;
 	   so, multimap<Key, Rule>::iterator is a class type.
 	*/
-
-	typedef typename multimap<Key, Rule>::iterator TemplateIterator;	// Template iterator	
-	TemplateIterator it;
-	pair<TemplateIterator, TemplateIterator> iterBoundPair; 
+	//#TODO multimap
+	typedef typename map<Key, Rule>::iterator TemplateIterator;	// Template iterator	
+	//TemplateIterator it;
+	//pair<TemplateIterator, TemplateIterator> iterBoundPair; 
       
 	/* Returns the bounds of a range that includes all the elements in the container with a key that compares equal to x. */
-	iterBoundPair = (this->table).equal_range(key);
+	//iterBoundPair = (this->table).equal_range(key);
 
-	for ( it = iterBoundPair.first; it != iterBoundPair.second; it++ )
+	//for ( it = iterBoundPair.first; it != iterBoundPair.second; it++ )
+	//{
+	//	retval.push_back((*it).second);
+	//}
+	typename map<Key, Rule>::iterator it;
+	if ( (it = table.find(key)) == table.end() )
 	{
-		retval.push_back((*it).second);
+		std::cerr << "Key not found\n";
+		return vector<Rule>();
 	}
+	else return vector<Rule>(1,(*it).second);
 
-	return retval;
+	
 }
 
 
@@ -128,9 +167,21 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 			// Now the whole tail has to be considered as a SINGLE AGGREGATE symbol.
 			cit = tail.begin();
 			setFirst = FirstOfAggSym(firstSet, tail, cit);
+			cerr<<"First set of : ";
+			rule.RuleOutput();
 			for ( its1 = setFirst.begin(); its1 != setFirst.end(); its1++ )
 			{
-				if ( *its1 == EPSILON )		
+				cerr<<"\t"<<*its1<<endl;
+				///*
+				if ( isTerminal(*its1) )	// Note:: 'epsilon' is not a terminal.
+				{
+					//####### Application of Rule(1) ###########.
+
+					key.SetKey(head, *its1);//#TODO The type of 'head' and '*its' should depend on the template parameter Key unlike strings here.
+					cerr<<"key = "<<key.GetKey().first<<" : "<<key.GetKey().second<<endl;
+					TableInsert(key, rule);
+				}
+				else if ( *its1 == EPSILON )		
 				{
 					//######## Application of Rule(2) ###########.
 					//setFollow = (followSet.GetFollowSet())[head];
@@ -150,19 +201,14 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 					}
 
 				}
-				else if ( isTerminal(*its1) )	// Note:: 'epsilon' is not a terminal.
-				{
-					//####### Application of Rule(1) ###########.
-
-					key.SetKey(head, *its1);//#TODO The type of 'head' and '*its' should depend on the template parameter Key unlike strings here.
-					TableInsert(key, rule);
-				}	
-
+				//*/
 			}
-			rule.RuleRemoveTail(tail);	
+			rule.RuleRemoveTail(0);	
 		} 
 	}
 	// We need to consider each rule in the form :: A -> [alpha], where [alpha] is an AGGREGATE symbol.
+	cerr << "In PopulateTable2345678888888888888888888888888888888888\n";
+	PrintTable();
 }
 
 
@@ -170,13 +216,14 @@ template<class Key>
 void
 Table<Key>::PrintTable()
 {
-	typename multimap<Key, Rule>::iterator itmm, tmpit;	
+	//#TODO multimap
+	typename map<Key, Rule>::iterator itmm, tmpit;	
 	int nTerm = NTerminals();
 	int nNTerm= NNonTerminals();
 	int i,j;
 	Key key;
-	string nonTerminal;
-
+	string nonTerminal,terminal;
+	std::cerr << "PRINTING TABLES @@@@@@@@@@@@@@@@@@@@@@";
 	std::cerr << "\t\t";
 	// Print the line of Terminals. 
 	for ( i = 0; i < nTerm; i++ )
@@ -192,16 +239,25 @@ Table<Key>::PrintTable()
 		std::cerr << nonTerminal << "  ";	
 		for ( j = 0; j < nTerm; j++ )
 		{
-			key.SetKey(nonTerminal, getTerminal(j));
-			if ( (tmpit = table.find(key)) != table.end() )
+			/*if ( (tmpit = table.find(key)) != table.end() )
 			{
-				PrintRule(tmpit->second);
+				(tmpit->second).RuleOutput();
 				std::cerr << "  ";
 			}
 			else
 			{
 				std::cerr << "  ";
+			}*/
+			terminal  = getTerminal(j);
+			key.SetKey(nonTerminal, terminal);
+			std::cerr << "(" << nonTerminal << "," << terminal << ")"
+				  << "\n"; 
+			std::cerr << "(" << key.GetKey().first << "," << key.GetKey().second << ")" <<"\n";
+			if ( Find(key).second ) ;
+			{
+				Find(key).first.RuleOutput();
 			}
+			std::cerr << " ";
 		}
 		std::cerr << "\n";
 

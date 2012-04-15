@@ -65,7 +65,7 @@ template<class Key>
 class Table
 {
 	private:
-		multimap<Key, Rule> table;
+		map<Key, Rule> table;
 
 	public:
 		Table();
@@ -73,6 +73,7 @@ class Table
 		vector<Rule> TableFind(Key key);
 		void PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet);
 		void PrintTable();
+		pair<Rule,bool> Find(Key key);
 };
 
 #endif

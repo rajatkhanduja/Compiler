@@ -20,6 +20,8 @@ NonRecursivePredictiveParser::NonRecursivePredictiveParser(Grammar& CFG, FirstSe
 	// Empty
 	// Prepare the parsingTable
 	(this->parsingTable).PopulateTable(CFG, firstSet, followSet);
+	std::cerr << "IN parser";
+	parsingTable.PrintTable();
 }
 
 void NonRecursivePredictiveParser::PrintTable()

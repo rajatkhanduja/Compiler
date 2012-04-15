@@ -7,12 +7,4 @@
 #
 # Grammar:
 #
-S --> i E t S | i E t S e S | A
-A --> a
-E --> b
-#
-#A --> a b c d B C | a b c D | z | a b c d e E F | z z G
-#
-#A --> z a B | z a z C | z z a D
-#
-#A --> z a | z a z | z z a
+A --> a b c d B C | a b c D | z | a b c d e E F | z z G

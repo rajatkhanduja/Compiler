@@ -385,20 +385,17 @@ void FollowSet::SetHardCoded()
 	list<string> temp;
 	
 	temp.push_back(ENDMARKER);
+	temp.push_back(")");
 	followSet.insert(pair<string, list<string> > ("E", temp));
-	//followSet["E"] = temp;
 	followSet.insert(pair<string, list<string> > ("E_PRIME", temp));
-	//followSet["E_PRIME"] = temp;
 	
 	temp.push_back("+");
 	followSet.insert(pair<string, list<string> > ("T", temp));
 	followSet.insert(pair<string, list<string> > ("T_PRIME", temp));
-	//followSet["T"] = temp;
-	//followSet["T_PRIME"] = temp;
 	
 	temp.push_back("*");
 	followSet.insert(pair<string, list<string> > ("F", temp));
-	//followSet["F"] = temp;
+	
 }
 
 
