@@ -143,7 +143,7 @@ string LexicalAnalyser::getNextToken ()
 	col -= lexeme.length() - 1;
 	addToSymbolTable (lexeme, token, curLine, col);
 	
-	std::cerr << "[LexicalAnalyser] Found token : " << token << "\n";
+//	std::cerr << "[LexicalAnalyser] Found token : " << token << "\n";
 	
 	return token;
 }

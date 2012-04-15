@@ -1,0 +1,7 @@
+6
+STMT->EXPR.DEL.temp2
+temp2->EXPR.DEL.temp2|e
+A->b.temp3|w.temp3
+temp3->c.temp3|e
+B->c.temp4|d.temp4|z.temp4
+temp4->v.temp4|e

@@ -55,7 +55,7 @@ int main (int argc, char *argv[])
 */
 	string lexeme, line;
 	unsigned int row = 0, col;
-/*
+
 	while (true)
 	{
 		getline (inputFile, line);
@@ -75,8 +75,8 @@ int main (int argc, char *argv[])
 		if ( inputFile.eof())
 			break;
 	}
-*/
-	lexer.setInputFile (&inputFile);
+
+/*	lexer.setInputFile (&inputFile);
 	try
 	{
 		while (true)
@@ -89,6 +89,6 @@ int main (int argc, char *argv[])
 	{
 		std::cerr << "Caught : " << exception << std::endl;
 	}
-
+*/
 	return 0;
 }
