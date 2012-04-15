@@ -913,7 +913,7 @@ bool DBG = false;
 
         for(int i=0;i<(int)row_nonTerminals.size();i++)
         {
-            cout<<"ROW: "<<row_nonTerminals[i]<<endl;
+            cout<<"row: "<<row_nonTerminals[i]<<endl;
             for(int j=0;j<(int)col_terminals.size();j++)
             {
 
@@ -921,11 +921,11 @@ bool DBG = false;
 
                 if(table_element[0].compare(EMPTY_ELEM_TABLE_INDICATOR)!=0)
                 {//if the production is not empty
-                    cout<<"\t\tCOL: "<<col_terminals[j]<<endl;
+                    cout<<"\tcolumn: "<<col_terminals[j];
 
                     for(int k=0;k<(int)table_element.size();k++)
                     {
-                        cout<<"\t\t\t\t"<<row_nonTerminals[i]<<"->"<<table_element[k]<<endl;
+                        cout<<"\t\t"<<row_nonTerminals[i]<<"->"<<table_element[k]<<endl;
 
                         if(k>0)
                             is_ambiguity = true;
