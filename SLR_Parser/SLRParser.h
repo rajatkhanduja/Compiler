@@ -28,8 +28,11 @@ class SLRParser
 		// Constructor
 		SLRParser (char * lexFile, char * grammarFile);
 
-		/* Call this function to parse. The output is printed directly.*/
-		void parse (ifstream& inputFile);
+		/* Call this function to parse. The function returns the stack of 
+		 * the reduction rules that have been applied. By definition, the 
+		 * topmost rule was called last.
+		 */
+		stack<Item> parse (ifstream& inputFile);
 		
 		/* Function to return the actionTable as a string. 
 		 * Useful to print the actionTable.
@@ -82,6 +85,8 @@ class SLRParser
 		string getNextToken_();
 
 };
+
+string parseStack2String (stack<Item> reductions);
 
 
 #endif	// End of file

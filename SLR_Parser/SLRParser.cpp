@@ -263,8 +263,11 @@ string SLRParser::getNextToken_()
 			
 	}
 }
-void SLRParser::parse (ifstream& inputFile)
+
+stack<Item> SLRParser::parse (ifstream& inputFile)
 {
+	stack<Item> reductions;
+
 	lex.setInputFile (&inputFile);
 
 	// Ensure the stack is empty.
@@ -311,6 +314,7 @@ void SLRParser::parse (ifstream& inputFile)
 
 			std::cerr << item2String(*actionVal.second.reduceRule)
 				  << "\n";
+			reductions.push (*actionVal.second.reduceRule);
 			
 			for (i = 0; i < n; i++)
 			{
@@ -335,6 +339,7 @@ void SLRParser::parse (ifstream& inputFile)
 	}
 
 	std::cerr << "Parsed\n";
+	return reductions;
 }
 
 string SLRParser::canonicalCollection2String ()
@@ -474,6 +479,52 @@ string SLRParser::gotoTable2String (void)
 				output << "-";
 			}
 		}
+		output << "\n";
+	}
+
+	return output.str();
+}
+
+
+string parseStack2String (stack<Item> reductions)
+{
+#define POPULATE_MAP(sym) \
+	if ( !grammarSymbols.count (sym))\
+	{\
+		grammarSymbols[sym] = 0; \
+	}
+#define PRINT_PRODUCTION(v,itr,output) \
+	for ( itr = v.begin (); itr != v.end(); itr++) \
+	{\
+		POPULATE_MAP (*itr); \
+		output  << "\"" << head.str() << "\""\
+			<< " -> "; \
+		output << "\"" << *itr << "_" << grammarSymbols[*itr] << "\";";\
+		std::cerr << "::: val for " << *itr << " : " << grammarSymbols[rule.first] << "\n" ;\
+		grammarSymbols[*itr] += 1;\
+		if (isNonTerminal (*itr)) \
+		{\
+			\
+		}\
+		output << "\n"; \
+	}
+
+	map<string, int> grammarSymbols;
+	map<string, int> NonTerm;
+	stringstream output; 
+	while (reductions.size())
+	{
+		Item rule = reductions.top ();
+		reductions.pop();
+		stringstream head;
+		POPULATE_MAP (rule.first);
+		head << rule.first << "_" <<  (NonTerm[rule.first] > grammarSymbols[rule.first] ? NonTerm[rule.first] : grammarSymbols[rule.first]);
+		grammarSymbols[rule.first]++ ;
+		NonTerm[rule.first]++;
+		std::cerr << " val for " << rule.first << " : " << grammarSymbols[rule.first] << "\n" ;
+		vector<string>::iterator itr;
+		PRINT_PRODUCTION (rule.second.first , itr, output);
+		PRINT_PRODUCTION (rule.second.second, itr, output);
 		output << "\n";
 	}
 

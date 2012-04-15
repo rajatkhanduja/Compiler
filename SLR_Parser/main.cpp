@@ -9,7 +9,7 @@ using std::ifstream;
 using std::ofstream;
 
 string debugFile = "debug";
-
+string treeFile  = "parseTree.dot";
 void usage (char *name)
 {
 	std::cerr << "Usage :-\n";
@@ -33,6 +33,7 @@ int main (int argc, char * argv[])
 		
 		// Open a file for dumping debugging statements.
 		ofstream out(debugFile.c_str());
+		ofstream tree (treeFile.c_str());
 		out << slrParser.canonicalCollection2String ();
 		out << "\n=============\n";
 		out << slrParser.actionTable2String();
@@ -43,7 +44,12 @@ int main (int argc, char * argv[])
 		// Parse
 		ifstream inputFile (argv[3]);
 		std::cerr << "=============Beginning Parsing==========\n";
-		slrParser.parse (inputFile);
+		tree 	<< "digraph parseTree { \n"
+			<< "size = \"5,5\";" 
+			<< "node [color=lightblue2,style=filled];";
+
+		tree << parseStack2String (slrParser.parse (inputFile));
+		tree 	<< "}";
 		std::cerr << "=============Done Parsing===========\n";
 	}
 	catch (string exception)

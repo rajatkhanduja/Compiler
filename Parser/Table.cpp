@@ -136,7 +136,7 @@ Table<Key>::PopulateTable(Grammar& CFG, FirstSet& firstSet, FollowSet& followSet
 					//setFollow = (followSet.GetFollowSet())[head];
 					for ( its2 = setFollow.begin(); its2 != setFollow.end(); its2++ )
 					{
-						if ( *its2 == ENDMARKER )
+						if ( !its2->compare(ENDMARKER) )
 						{
 							key.SetKey(head, ENDMARKER);
 							TableInsert(key, rule);
