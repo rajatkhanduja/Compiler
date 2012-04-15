@@ -496,32 +496,33 @@ string parseStack2String (stack<Item> reductions)
 #define PRINT_PRODUCTION(v,itr,output) \
 	for ( itr = v.begin (); itr != v.end(); itr++) \
 	{\
-		POPULATE_MAP (*itr); \
 		output  << "\"" << head.str() << "\""\
 			<< " -> "; \
-		output << "\"" << *itr << "_" << grammarSymbols[*itr] << "\";";\
-		std::cerr << "::: val for " << *itr << " : " << grammarSymbols[rule.first] << "\n" ;\
-		grammarSymbols[*itr] += 1;\
-		if (isNonTerminal (*itr)) \
+		output << "\"" << *itr << "_" << rightSide[*itr] << "\";";\
+		if ( isNonTerminal(*itr) ) \
 		{\
-			\
+			leftSide[*itr].push(rightSide[*itr]);\
 		}\
+		rightSide[*itr] += 1;\
 		output << "\n"; \
 	}
 
-	map<string, int> grammarSymbols;
-	map<string, int> NonTerm;
+	map<string, int> rightSide;
+	map<string, stack<int> > leftSide;
 	stringstream output; 
 	while (reductions.size())
 	{
 		Item rule = reductions.top ();
 		reductions.pop();
 		stringstream head;
-		POPULATE_MAP (rule.first);
-		head << rule.first << "_" <<  (NonTerm[rule.first] > grammarSymbols[rule.first] ? NonTerm[rule.first] : grammarSymbols[rule.first]);
-		grammarSymbols[rule.first]++ ;
-		NonTerm[rule.first]++;
-		std::cerr << " val for " << rule.first << " : " << grammarSymbols[rule.first] << "\n" ;
+		if ( ! leftSide[rule.first].size() )
+		{
+			leftSide[rule.first].push(0);
+			rightSide[rule.first]++;
+		}
+			
+		head << rule.first << "_" <<  leftSide[rule.first].top();
+		leftSide[rule.first].pop();
 		vector<string>::iterator itr;
 		PRINT_PRODUCTION (rule.second.first , itr, output);
 		PRINT_PRODUCTION (rule.second.second, itr, output);

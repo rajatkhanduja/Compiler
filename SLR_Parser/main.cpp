@@ -45,8 +45,8 @@ int main (int argc, char * argv[])
 		ifstream inputFile (argv[3]);
 		std::cerr << "=============Beginning Parsing==========\n";
 		tree 	<< "digraph parseTree { \n"
-			<< "size = \"5,5\";" 
-			<< "node [color=lightblue2,style=filled];";
+			//<< "size = \"8,8\";\n" 
+			<< "node [style=filled fillcolor=\"#00ff005f\"];\n";
 
 		tree << parseStack2String (slrParser.parse (inputFile));
 		tree 	<< "}";
