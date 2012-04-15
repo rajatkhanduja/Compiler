@@ -1,4 +1,3 @@
-6
 STMT->EXPR.DEL.temp2
 temp2->EXPR.DEL.temp2|e
 A->b.temp3|w.temp3

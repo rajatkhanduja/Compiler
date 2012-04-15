@@ -103,17 +103,18 @@ bool hasNthWord(string production,int n)
 }
 
 void printStringList(vector<string> input_string_list)
-{//python style of printing string list
+{
+	return;
     cout<<"{ ";
     for(int i=0;i<(int)input_string_list.size();i++)
     {
-//        cout<<input_string_list[i];
+        cout<<input_string_list[i];
         if(i+1!=input_string_list.size())
         {
-//            cout<<" , ";
+            cout<<" , ";
         }
     }
-//    cout<<" }";
+    cout<<" }";
 }
 
 void printStringList_spaceSeperated(vector<string> input_string_list,bool forward_traverse = true,bool left_align = true)

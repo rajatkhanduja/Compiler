@@ -9,10 +9,12 @@
 
 using namespace std;
 
-#include "auxillaryFunctions.h"
-#define GRAMMAR_FILE_NAME   "output1.txt"
+vector<string> args;
+
+#include "auxillaryFunctions.hpp"
+#define GRAMMAR_FILE_NAME   (args[0].c_str())
 #define EMPTY_ELEM_TABLE_INDICATOR "BLANK"
-#define LEX_OUTPUT_FILE_NAME   "tokenized_file.txt"
+#define LEX_OUTPUT_FILE_NAME   (args[1].c_str())
 #define END_OF_TOKENIZER_FILE   "EOF"
 
 
@@ -42,7 +44,17 @@ public:
 
     void print()
     {
-        cout<<nonTerminal<<"{ \n\t";
+        cout<<nonTerminal<<endl;
+	cout<<"FIRST : ";
+	for(int i = 0; i < first.size(); i++)
+		cout<<first[i]<<" ";
+	cout<<endl;
+	cout<<"FOLLOW : ";
+        for(int i = 0; i < follow.size(); i++)
+		cout<<follow[i]<<" ";
+	cout<<endl;
+	return;
+	cout<<nonTerminal<<"{ \n\t";
         printStringList(first);
         cout<<",\n\t";
         printStringList(follow);
