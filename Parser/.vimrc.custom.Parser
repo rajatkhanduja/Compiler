@@ -24,3 +24,5 @@ vs TopDownDriver.hpp
 tabnew xtoLL1driver.cpp
 tabnew Makefile
 tabnew test.grammar
+tabnew test2.grammar
+tabnew test3.grammar
