@@ -1,5 +1,3 @@
-E->T.E'
-E'->+.T.E'|e
-T->F.T'
-T'->*.F.T'|e
-F->(.E.)|id
+S->A.a.A.b|B.b.B.a
+A->e
+B->e

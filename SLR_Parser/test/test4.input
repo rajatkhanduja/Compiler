@@ -6,7 +6,7 @@ int main ( int argc )
     if 4 > 2
     then
       a = 5 ;
-  a + test1111111111112 ; 
+  a + test112 ; 
   b * a ;
   c - a ;
   d = x + y ;

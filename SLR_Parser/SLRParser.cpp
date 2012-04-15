@@ -443,7 +443,7 @@ string SLRParser::gotoTable2String (void)
 	output << "\n";
 	for ( i = 0; i < lr0automaton.states.size(); i++)
 	{
-		output << lr0automaton.states[i] << "-" << i + 1;
+		output << i + 1;
 		int j;
 		for ( j = 0; j < NNonTerminals(); j++)
 		{
