@@ -276,7 +276,6 @@ static pair<vector<string>, vector<int> > FindLongestCommonPrefix(Rule& r,
 
 void LeftFactorize(Grammar& g)
 {
-	//g.GrammarOutput();
 	static int renamer = 0;
 	Rule r;
 	int n1 = g.GrammarNRules(), n2;
@@ -285,13 +284,14 @@ void LeftFactorize(Grammar& g)
 	for(int i = 0; i < n1; i++)
 	{
 		r = g.GrammarRule(i);
-		r.RuleOutput();
 		lcp_pos = FindLongestCommonPrefix(r, 0, vector<string>());
+		/*
 		cerr<<"lcp_pos:"<<endl;
 		for(int j = 0; j < lcp_pos.first.size(); j++)
 			cerr<<"\t"<<lcp_pos.first[j]<<endl;
 		for(int j = 0; j < lcp_pos.second.size(); j++)
 			cerr<<"\t"<<lcp_pos.second[j]<<endl;
+		*/
 		if(lcp_pos.second.size() > 1)
 		{
 			rulesmodified = true;
