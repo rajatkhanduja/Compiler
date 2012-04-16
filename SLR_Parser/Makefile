@@ -24,6 +24,9 @@ $(OBJ_GRAMMAR)/%.opp :
 $(LEX)/obj/%.o:
 	make -C $(LEX) lex_lib
 
+tree:parseTree.dot
+	dot -Tpng $^ -o parseTree.png
+
 clean:
 	rm -f ${OBJ}/*.o
 	rm -f ${BIN}/*.out
