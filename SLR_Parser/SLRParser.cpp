@@ -496,9 +496,17 @@ string parseStack2String (stack<Item> reductions)
 #define PRINT_PRODUCTION(v,itr,output) \
 	for ( itr = v.begin (); itr != v.end(); itr++) \
 	{\
-		output  << "\"" << head.str() << "\""\
+		output << head.str()\
 			<< " -> "; \
-		output << "\"" << *itr << "_" << rightSide[*itr] << "\";";\
+		if ( isNonTerminal (*itr) )\
+		{	\
+			finalOutput << *itr << "_" << rightSide[*itr] << " [label=\"" << *itr << "\"];\n";\
+			output << *itr << "_" << rightSide[*itr];\
+		}\
+		else\
+		{	finalOutput << "\"" << *itr << "_" << rightSide[*itr] << "\" [label=\"" << *itr << "\"];\n";\
+			output << "\"" << *itr << "_" << rightSide[*itr] << "\";";\
+		}\
 		if ( isNonTerminal(*itr) ) \
 		{\
 			leftSide[*itr].push(rightSide[*itr]);\
@@ -510,6 +518,7 @@ string parseStack2String (stack<Item> reductions)
 	map<string, int> rightSide;
 	map<string, stack<int> > leftSide;
 	stringstream output; 
+	stringstream finalOutput;
 	while (reductions.size())
 	{
 		Item rule = reductions.top ();
@@ -521,7 +530,8 @@ string parseStack2String (stack<Item> reductions)
 			rightSide[rule.first]++;
 		}
 			
-		head << rule.first << "_" <<  leftSide[rule.first].top();
+		head << rule.first << "_" <<  leftSide[rule.first].top() ;
+		finalOutput << rule.first << "_" << leftSide[rule.first].top() << " [label=\"" << rule.first << "\"];\n";
 		leftSide[rule.first].pop();
 		vector<string>::iterator itr;
 		PRINT_PRODUCTION (rule.second.first , itr, output);
@@ -529,5 +539,6 @@ string parseStack2String (stack<Item> reductions)
 		output << "\n";
 	}
 
-	return output.str();
+	finalOutput << output.str();
+	return finalOutput.str();
 }
