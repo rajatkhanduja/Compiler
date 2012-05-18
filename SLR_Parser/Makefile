@@ -19,7 +19,7 @@ ${OBJ}/%.o : ${SRC}/%.cpp
 	${CC} -c -g ${DEFINES} ${CFLAGS} $< -o $@
 
 $(OBJ_GRAMMAR)/%.opp : 
-	make -C $(LL1) grammar
+	make -f $(LL1)/Makefile_LL1 grammar
 
 $(LEX)/obj/%.o:
 	make -C $(LEX) lex_lib
